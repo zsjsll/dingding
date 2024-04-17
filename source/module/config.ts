@@ -1,4 +1,4 @@
-import { QQCfg, DDCfg, ClockCfg } from "@/app"
+import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "@/app"
 import { PhoneCfg } from "@/phone"
 import { ListenerCfg } from "@/listener"
 import { getCurrentDate } from "./tools"
@@ -14,6 +14,7 @@ export type Cfg = {
     ClockCfg &
     PhoneCfg &
     ListenerCfg &
+    EmailCfg &
     BASE_CONFIG
 
 type White_list = { [k: string]: string; XMSF: string }
@@ -56,6 +57,7 @@ export class Config {
             PACKAGE_ID_LIST: {
                 QQ: "com.tencent.tim", // 请使用tim
                 DD: "com.alibaba.android.rimet", // 钉钉
+                EMAIL: "com.tencent.androidqqmail", // QQ邮箱
                 XMSF: "com.xiaomi.xmsf", // 小米推送服务
                 CLOCK: "com.android.alarmclock", // 系统闹铃,自行修改
                 HOME: "com.meizu.flyme.launcher", //桌面的包名称，自行修改

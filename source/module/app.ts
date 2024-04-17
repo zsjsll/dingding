@@ -94,6 +94,12 @@ export class DD implements App, DDCfg {
     // 登录钉钉，如果已经登录，false
     private logining() {
         if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(1e3) !== null) {
+            if (id("tv_more").findOne(500) !== null) {
+                id("tv_more").findOne(-1).click()
+                sleep(500)
+                id("ll_rollback_old_login").findOne(-1).click()
+                sleep(500)
+            }
             id("et_phone_input").findOne(-1).setText(this.ACCOUNT)
             id("et_password").findOne(-1).setText(this.PASSWD)
             id("cb_privacy").findOne(-1).click()
@@ -101,6 +107,7 @@ export class DD implements App, DDCfg {
             return true
         } else return false
     }
+
     // 不进行更新
     private noUpdate() {
         const noupdate = text("暂不更新").findOne(10e3)
@@ -241,4 +248,12 @@ export class Clock implements ClockCfg {
         }
         return t
     }
+}
+
+type Email_Package_Id_List = {
+    EMAIL: string
+}
+
+export type EmailCfg = {
+    PACKAGE_ID_LIST: Email_Package_Id_List
 }

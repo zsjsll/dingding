@@ -25,7 +25,7 @@ import { Phone } from "@/phone"
     })
 
     function listenQQ(n: org.autojs.autojs.core.notification.Notification) {
-        if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.QQ) return
+        // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL) return
         switch (n.getText()) {
             case "帮助":
                 threads.shutDownAll()
