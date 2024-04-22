@@ -5,14 +5,17 @@
 基于[autoxjs](https://github.com/kkevsekk1/AutoX)
 
 ## 使用
-daka.js 填写用户、密码、QQ号即可使用
 
-要发送的人的qq建议在消息的第一个（置顶）。
+daka.js 填写用户、密码、QQ 号即可使用
+
+要发送的人的 qq 建议在消息的第一个（置顶）。
 
 仅研究学习使用。
 
-
 ## 一个新的开始
-基于[autojs6](https://github.com/SuperMonster003/AutoJs6)的分支。
 
-https://github.com/zsjsll/js_dingding/tree/dev
+基于[autox](https://github.com/kkevsekk1/AutoX)
+
+## 分支
+
+[MEIZU PRO5 ](https://github.com/zsjsll/js_dingding/tree/dev)
