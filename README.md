@@ -18,4 +18,5 @@ daka.js 填写用户、密码、QQ 号即可使用
 
 ## 分支
 
-[MEIZU PRO5 ](https://github.com/zsjsll/js_dingding/tree/dev)
+[MEIZU PRO5](https://github.com/zsjsll/js_dingding/tree/pro5)
+[MI9](https://github.com/zsjsll/js_dingding/tree/mi9)
