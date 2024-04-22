@@ -59,8 +59,9 @@ export class Config {
                 DD: "com.alibaba.android.rimet", // 钉钉
                 EMAIL: "com.tencent.androidqqmail", // QQ邮箱
                 XMSF: "com.xiaomi.xmsf", // 小米推送服务
-                CLOCK: "com.android.alarmclock", // 系统闹铃,自行修改
-                HOME: "com.meizu.flyme.launcher", //桌面的包名称，自行修改
+                HWID: "com.huawei.hwid", // 华为手机标识服务
+                CLOCK: "com.android.deskclock", // 系统闹铃,自行修改
+                HOME: "com.miui.home.launcher.ScreenView", //桌面的包名称，自行修改
             },
 
             GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径

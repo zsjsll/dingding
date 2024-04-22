@@ -4,7 +4,7 @@
 
 打卡
 
--   MEIZU PRO 5 flyme 6.3.0.2A
+-   MI 9 MIUI 10 9.8.2 开发版
 
 适用版本：
 
