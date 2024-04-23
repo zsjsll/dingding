@@ -48,9 +48,9 @@ export function getCurrentDate() {
 /**
  * @export
  * @param {number} delay 小于等于0的时候，没有延时
- * @param {number} [limit=0.5] 最少等0.5分钟（30s）
+ * @param {number} [limit=0.5] 最少等0.1分钟（6s）
  */
-export function holdOn(delay: number, limit: number = 0.5) {
+export function holdOn(delay: number, limit: number = 0.1) {
     if (delay <= 0) {
         return
     } else {
