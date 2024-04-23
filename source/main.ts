@@ -4,6 +4,13 @@ import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
 ;(function main() {
+    //停止其他脚本 ，只运行当前脚本
+    engines.all().map((ScriptEngine) => {
+        if (engines.myEngine().toString() !== ScriptEngine.toString()) {
+            ScriptEngine.forceStop()
+        }
+    })
+
     auto()
     // VolumeDown()
     shell("", true)
