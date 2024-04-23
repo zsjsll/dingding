@@ -48,9 +48,9 @@ export function getCurrentDate() {
 /**
  * @export
  * @param {number} delay 小于等于0的时候，没有延时
- * @param {number} [limit=0.1] 最少等6s
+ * @param {number} [limit=0.5] 最少等0.5分钟（30s）
  */
-export function holdOn(delay: number, limit: number = 0.1) {
+export function holdOn(delay: number, limit: number = 0.5) {
     if (delay <= 0) {
         return
     } else {
@@ -115,7 +115,8 @@ export function resetPhone() {
 
 export function closeScreen() {
     device.cancelKeepingAwake() // 取消设备常亮
-    if (isRoot()) shell("input keyevent 26", true)
+    // if (isRoot()) shell("input keyevent 26", true)
+    if (isRoot()) Power()
     else if (parseInt(device.release) > 9) lockScreen()
     sleep(2e3)
 }

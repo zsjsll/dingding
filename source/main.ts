@@ -85,13 +85,13 @@ import { Phone } from "@/phone"
             console.warn("已暂停打卡!")
             return
         }
-        let timer = cfg.DELAY
-        timer = clock.closeAlarmMEIZU(n)
+
+        clock.closeAlarm()
 
         threads.shutDownAll()
         threads.start(() => {
             phone.turnOn()
-            cfg.msg = dd.openAndPunchIn(timer)
+            cfg.msg = dd.openAndPunchIn()
             qq.openAndSendMsg(cfg.msg)
             phone.turnOff()
         })

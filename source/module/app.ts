@@ -37,7 +37,7 @@ export class QQ implements App, QQCfg {
         })
         const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(-1)
         const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!\n"
-        message = includes(message, "无效") ? wn + message : message
+        if (includes(message, "无效") || includes(message, "失败")) message = wn + message
         input.setText(`${message}\n当前电量:${device.getBattery()}%\n是否充电:${device.isCharging()}`)
         const send = text("发送").clickable().findOne(-1)
         sleep(500)
@@ -93,13 +93,15 @@ export class DD implements App, DDCfg {
 
     // 登录钉钉，如果已经登录，false
     private logining() {
-        if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(1e3) !== null) {
+        if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(2e3) !== null) {
+            //是否为新版本的钉钉，如果是，用旧的登录方式
             if (id("tv_more").findOne(500) !== null) {
                 id("tv_more").findOne(-1).click()
                 sleep(500)
                 id("ll_rollback_old_login").findOne(-1).click()
                 sleep(500)
             }
+
             id("et_phone_input").findOne(-1).setText(this.ACCOUNT)
             id("et_password").findOne(-1).setText(this.PASSWD)
             id("cb_privacy").findOne(-1).click()
@@ -135,6 +137,7 @@ export class DD implements App, DDCfg {
                 console.warn("启动失败，重新启动...")
                 continue
             }
+
             if (!this.logining()) console.log("正在登录...")
             else console.log("可能已登录")
             if (this.noUpdate()) console.info("取消更新")
@@ -232,21 +235,14 @@ export class Clock implements ClockCfg {
     DELAY: number
     PACKAGE_ID_LIST: CLOCK_Package_Id_List
 
-    closeAlarmMEIZU(n: org.autojs.autojs.core.notification.Notification) {
-        let t = this.DELAY
-        if (includes(n.getText(), "已错过")) {
-            console.warn("未捕获信息!开启快速打卡")
-            t = 1
-        } else {
-            sleep(2e3)
-            n.click()
-            const btn_close = id(this.PACKAGE_ID_LIST.CLOCK + ":id/el").findOne(2e3)
-            if (btn_close !== null) {
-                btn_close.click()
-                console.log("关闭闹钟")
-            }
-        }
-        return t
+    closeAlarm() {
+        sleep(2e3)
+        if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(10e3) !== null) {
+            VolumeDown() //通过音量键来关闭闹钟，需要root权限
+            console.log("闹钟已关闭")
+        } else console.warn("无法关闭闹钟")
+
+        return this.DELAY //返回的是延时时间
     }
 }
 

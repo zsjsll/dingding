@@ -67,7 +67,7 @@ export class Listener implements ListenerCfg {
                     if (isFunction(func)) return func(n)
                     return
                 },
-                1e3,
+                200,
                 { leading: true, trailing: false }
             )
         )
