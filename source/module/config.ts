@@ -7,7 +7,7 @@ import { toString } from "lodash"
 export type Cfg = {
     PACKAGE_ID_LIST: White_list
     GLOBAL_LOG_FILE_DIR: string
-    pause: boolean
+    suspend_count: number
     msg: string
 } & QQCfg &
     DDCfg &
@@ -66,7 +66,7 @@ export class Config {
 
             GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径
 
-            pause: false, //是否暂停打卡
+            suspend_count: 0, //暂停打卡次数
             msg: "",
         }
     }
