@@ -1,4 +1,4 @@
-import { includes } from "lodash"
+import { ceil, floor, includes, isNaN, parseInt, toInteger, toNumber, trim } from "lodash"
 
 export function backHome(home_id: string) {
     for (let i = 0; i < 10; i++) {
@@ -151,4 +151,33 @@ export function getStorageData(name: string, key: string) {
         return storage.get(key, "")
     }
     // 默认返回undefined
+}
+
+/**
+ * 输入打卡天数，返回打卡次数
+ * 先把str转为数字，整数部分乘以2
+ * 小数部分向上取整，相加得到打卡次数
+ *
+ * @export
+ * @param {string} n
+ * @return {*}  {number}
+ */
+export function calculateDay(n: string): number {
+    const a =trim(n, "暂停 -")
+    let num = parseInt(a)
+    num = isNaN(num) ? num : toNumber(a) // 获取天数
+    num = floor(num) * 2 + ceil(num % 1) //整数*2 ,小数部分向上取整，相加得到打卡次数
+    return isNaN(num) ? 1 : num //处理出现的NaN情况，把NaN转为1
+}
+
+/**
+ * 先把str转为数字，丢弃小数部分，返回数字
+ *
+ * @export
+ * @param {string} n
+ * @return {*}  {number}
+ */
+export function calculateCount(n: string): number {
+    const mun = parseInt(trim(n, "暂停 -")) // 丢弃小数部分，获取打卡次数
+    return isNaN(mun) ? 1 : mun //处理出现的NaN情况，把NaN转为1
 }

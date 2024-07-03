@@ -18,6 +18,8 @@
 
 `pnpm i`
 
+`pnpm add -g @swc/cli @swc/core`
+
 ### 打包
 
 `pnpm run build`

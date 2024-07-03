@@ -7,8 +7,8 @@ import { toString } from "lodash"
 export type Cfg = {
     PACKAGE_ID_LIST: White_list
     GLOBAL_LOG_FILE_DIR: string
-    suspend_count: number
     msg: string
+    suspend: Suspend
 } & QQCfg &
     DDCfg &
     ClockCfg &
@@ -16,6 +16,8 @@ export type Cfg = {
     ListenerCfg &
     EmailCfg &
     BASE_CONFIG
+
+type Suspend = { after: number; count: number }
 
 type White_list = { [k: string]: string; XMSF: string }
 
@@ -66,7 +68,7 @@ export class Config {
 
             GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径
 
-            suspend_count: 0, //暂停打卡次数
+            suspend: { after: 0, count: 0 }, //暂停打卡次数
             msg: "",
         }
     }
