@@ -1,4 +1,17 @@
-import { ceil, floor, List, parseInt, replace, split, toInteger, toNumber, trim, trimStart } from "lodash"
+import {
+    ceil,
+    floor,
+    isObject,
+    isString,
+    List,
+    parseInt,
+    replace,
+    split,
+    toInteger,
+    toNumber,
+    trim,
+    trimStart,
+} from "lodash"
 
 function test(str: string) {
     const a = "0" + str
@@ -9,7 +22,18 @@ function test(str: string) {
 
 console.log(test("15暂停4.5"))
 
-let a = 1
-a ||= 10
-console.log(a)
-// output: 1
+type O = {
+    a: number
+    b: number
+}
+
+function test2(o: O) {
+    if (o !== undefined) {
+        const { a, b } = o
+        if (a === 0 && b === 0) return "1"
+        else if (a === 0) return "2"
+        else return "4"
+    }
+}
+
+console.log(test2({ a: 0, b: 6 }))

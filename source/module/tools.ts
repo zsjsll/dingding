@@ -187,8 +187,6 @@ export function calculateCount(input: Array<number>): Suspend {
     const after = to_int_arr[0]
     let count = to_int_arr[1]
     count ??= 1
-    console.log("after", after, "count", count)
-
     // const count = input[1] === undefined ? 1 : input[1]
 
     return { after, count }
@@ -197,4 +195,18 @@ export function calculateCount(input: Array<number>): Suspend {
 export function formatSuspendInfo(input: string) {
     const a = "0" + input
     return a.match(/[\d.]+/g)?.map((v) => toNumber(v)) as number[]
+}
+
+export function status(suspend?: Suspend) {
+    const battery = device.getBattery()
+    const charge = device.isCharging()
+    const out = `当前电量: ${battery}%\n是否充电: ${charge}`
+    if (suspend !== undefined) {
+        const { after, count } = suspend
+        if (after !== 0 && count !== 0) return out + `\n暂停打卡已设置\n 延迟: ${after}次\n暂停: ${count}次`
+        else if (after === 0 && count !== 0) return out + `\n暂停开始\n剩余: ${count}次`
+        else if (after !== 0 && count === 0) return "错误! 有延迟, 无暂停"
+        else if (after === 0 && count === 0) return out
+    }
+    return out
 }

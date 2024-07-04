@@ -65,12 +65,17 @@ import { calculateCount, formatSuspendInfo } from "@/tools"
         }
         if (includes(n.getText(), "暂停")) {
             const arr = formatSuspendInfo(n.getText()) //先把输入的字符串格式化成array<number>
-            cfg.suspend = calculateCount(arr)
-
-            const msg = `*已设置暂停定时打卡*\n正常定时打卡${cfg.suspend.after}次(${
-                cfg.suspend.after / 2
-            }天)后\n暂停定时打卡${cfg.suspend.count}次(${cfg.suspend.count / 2}天)`
-            console.info(`正常打卡${cfg.suspend.after}次后, 暂停定时打卡${cfg.suspend.count}次`)
+            let msg = "暂停次数不能为0, 已取消暂停"
+            if (arr[1] === 0) {
+                cfg.suspend = { after: 0, count: 0 }
+                console.info(msg)
+            } else {
+                cfg.suspend = calculateCount(arr)
+                msg = `*已设置暂停定时打卡*\n正常定时打卡${cfg.suspend.after}次(${
+                    cfg.suspend.after / 2
+                }天)后\n暂停定时打卡${cfg.suspend.count}次(${cfg.suspend.count / 2}天)`
+                console.info(`正常打卡${cfg.suspend.after}次后, 暂停定时打卡${cfg.suspend.count}次`)
+            }
 
             threads.shutDownAll()
             threads.start(() => {
