@@ -1,4 +1,4 @@
-import { ceil, floor, includes, isNaN, List, parseInt, toInteger, toNumber, trim } from "lodash"
+import { ceil, floor, includes, parseInt, toNumber } from "lodash"
 
 export function backHome(home_id: string) {
     for (let i = 0; i < 10; i++) {
@@ -204,8 +204,15 @@ export function status(suspend?: Suspend) {
     const line = "-----------------------------\n"
     if (suspend !== undefined) {
         const { after, count } = suspend
-        if (after !== 0 && count !== 0) return line + `#暂停设置#\n 延迟: ${after}次\n暂停: ${count}次\n` + line + msg
-        else if (after === 0 && count !== 0) return line + `*暂停开始*\n剩余: ${count}次\n` + line + msg
+        if (after !== 0 && count !== 0)
+            return (
+                line +
+                `#暂停设置#\n 延迟: ${after}次  ( ${after / 2}天 )\n暂停: ${count}次  ( ${count / 2}天 )\n` +
+                line +
+                msg
+            )
+        else if (after === 0 && count !== 0)
+            return line + `*暂停开始*\n剩余: ${count}次  ( ${count / 2}天 )\n` + line + msg
         else if (after !== 0 && count === 0) return "错误! 有延迟, 无暂停"
         else if (after === 0 && count === 0) return msg
     }
