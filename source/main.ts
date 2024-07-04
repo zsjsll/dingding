@@ -1,9 +1,9 @@
-import {  includes, } from "lodash"
+import { includes } from "lodash"
 import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import {  calculateDay } from "@/tools"
+import { calculateCount, formatSuspendInfo } from "@/tools"
 ;(function main() {
     //停止其他脚本 ，只运行当前脚本
     engines.all().map((ScriptEngine) => {
@@ -34,15 +34,12 @@ import {  calculateDay } from "@/tools"
 
     function listenQQ(n: org.autojs.autojs.core.notification.Notification) {
         // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL) return
-
         if (n.getText() === "帮助") {
             threads.shutDownAll()
             threads.start(() => {
                 phone.turnOn()
                 qq.openAndSendMsg(
-                    `帮助: 显示所有指令内容\n打卡: 马上打卡\n锁屏: 停止当前动作后锁屏\n恢复: 恢复自动打卡\n暂停{m=1}: 停止自动打卡{m}次\n-----------------------------\n目前剩余: ${
-                        cfg.suspend.count / 2
-                    }天\n-----------------------------`
+                    `帮助: 显示所有指令内容\n\n打卡: 马上打卡\n\n锁屏: 停止当前动作后锁屏\n\n{n=0}暂停{m=1}:\n正常自动打卡{n}次\n然后,\n暂停自动打卡{m}次\n\n恢复: 恢复自动打卡\n\n状态: 显示当前状态`
                 )
                 phone.turnOff()
             })
@@ -58,11 +55,22 @@ import {  calculateDay } from "@/tools"
             })
             return
         }
+        if (n.getText() === "状态") {
+            // FIXME: 这里应该显示当前状态
+            const t = `正常自动打卡${cfg.suspend.after}次    (${cfg.suspend.after / 2}天)
+然后,
+暂停自动打卡${cfg.suspend.count}次    (${cfg.suspend.count / 2}天)`
+            const staus = cfg.suspend.after === 0 && cfg.suspend.count === 0 ? "未启用暂停定时打卡" : t
+            return
+        }
         if (includes(n.getText(), "暂停")) {
-            cfg.suspend.count = calculateDay(n.getText())
+            const arr = formatSuspendInfo(n.getText()) //先把输入的字符串格式化成array<number>
+            cfg.suspend = calculateCount(arr)
 
-            const msg = `*已暂停定时打卡*\n剩余${cfg.suspend.count}次\n${cfg.suspend.count / 2}天`
-            console.info(`暂停定时打卡${cfg.suspend.count}次`)
+            const msg = `*已设置暂停定时打卡*\n正常定时打卡${cfg.suspend.after}次(${
+                cfg.suspend.after / 2
+            }天)后\n暂停定时打卡${cfg.suspend.count}次(${cfg.suspend.count / 2}天)`
+            console.info(`正常打卡${cfg.suspend.after}次后, 暂停定时打卡${cfg.suspend.count}次`)
 
             threads.shutDownAll()
             threads.start(() => {

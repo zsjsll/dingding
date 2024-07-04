@@ -1,9 +1,14 @@
-import { ceil, floor, List, parseInt, toInteger, toNumber, trim } from "lodash"
+import { ceil, floor, List, parseInt, replace, split, toInteger, toNumber, trim, trimStart } from "lodash"
 
-const b = "0"
+function test(str: string) {
+    const a = "0" + str
 
-console.log(Number(b))
+    const b = a.match(/[\d.]+/g)?.map((v) => toNumber(v))
+    return b
+}
 
-// a = floor(a) * 2 + ceil(a % 1)
+console.log(test("15暂停4.5"))
 
-// console.log(a)
+let a = 1
+a ||= 10
+console.log(a)

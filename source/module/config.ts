@@ -1,7 +1,7 @@
 import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "@/app"
 import { PhoneCfg } from "@/phone"
 import { ListenerCfg } from "@/listener"
-import { getCurrentDate } from "./tools"
+import { getCurrentDate, Suspend } from "./tools"
 import { toString } from "lodash"
 
 export type Cfg = {
@@ -16,8 +16,6 @@ export type Cfg = {
     ListenerCfg &
     EmailCfg &
     BASE_CONFIG
-
-type Suspend = { after: number; count: number }
 
 type White_list = { [k: string]: string; XMSF: string }
 

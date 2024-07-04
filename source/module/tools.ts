@@ -1,4 +1,4 @@
-import { ceil, floor, includes, isNaN, parseInt, toInteger, toNumber, trim } from "lodash"
+import { ceil, floor, includes, isNaN, List, parseInt, toInteger, toNumber, trim } from "lodash"
 
 export function backHome(home_id: string) {
     for (let i = 0; i < 10; i++) {
@@ -153,31 +153,48 @@ export function getStorageData(name: string, key: string) {
     // 默认返回undefined
 }
 
+export type Suspend = { after: number; count: number }
+
 /**
  * 输入打卡天数，返回打卡次数
  * 先把str转为数字，整数部分乘以2
  * 小数部分向上取整，相加得到打卡次数
  *
  * @export
- * @param {string} n
+ * @param {string} input
  * @return {*}  {number}
  */
-export function calculateDay(n: string): number {
-    const a =trim(n, "暂停 -")
-    let num = parseInt(a)
-    num = isNaN(num) ? num : toNumber(a) // 获取天数
-    num = floor(num) * 2 + ceil(num % 1) //整数*2 ,小数部分向上取整，相加得到打卡次数
-    return isNaN(num) ? 1 : num //处理出现的NaN情况，把NaN转为1
-}
+export function calculateDay(input: Array<number>): Suspend {
+    console.log("input", input)
 
+    const day2Times = (day: number) => floor(day) * 2 + ceil(day % 1) // 天数转换成次数
+    const times = input.map(day2Times)
+    const after = times[0]
+    let count = times[1]
+    count ??= 1
+
+    return { after, count }
+}
 /**
  * 先把str转为数字，丢弃小数部分，返回数字
  *
  * @export
- * @param {string} n
+ * @param {string} input
  * @return {*}  {number}
  */
-export function calculateCount(n: string): number {
-    const mun = parseInt(trim(n, "暂停 -")) // 丢弃小数部分，获取打卡次数
-    return isNaN(mun) ? 1 : mun //处理出现的NaN情况，把NaN转为1
+export function calculateCount(input: Array<number>): Suspend {
+    const to_int_arr = input.map((v) => floor(v)) // 输入数组向下取整
+    const after = to_int_arr[0]
+    let count = to_int_arr[1]
+    count ??= 1
+    console.log("after", after, "count", count)
+
+    // const count = input[1] === undefined ? 1 : input[1]
+
+    return { after, count }
+}
+
+export function formatSuspendInfo(input: string) {
+    const a = "0" + input
+    return a.match(/[\d.]+/g)?.map((v) => toNumber(v)) as number[]
 }
