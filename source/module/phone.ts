@@ -75,4 +75,15 @@ export class Phone implements PhoneCfg {
         console.error("需root权限或Android 9 以上版本,等待屏幕自动关闭")
         return false
     }
+
+    doIt(f: () => void, wait: number = 0) {
+        setTimeout(() => {
+            threads.shutDownAll()
+            threads.start(() => {
+                this.turnOn()
+                f()
+                this.turnOff()
+            })
+        }, wait) //等待，这样可以打断锁屏，并且让console.log()输出完整
+    }
 }

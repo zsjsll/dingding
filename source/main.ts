@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { calculateCount, formatSuspendInfo } from "@/tools"
+import { calculateCount, formatSuspendInfo, status } from "@/tools"
 ;(function main() {
     //停止其他脚本 ，只运行当前脚本
     engines.all().map((ScriptEngine) => {
@@ -35,74 +35,61 @@ import { calculateCount, formatSuspendInfo } from "@/tools"
     function listenQQ(n: org.autojs.autojs.core.notification.Notification) {
         // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL) return
         if (n.getText() === "帮助") {
-            threads.shutDownAll()
-            threads.start(() => {
-                phone.turnOn()
-                qq.openAndSendMsg(
-                    `帮助: 显示所有指令内容\n\n打卡: 马上打卡\n\n锁屏: 停止当前动作后锁屏\n\n{n=0}暂停{m=1}:\n正常自动打卡{n}次\n然后,\n暂停自动打卡{m}次\n\n恢复: 恢复自动打卡\n\n状态: 显示当前状态`
-                )
-                phone.turnOff()
+            const msg =
+                "帮助: 显示所有指令内容\n打卡: 马上打卡\n锁屏: 停止当前动作后锁屏\n{n}暂停{m}: 延迟{n}次,暂停{m}次\n恢复: 恢复自动打卡\n状态: 显示当前状态" +
+                "\n" +
+                status(cfg.suspend)
+
+            phone.doIt(() => {
+                qq.openAndSendMsg(msg)
             })
             return
         }
         if (n.getText() === "打卡") {
-            threads.shutDownAll()
-            threads.start(() => {
-                phone.turnOn()
+            phone.doIt(() => {
                 cfg.msg = dd.openAndPunchIn(-1)
-                qq.openAndSendMsg(cfg.msg)
-                phone.turnOff()
+                const msg = cfg.msg + "\n" + status(cfg.suspend)
+                qq.openAndSendMsg(msg)
             })
             return
         }
         if (n.getText() === "状态") {
-            // FIXME: 这里应该显示当前状态
-            const t = `正常自动打卡${cfg.suspend.after}次    (${cfg.suspend.after / 2}天)
-然后,
-暂停自动打卡${cfg.suspend.count}次    (${cfg.suspend.count / 2}天)`
-            const staus = cfg.suspend.after === 0 && cfg.suspend.count === 0 ? "未启用暂停定时打卡" : t
-            return
+            const msg = status(cfg.suspend)
+            phone.doIt(() => {
+                qq.openAndSendMsg(msg)
+            })
         }
         if (includes(n.getText(), "暂停")) {
             const arr = formatSuspendInfo(n.getText()) //先把输入的字符串格式化成array<number>
-            let msg = "暂停次数不能为0, 已取消暂停"
-            if (arr[1] === 0) {
-                cfg.suspend = { after: 0, count: 0 }
-                console.info(msg)
-            } else {
+            let msg = "暂停次数不能为0, 请重新设置!"
+            if (arr[1] === 0) console.info(msg)
+            else {
                 cfg.suspend = calculateCount(arr)
-                msg = `*已设置暂停定时打卡*\n正常定时打卡${cfg.suspend.after}次(${
-                    cfg.suspend.after / 2
-                }天)后\n暂停定时打卡${cfg.suspend.count}次(${cfg.suspend.count / 2}天)`
-                console.info(`正常打卡${cfg.suspend.after}次后, 暂停定时打卡${cfg.suspend.count}次`)
+                msg = status(cfg.suspend)
+                console.info(msg)
             }
 
-            threads.shutDownAll()
-            threads.start(() => {
-                phone.turnOn()
+            phone.doIt(() => {
                 qq.openAndSendMsg(msg)
-                phone.turnOff()
             })
             return
         }
+
         if (n.getText() === "恢复") {
-            cfg.suspend.count = 0
+            cfg.suspend = { after: 0, count: 0 }
             console.info("恢复定时打卡")
-            threads.shutDownAll()
-            threads.start(() => {
-                phone.turnOn()
-                qq.openAndSendMsg("修改成功, 已恢复定时打卡功能")
-                phone.turnOff()
+            const msg = "修改成功, 已恢复定时打卡功能" + "\n" + status(cfg.suspend)
+            phone.doIt(() => {
+                qq.openAndSendMsg(msg)
             })
             return
         }
+
         if (n.getText() === "锁屏") {
+            const msg = "已停止当前动作" + "\n" + status(cfg.suspend)
             console.info("停止当前动作")
-            threads.shutDownAll()
-            threads.start(() => {
-                phone.turnOn()
-                qq.openAndSendMsg("已停止当前动作")
-                phone.turnOff()
+            phone.doIt(() => {
+                qq.openAndSendMsg(msg)
             })
             return
         }
@@ -124,29 +111,23 @@ import { calculateCount, formatSuspendInfo } from "@/tools"
 
         clock.closeAlarm()
 
-        threads.shutDownAll()
-        threads.start(() => {
-            phone.turnOn()
+        phone.doIt(() => {
             cfg.msg = dd.openAndPunchIn()
-            qq.openAndSendMsg(cfg.msg)
-            phone.turnOff()
+            const msg = cfg.msg + "\n" + status(cfg.suspend)
+            qq.openAndSendMsg(msg)
         })
+        return
     }
 
     function listenDD(n: org.autojs.autojs.core.notification.Notification) {
         if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.DD) return
         if (!includes(n.getText(), "考勤打卡")) return
         cfg.msg = n.getText().replace(/^\[.+?\]/, "")
+        const msg = cfg.msg + "\n" + status(cfg.suspend)
 
-        setTimeout(() => {
-            threads.shutDownAll()
-            threads.start(() => {
-                phone.turnOn()
-                qq.openAndSendMsg(cfg.msg)
-                phone.turnOff()
-            })
+        phone.doIt(() => {
+            qq.openAndSendMsg(msg)
         }, 1000) //等待，这样可以打断锁屏，并且让console.log()输出完整
-
         return
     }
 })()

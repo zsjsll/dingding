@@ -200,13 +200,14 @@ export function formatSuspendInfo(input: string) {
 export function status(suspend?: Suspend) {
     const battery = device.getBattery()
     const charge = device.isCharging()
-    const out = `当前电量: ${battery}%\n是否充电: ${charge}`
+    const msg = `当前电量: ${battery}%\n是否充电: ${charge}`
+    const line = "-----------------------------\n"
     if (suspend !== undefined) {
         const { after, count } = suspend
-        if (after !== 0 && count !== 0) return out + `\n暂停打卡已设置\n 延迟: ${after}次\n暂停: ${count}次`
-        else if (after === 0 && count !== 0) return out + `\n暂停开始\n剩余: ${count}次`
+        if (after !== 0 && count !== 0) return line + `#暂停设置#\n 延迟: ${after}次\n暂停: ${count}次\n` + line + msg
+        else if (after === 0 && count !== 0) return line + `*暂停开始*\n剩余: ${count}次\n` + line + msg
         else if (after !== 0 && count === 0) return "错误! 有延迟, 无暂停"
-        else if (after === 0 && count === 0) return out
+        else if (after === 0 && count === 0) return msg
     }
-    return out
+    return msg
 }

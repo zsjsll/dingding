@@ -36,11 +36,13 @@ export class QQ implements App, QQCfg {
             packageName: this.PACKAGE_ID_LIST.QQ,
         })
         const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(-1)
-        const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!\n"
-        if (includes(message, "无效") || includes(message, "失败")) message = wn + message
-        input.setText(
-            `${message}\n-----------------------------\n当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
-        )
+        const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
+        if (includes(message, "无效") || includes(message, "失败")) message = wn + "\n" + message
+        const defaultMsg = `当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
+        if (!(includes(message, "当前电量") || includes(message, "是否充电"))) message = message + "\n" + defaultMsg
+
+        input.setText(message)
+
         const send = text("发送").clickable().findOne(-1)
         sleep(500)
         send.click()
