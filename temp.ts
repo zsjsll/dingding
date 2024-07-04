@@ -12,3 +12,4 @@ console.log(test("15暂停4.5"))
 let a = 1
 a ||= 10
 console.log(a)
+// output: 1
