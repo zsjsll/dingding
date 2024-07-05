@@ -1,13 +1,4 @@
-import {
-    brightScreen,
-    isDeviceLocked,
-    backHome,
-    setVolume,
-    openScreen,
-    UnLockScreen,
-    resetPhone,
-    closeScreen,
-} from "@/tools"
+import { brightScreen, isDeviceLocked, backHome, setVolume, openScreen, UnLockScreen, resetPhone, closeScreen } from "@/tools"
 import { Cfg } from "./config"
 
 export type PhoneCfg = {
@@ -76,14 +67,23 @@ export class Phone implements PhoneCfg {
         return false
     }
 
-    doIt(f: () => void, wait: number = 0) {
-        setTimeout(() => {
+    doIt(f: () => void, wait?: number) {
+        if (wait !== undefined) {
+            setTimeout(() => {
+                threads.shutDownAll()
+                threads.start(() => {
+                    this.turnOn()
+                    f()
+                    this.turnOff()
+                })
+            }, wait) //等待，这样可以打断锁屏，并且让console.log()输出完整
+        } else {
             threads.shutDownAll()
             threads.start(() => {
                 this.turnOn()
                 f()
                 this.turnOff()
             })
-        }, wait) //等待，这样可以打断锁屏，并且让console.log()输出完整
+        }
     }
 }

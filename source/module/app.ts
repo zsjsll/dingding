@@ -40,6 +40,7 @@ export class QQ implements App, QQCfg {
         if (includes(message, "无效") || includes(message, "失败")) message = wn + "\n" + message
         const defaultMsg = `当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
         if (!(includes(message, "当前电量") || includes(message, "是否充电"))) message = message + "\n" + defaultMsg
+        message = message.replace(/^-+\n/, "") //如果开头有很多的-，则去掉
 
         input.setText(message)
 
@@ -182,9 +183,7 @@ export class DD implements App, DDCfg {
             }
             console.info("可以打卡")
             const btn =
-                text("上班打卡").clickable(true).findOnce() ||
-                text("下班打卡").clickable(true).findOnce() ||
-                text("迟到打卡").clickable(true).findOnce()
+                text("上班打卡").clickable(true).findOnce() || text("下班打卡").clickable(true).findOnce() || text("迟到打卡").clickable(true).findOnce()
             if (btn === null) {
                 click(device.width / 2, device.height * 0.56)
                 console.log("点击打卡按钮坐标")

@@ -27,13 +27,13 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
     const listener = new Listener(cfg)
     listener.listenVolumeKey()
     listener.listenNotification((notification) => {
-        listenQQ(notification)
+        listenMsg(notification)
         listenClock(notification)
         listenDD(notification)
     })
 
-    function listenQQ(n: org.autojs.autojs.core.notification.Notification) {
-        // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL) return
+    function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
+        // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL && n.getPackageName() !== cfg.PACKAGE_ID_LIST.QQ) return
         if (n.getText() === "帮助") {
             const msg =
                 "帮助: 显示所有指令内容\n打卡: 马上打卡\n锁屏: 停止当前动作后锁屏\n{n}暂停{m}: 延迟{n}次,暂停{m}次\n恢复: 恢复自动打卡\n状态: 显示当前状态" +
@@ -47,8 +47,7 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
         }
         if (n.getText() === "打卡") {
             phone.doIt(() => {
-                cfg.msg = dd.openAndPunchIn(-1)
-                const msg = cfg.msg + "\n" + status(cfg.suspend)
+                const msg = dd.openAndPunchIn(-1) + "\n" + status(cfg.suspend)
                 qq.openAndSendMsg(msg)
             })
             return
@@ -61,14 +60,11 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
         }
         if (includes(n.getText(), "暂停")) {
             const arr = formatSuspendInfo(n.getText()) //先把输入的字符串格式化成array<number>
-            let msg = "暂停次数不能为0, 请重新设置!"
-            if (arr[1] === 0) console.info(msg)
-            else {
+            let msg = "暂停不能为0" + "\n" + status(cfg.suspend)
+            if (arr[1] !== 0) {
                 cfg.suspend = calculateCount(arr)
                 msg = status(cfg.suspend)
-                console.info(msg)
             }
-
             phone.doIt(() => {
                 qq.openAndSendMsg(msg)
             })
@@ -97,23 +93,15 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
 
     function listenClock(n: org.autojs.autojs.core.notification.Notification) {
         if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.CLOCK) return
-        if (cfg.suspend.count > 0) {
-            cfg.suspend.count -= 1
-            console.warn("已暂停定时打卡! 剩余次数:" + cfg.suspend.count)
-            threads.shutDownAll()
-            threads.start(() => {
-                phone.turnOn()
-                qq.openAndSendMsg(`*定时打卡已暂停*\n剩余${cfg.suspend.count}次\n${cfg.suspend.count / 2}天`)
-                phone.turnOff()
-            })
-            return
-        }
+        let msg = "! 暂停打卡结束 !"
+        const { after, count } = cfg.suspend
+        if (after > 0) cfg.suspend.after = after - 1
+        else if (count > 0) cfg.suspend.count = count - 1
 
         clock.closeAlarm()
-
         phone.doIt(() => {
-            cfg.msg = dd.openAndPunchIn()
-            const msg = cfg.msg + "\n" + status(cfg.suspend)
+            if (after > 0 || count === 0) msg = dd.openAndPunchIn() + "\n" + status(cfg.suspend)
+            else msg = msg + "\n" + status(cfg.suspend)
             qq.openAndSendMsg(msg)
         })
         return

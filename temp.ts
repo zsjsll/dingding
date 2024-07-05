@@ -1,17 +1,12 @@
-class Test {
-    name: string
-    constructor(name: string) {
-        this.name = name
-    }
-    out() {
-        return this.name
-    }
-}
+const line = "------------------------"
+let msg = "你好"
 
-let n = "hello"
+msg = line + "\n" + msg + "\n" + line
 
-const t = new Test(n)
-console.log(t.out())
+const se = msg.replace(/^-+\n/, "")
 
-n = "world"
-console.log(t.out())
+console.log(se)
+
+const o = { a: 1, b: 5 }
+
+if (o.a > 0 || o.b === 0) console.log(1)
