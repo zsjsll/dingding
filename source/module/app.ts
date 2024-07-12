@@ -98,7 +98,7 @@ export class DD implements App, DDCfg {
 
     // 登录钉钉，如果已经登录，false
     private logining() {
-        if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(2e3) !== null) {
+        if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3) !== null) {
             //是否为新版本的钉钉，如果是，用旧的登录方式
             if (id("tv_more").findOne(500) !== null) {
                 id("tv_more").findOne(-1).click()
@@ -125,8 +125,7 @@ export class DD implements App, DDCfg {
     }
     // 强制回到app的home界面
     private atAppHome() {
-        const message = id("home_app_item").indexInParent(0).findOne(1e3)
-
+        const message = id("home_app_item").indexInParent(0).findOne(5e3)
         if (message === null) return false
         message.click()
         return true

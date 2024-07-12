@@ -53,7 +53,7 @@ export class Config {
             OBSERVE_VOLUME_KEY: true, // 监听音量+-键, 开启后无法通过音量+-键调整音量, 按下音量+-键：结束所有子线程
             NOTIFICATIONS_FILTER: true, // 是否过滤通知
             DELAY: 4, //随机等待时间，单位：分钟,如果填写的值<:0，则跳过等待时间，目前手机设置的是5min锁屏，所以设定4min
-            RETRY: 5, //登录和打卡的重试次数
+            RETRY: 10, //登录和打卡的重试次数
             PACKAGE_ID_LIST: {
                 QQ: "com.tencent.tim", // 请使用tim
                 DD: "com.alibaba.android.rimet", // 钉钉
