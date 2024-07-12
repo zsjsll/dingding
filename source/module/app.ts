@@ -96,23 +96,25 @@ export class DD implements App, DDCfg {
     RETRY: number
     CORP_ID: string
 
+    private isLogin() {
+        if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3) !== null) return false
+        else if (id(this.PACKAGE_ID_LIST.DD + ":id/home_app_item").findOne(5e3) !== null) return true
+    }
     // 登录钉钉，如果已经登录，false
     private logining() {
-        if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3) !== null) {
-            //是否为新版本的钉钉，如果是，用旧的登录方式
-            if (id("tv_more").findOne(500) !== null) {
-                id("tv_more").findOne(-1).click()
-                sleep(500)
-                id("ll_rollback_old_login").findOne(-1).click()
-                sleep(500)
-            }
+        //是否为新版本的钉钉，如果是，用旧的登录方式
+        if (id("tv_more").findOne(500) !== null) {
+            id("tv_more").findOne(-1).click()
+            sleep(500)
+            id("ll_rollback_old_login").findOne(-1).click()
+            sleep(500)
+            console.log("切换登录方式为旧版...")
+        }
 
-            id("et_phone_input").findOne(-1).setText(this.ACCOUNT)
-            id("et_password").findOne(-1).setText(this.PASSWD)
-            id("cb_privacy").findOne(-1).click()
-            id("btn_next").findOne(-1).click()
-            return true
-        } else return false
+        id("et_phone_input").findOne(-1).setText(this.ACCOUNT)
+        id("et_password").findOne(-1).setText(this.PASSWD)
+        id("cb_privacy").findOne(-1).click()
+        id("btn_next").findOne(-1).click()
     }
 
     // 不进行更新
@@ -142,8 +144,10 @@ export class DD implements App, DDCfg {
                 continue
             }
 
-            if (!this.logining()) console.log("正在登录...")
-            else console.log("可能已登录")
+            if (!this.isLogin()) {
+                console.log("正在登录...")
+                this.logining()
+            } else console.log("可能已登录")
             if (this.noUpdate()) console.info("取消更新")
             else console.log("无更新消息")
             const is_at_app_home = this.atAppHome()
