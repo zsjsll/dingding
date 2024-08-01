@@ -188,7 +188,7 @@ export class DD implements App, DDCfg {
       }
       console.info("可以打卡")
       const btn = text("上班打卡").clickable(true).findOnce() || text("下班打卡").clickable(true).findOnce() || text("迟到打卡").clickable(true).findOnce()
-      sleep(1000)
+      sleep(2000)
       if (btn === null) {
         click(device.width / 2, device.height * 0.6)
         console.log("点击打卡按钮坐标")
