@@ -61,9 +61,9 @@ export class QQ implements App, QQCfg {
     if (includes(message, "无效")) console.warn("打卡无效,也许未到打卡时间!")
     console.info(message)
     const r = this.sendmsg(message)
-    sleep(2e3)
+    sleep(1e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
-    sleep(2e3)
+    sleep(5e3)
     return r
   }
 }
@@ -99,7 +99,8 @@ export class DD implements App, DDCfg {
 
   private isLogin() {
     if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3) !== null) return false
-    else if (id(this.PACKAGE_ID_LIST.DD + ":id/home_app_item").findOne(5e3) !== null) return true
+    // else if (id(this.PACKAGE_ID_LIST.DD + ":id/home_app_item").findOne(5e3) !== null) return true
+    return true
   }
   // 登录钉钉，如果已经登录，false
   private logining() {
@@ -131,7 +132,8 @@ export class DD implements App, DDCfg {
     if (!this.isLogin()) return false
     const message = id("home_app_item").indexInParent(0).findOne(5e3)
     if (message !== null) message.click()
-    else click(device.width / 10, device.height * 0.95)
+    else if (packageName(this.PACKAGE_ID_LIST.DD).findOne(2e3) !== null) click(device.width / 10, device.height * 0.95)
+    else false
     return true
   }
 
@@ -152,9 +154,8 @@ export class DD implements App, DDCfg {
       } else console.log("可能已登录")
       if (this.noUpdate()) console.info("取消更新")
       else console.log("无更新消息")
-      const is_at_app_home = this.atAppHome()
       sleep(5e3) //如果设置了极速打卡或者蓝牙自动打卡， 会在这段时间完成打卡
-      if (is_at_app_home) return true
+      if (this.atAppHome()) return true
       else console.warn("登录失败,重试...")
     }
     console.error(`重试${this.RETRY}次,登录失败!`)
@@ -188,7 +189,6 @@ export class DD implements App, DDCfg {
       }
       console.info("可以打卡")
       const btn = text("上班打卡").clickable(true).findOnce() || text("下班打卡").clickable(true).findOnce() || text("迟到打卡").clickable(true).findOnce()
-      sleep(2000)
       if (btn === null) {
         click(device.width / 2, device.height * 0.6)
         console.log("点击打卡按钮坐标")
