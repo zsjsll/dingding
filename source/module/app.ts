@@ -45,7 +45,7 @@ export class QQ implements App, QQCfg {
     input.setText(message)
 
     const send = text("发送").clickable().findOne(-1)
-    sleep(500)
+    sleep(1000)
     send.click()
     console.info("发送成功")
     return true
@@ -61,6 +61,7 @@ export class QQ implements App, QQCfg {
     if (includes(message, "无效")) console.warn("打卡无效,也许未到打卡时间!")
     console.info(message)
     const r = this.sendmsg(message)
+    sleep(2e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
     sleep(2e3)
     return r
@@ -187,7 +188,7 @@ export class DD implements App, DDCfg {
       }
       console.info("可以打卡")
       const btn = text("上班打卡").clickable(true).findOnce() || text("下班打卡").clickable(true).findOnce() || text("迟到打卡").clickable(true).findOnce()
-      sleep(5000)
+      sleep(1000)
       if (btn === null) {
         click(device.width / 2, device.height * 0.6)
         console.log("点击打卡按钮坐标")
