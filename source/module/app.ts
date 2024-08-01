@@ -217,9 +217,9 @@ export class DD implements App, DDCfg {
       return e
     }
     const r = this.punchIn()
-    sleep(2e3)
+    sleep(3e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
-    sleep(5e3)
+    sleep(2e3)
     return r
   }
 }
