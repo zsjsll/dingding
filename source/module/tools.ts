@@ -217,7 +217,7 @@ export function openWifi() {
   if (wifi_info.error !== "") console.error("无法获取wifi信息")
   const r = toNumber(wifi_info.result)
   if (r === 0) {
-    console.warn("wifi已关闭，正在打开中，等待5s。。。")
+    console.info("wifi已关闭，正在打开中，等待5s。。。")
     shell("svc wifi enable", true)
     sleep(5e3)
   } else {
