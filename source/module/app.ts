@@ -33,28 +33,32 @@ export class QQ implements QQCfg {
     //   packageName: this.PACKAGE_ID_LIST.QQ,
     // })
 
-    let nav = id("kbi").findOnce()
+    let a: boolean = false
+    let b: boolean = false
+    sleep(1e3)
+    let nav = id("kbi").findOne(2e3)
 
-    if (nav !== null && nav.text() === "消息") nav.parent().click()
-    else nav = text("消息").boundsInside(0, 2189, device.width, device.height).findOnce() //双保险查找控件
+    if (nav !== null && nav.text() === "消息") a = nav.parent().click()
+    else nav = text("消息").boundsInside(0, 2189, device.width, device.height).findOne(2e3) //双保险查找控件
 
-    if (nav !== null && nav.text() === "消息") nav.parent().click()
+    if (nav !== null && nav.text() === "消息") a = nav.parent().click()
     // else bounds(0, 2189, device.width, device.height).click() //双保险查找控件
-
+    sleep(1e3)
     // const contact = id("n19").indexInParent(1).findOne(10e3).child(0)
-    let contact = id("aua").descStartsWith("123_").findOnce()
-    if (contact !== null && startsWith(contact.desc(), "123_")) contact.click()
-    else contact = descStartsWith("123_").boundsInside(0, 351, device.width, 545).findOnce() //双保险查找控件
-    if (contact !== null && startsWith(contact.desc(), "123_")) contact.click()
+    let contact = id("aua").descStartsWith("123_").findOne(2e3)
+    if (contact !== null && startsWith(contact.desc(), "123_")) b = contact.click()
+    else contact = descStartsWith("123_").boundsInside(0, 351, device.width, 545).findOne(2e3) //双保险查找控件
+    if (contact !== null && startsWith(contact.desc(), "123_")) b = contact.click()
     // else bounds(0, 351, device.width, 545).click() //双保险查找控件
-
-    if (nav === null || contact === null) {
+    sleep(2e3)
+    if (!a || !b) {
       app.startActivity({
         action: "android.intent.action.VIEW",
         data: "mqq://im/chat?chat_type=wpa&version=1&src_type=web&uin=" + this.QQ,
         packageName: this.PACKAGE_ID_LIST.QQ,
       })
     }
+    sleep(2e3)
   }
 
   sendmsg(message: string) {
