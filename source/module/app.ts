@@ -28,13 +28,24 @@ export class QQ implements App, QQCfg {
   open() {
     return openApp(this.PACKAGE_ID_LIST.QQ)
   }
+  private chat() {
+    // 最新的tim和qq 如果用意图启动，会出错误，所以改成查找控件来进入聊天窗口
+
+    // app.startActivity({
+    //   action: "android.intent.action.VIEW",
+    //   data: "mqq://im/chat?chat_type=wpa&version=1&src_type=web&uin=" + this.QQ,
+    //   packageName: this.PACKAGE_ID_LIST.QQ,
+    // })
+
+    let dock = id("kbi").indexInParent(1).findOne(10e3).parent()
+    dock ||= text("消息").boundsInside(0, 2189, device.width, device.height).findOne(-1).parent() //双保险查找控件
+    let contact = id("n19").indexInParent(1).findOne(10e3).child(0)
+    contact ||= id("aua").descStartsWith("123_").findOne(-1) //双保险查找控件
+    dock.click() //点击dock栏，初始化qq的首页
+    contact.click() //点击聊天对象，进入聊天页面
+  }
 
   sendmsg(message: string) {
-    app.startActivity({
-      action: "android.intent.action.VIEW",
-      data: "mqq://im/chat?chat_type=wpa&version=1&src_type=web&uin=" + this.QQ,
-      packageName: this.PACKAGE_ID_LIST.QQ,
-    })
     const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(-1)
     const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
     if (includes(message, "无效") || includes(message, "失败")) message = wn + "\n" + message
@@ -57,6 +68,8 @@ export class QQ implements App, QQCfg {
       console.error("无法打开QQ!")
       return false
     }
+
+    this.chat() //进入聊天界面
 
     if (includes(message, "无效")) console.warn("打卡无效,也许未到打卡时间!")
     console.info(message)
