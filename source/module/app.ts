@@ -35,15 +35,18 @@ export class QQ implements QQCfg {
 
     const dock = id("kbi").findOne(10e3)
     if (dock.text() === "消息") dock.parent().click()
-    else text("消息").boundsInside(0, 2189, device.width, device.height).findOne(-1).parent().click() //双保险查找控件
+    else text("消息").boundsInside(0, 2189, device.width, device.height).findOne(10e3).parent().click() //双保险查找控件
+    // else bounds(0, 2189, device.width, device.height).click() //双保险查找控件
 
-    const contact = id("n19").indexInParent(1).findOne(10e3).child(0)
+    // const contact = id("n19").indexInParent(1).findOne(10e3).child(0)
+    const contact = id("aua").descStartsWith("123_").findOne(10e3)
     if (startsWith(contact.desc(), "123_")) contact.click()
-    else id("aua").descStartsWith("123_").findOne(-1).click() //双保险查找控件
+    else descStartsWith("123_").boundsInside(0, 351, device.width, 545).findOne(10e3).click() //双保险查找控件
+    // else bounds(0, 351, device.width, 545).click() //双保险查找控件
   }
 
   sendmsg(message: string) {
-    const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(-1)
+    const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(10e3)
     const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
     if (includes(message, "无效") || includes(message, "失败")) message = wn + "\n" + message
     const defaultMsg = `当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
@@ -52,7 +55,7 @@ export class QQ implements QQCfg {
 
     input.setText(message)
 
-    const send = text("发送").clickable().findOne(-1)
+    const send = text("发送").clickable().findOne(10e3)
     sleep(1000)
     send.click()
     console.info("发送成功")
@@ -116,17 +119,17 @@ export class DD implements DDCfg {
   private logining() {
     //是否为新版本的钉钉，如果是，用旧的登录方式
     if (id("tv_more").findOne(500) !== null) {
-      id("tv_more").findOne(-1).click()
+      id("tv_more").findOne(10e3).click()
       sleep(500)
-      id("ll_rollback_old_login").findOne(-1).click()
+      id("ll_rollback_old_login").findOne(10e3).click()
       sleep(500)
       console.log("切换登录方式为旧版...")
     }
 
-    id("et_phone_input").findOne(-1).setText(this.ACCOUNT)
-    id("et_password").findOne(-1).setText(this.PASSWD)
-    id("cb_privacy").findOne(-1).click()
-    id("btn_next").findOne(-1).click()
+    id("et_phone_input").findOne(10e3).setText(this.ACCOUNT)
+    id("et_password").findOne(10e3).setText(this.PASSWD)
+    id("cb_privacy").findOne(10e3).click()
+    id("btn_next").findOne(10e3).click()
   }
 
   // 不进行更新
