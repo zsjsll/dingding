@@ -1,6 +1,6 @@
 import { backHome, openApp, getCurrentDate, getCurrentTime, holdOn } from "@/tools"
 import { Cfg } from "./config"
-import { includes } from "lodash"
+import { includes, startsWith } from "lodash"
 
 export type QQCfg = {
   PACKAGE_ID_LIST: QQ_Package_Id_List
@@ -12,11 +12,7 @@ type QQ_Package_Id_List = {
   HOME: string
 }
 
-type App = {
-  open(retry?: number): boolean
-}
-
-export class QQ implements App, QQCfg {
+export class QQ implements QQCfg {
   PACKAGE_ID_LIST: QQ_Package_Id_List
   QQ: string
 
@@ -25,7 +21,7 @@ export class QQ implements App, QQCfg {
     this.QQ = cfg.QQ
   }
 
-  open() {
+  private open() {
     return openApp(this.PACKAGE_ID_LIST.QQ)
   }
   private chat() {
@@ -37,12 +33,13 @@ export class QQ implements App, QQCfg {
     //   packageName: this.PACKAGE_ID_LIST.QQ,
     // })
 
-    let dock = id("kbi").indexInParent(1).findOne(10e3).parent()
-    dock ||= text("消息").boundsInside(0, 2189, device.width, device.height).findOne(-1).parent() //双保险查找控件
-    let contact = id("n19").indexInParent(1).findOne(10e3).child(0)
-    contact ||= id("aua").descStartsWith("123_").findOne(-1) //双保险查找控件
-    dock.click() //点击dock栏，初始化qq的首页
-    contact.click() //点击聊天对象，进入聊天页面
+    const dock = id("kbi").findOne(10e3)
+    if (dock.text() === "消息") dock.parent().click()
+    else text("消息").boundsInside(0, 2189, device.width, device.height).findOne(-1).parent().click() //双保险查找控件
+
+    const contact = id("n19").indexInParent(1).findOne(10e3).child(0)
+    if (startsWith(contact.desc(), "123_")) contact.click()
+    else id("aua").descStartsWith("123_").findOne(-1).click() //双保险查找控件
   }
 
   sendmsg(message: string) {
@@ -94,7 +91,7 @@ type DD_Package_Id_List = {
   HOME: string
 }
 
-export class DD implements App, DDCfg {
+export class DD implements DDCfg {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.ACCOUNT = cfg.ACCOUNT
@@ -150,7 +147,7 @@ export class DD implements App, DDCfg {
     return true
   }
 
-  open() {
+  private open() {
     for (let index = 1; index <= this.RETRY; index++) {
       console.info(`第${index}次登录...`)
       backHome(this.PACKAGE_ID_LIST.HOME)
@@ -175,7 +172,7 @@ export class DD implements App, DDCfg {
     return false
   }
 
-  punchIn() {
+  private punchIn() {
     const u = "dingtalk://dingtalkclient/page/link?url=https://attend.dingtalk.com/attend/index.html"
     const url = this.CORP_ID === "" ? u : `${u}?corpId=${this.CORP_ID}`
 

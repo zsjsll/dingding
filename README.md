@@ -10,7 +10,7 @@
 
 -   [autox](https://github.com/kkevsekk1/AutoX) 6.5.8
 -   钉钉 7.0.42.11
--   TIM 3.5.5.3198
+-   TIM 3.5.5.3198 || 4.0.95.4008
 
 本项目使用 typescript
 
