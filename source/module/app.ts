@@ -33,16 +33,28 @@ export class QQ implements QQCfg {
     //   packageName: this.PACKAGE_ID_LIST.QQ,
     // })
 
-    const dock = id("kbi").findOne(10e3)
-    if (dock.text() === "消息") dock.parent().click()
-    else text("消息").boundsInside(0, 2189, device.width, device.height).findOne(10e3).parent().click() //双保险查找控件
+    let nav = id("kbi").findOnce()
+
+    if (nav !== null && nav.text() === "消息") nav.parent().click()
+    else nav = text("消息").boundsInside(0, 2189, device.width, device.height).findOnce() //双保险查找控件
+
+    if (nav !== null && nav.text() === "消息") nav.parent().click()
     // else bounds(0, 2189, device.width, device.height).click() //双保险查找控件
 
     // const contact = id("n19").indexInParent(1).findOne(10e3).child(0)
-    const contact = id("aua").descStartsWith("123_").findOne(10e3)
-    if (startsWith(contact.desc(), "123_")) contact.click()
-    else descStartsWith("123_").boundsInside(0, 351, device.width, 545).findOne(10e3).click() //双保险查找控件
+    let contact = id("aua").descStartsWith("123_").findOnce()
+    if (contact !== null && startsWith(contact.desc(), "123_")) contact.click()
+    else contact = descStartsWith("123_").boundsInside(0, 351, device.width, 545).findOnce() //双保险查找控件
+    if (contact !== null && startsWith(contact.desc(), "123_")) contact.click()
     // else bounds(0, 351, device.width, 545).click() //双保险查找控件
+
+    if (nav === null || contact === null) {
+      app.startActivity({
+        action: "android.intent.action.VIEW",
+        data: "mqq://im/chat?chat_type=wpa&version=1&src_type=web&uin=" + this.QQ,
+        packageName: this.PACKAGE_ID_LIST.QQ,
+      })
+    }
   }
 
   sendmsg(message: string) {
