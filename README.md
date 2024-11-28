@@ -8,9 +8,15 @@
 
 适用版本：
 
--   [autox](https://github.com/kkevsekk1/AutoX) 6.5.8
--   钉钉 7.0.42.11
--   TIM 3.5.5.3198 || 4.0.95.4008
+-   [autox](https://github.com/kkevsekk1/AutoX)
+    -  6.4.3 稳定 可以打包
+    -  6.5.8 未测试 但应该是可以用的
+    -  **6.6.0** 稳定，兼容小米权限设置
+    -  6.6.7 测试中，无法打包app，使用应该是没问题的
+-   钉钉 [7.0.42.11](https://github.com/zsjsll/js_dingding/releases/download/0.0.1/dingding-7.0.42.11-1068.apk)
+-   TIM
+    -  [3.5.6](https://github.com/zsjsll/js_dingding/releases/download/0.0.1/TIM-3.5.6-lspatched.apk) 只支持华为的推送服务
+    -  [4.0.95](https://github.com/zsjsll/js_dingding/releases/download/0.0.1/TIM-4.0.95-4008.apk) 最新的版本支持了其他手机的推送服务
 
 本项目使用 typescript
 
