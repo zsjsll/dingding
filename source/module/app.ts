@@ -134,17 +134,20 @@ export class DD implements DDCfg {
   // 登录钉钉，如果已经登录，false
   private logining() {
     //是否为新版本的钉钉，如果是，用旧的登录方式
-    if (id("tv_more").findOne(500) !== null) {
+    if (id("tv_more").findOne(2e3) !== null) {
       id("tv_more").findOne(10e3).click()
-      sleep(500)
+      sleep(2e3)
       id("ll_rollback_old_login").findOne(10e3).click()
-      sleep(500)
+      sleep(2e3)
       console.log("切换登录方式为旧版...")
     }
-
+    sleep(2e3)
     id("et_phone_input").findOne(10e3).setText(this.ACCOUNT)
+    sleep(2e3)
     id("et_password").findOne(10e3).setText(this.PASSWD)
+    sleep(2e3)
     id("cb_privacy").findOne(10e3).click()
+    sleep(2e3)
     id("btn_next").findOne(10e3).click()
   }
 
