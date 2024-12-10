@@ -3,6 +3,7 @@ import { Cfg } from "./config"
 
 export type PhoneCfg = {
   DEV: boolean
+  root: boolean
   SCREEN_BRIGHTNESS: number
   UNLOCKSCREEN: UnLockScreen
   VOLUME: number
@@ -15,6 +16,7 @@ type Phone_Package_Id_List = {
 
 export class Phone implements PhoneCfg {
   DEV: boolean
+  root: boolean
   SCREEN_BRIGHTNESS: number
   UNLOCKSCREEN: UnLockScreen
   VOLUME: number
@@ -22,6 +24,7 @@ export class Phone implements PhoneCfg {
 
   constructor(cfg: Cfg) {
     this.DEV = cfg.DEV
+    this.root = cfg.root
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
     this.UNLOCKSCREEN = cfg.UNLOCKSCREEN
     this.VOLUME = cfg.VOLUME
@@ -38,7 +41,7 @@ export class Phone implements PhoneCfg {
     sleep(500)
     if (isDeviceLocked()) {
       console.log("解锁屏幕")
-      openScreen(this.UNLOCKSCREEN)
+      openScreen(this.UNLOCKSCREEN, this.root)
       if (isDeviceLocked()) {
         console.error("上滑解锁失败, 请按脚本中的注释调整UNLOCKSCREEN中的 key[TIME, START, END] 的参数!")
         return false
@@ -55,7 +58,7 @@ export class Phone implements PhoneCfg {
     if (this.DEV) resetPhone()
     console.log("关闭屏幕")
     for (let i = 0; i < 10; i++) {
-      closeScreen()
+      closeScreen(this.root)
       sleep(2000)
 
       if (!device.isScreenOn()) {

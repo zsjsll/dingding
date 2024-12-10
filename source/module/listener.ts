@@ -3,7 +3,8 @@ import { debounce, forIn, isFunction, toString } from "lodash"
 import { Cfg } from "./config"
 
 export type ListenerCfg = {
-  OBSERVE_VOLUME_KEY: boolean
+  OBSERVE_VOLUME_KEY_UP: boolean
+  OBSERVE_VOLUME_KEY_DOWN: boolean
   NOTIFICATIONS_FILTER: boolean
   PACKAGE_ID_LIST: White_list
 }
@@ -20,30 +21,47 @@ type Info = {
 
 export class Listener implements ListenerCfg {
   constructor(cfg: Cfg) {
-    this.OBSERVE_VOLUME_KEY = cfg.OBSERVE_VOLUME_KEY
+    this.OBSERVE_VOLUME_KEY_UP = cfg.OBSERVE_VOLUME_KEY_UP
+    this.OBSERVE_VOLUME_KEY_DOWN = cfg.OBSERVE_VOLUME_KEY_DOWN
     this.NOTIFICATIONS_FILTER = cfg.NOTIFICATIONS_FILTER
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
   }
+  OBSERVE_VOLUME_KEY_UP: boolean
+  OBSERVE_VOLUME_KEY_DOWN: boolean
   PACKAGE_ID_LIST: White_list
   NOTIFICATIONS_FILTER: boolean
-  OBSERVE_VOLUME_KEY: boolean
 
   listenVolumeKey(func?: (e: android.view.KeyEvent) => unknown) {
-    events.setKeyInterceptionEnabled("volume_up", this.OBSERVE_VOLUME_KEY)
-    events.setKeyInterceptionEnabled("volume_down", this.OBSERVE_VOLUME_KEY)
-    if (this.OBSERVE_VOLUME_KEY) events.observeKey()
+    events.setKeyInterceptionEnabled("volume_up", this.OBSERVE_VOLUME_KEY_UP)
+    events.setKeyInterceptionEnabled("volume_down", this.OBSERVE_VOLUME_KEY_DOWN)
+    if (this.OBSERVE_VOLUME_KEY_UP || this.OBSERVE_VOLUME_KEY_DOWN) events.observeKey()
 
-    events.on("key", (keycode: number, event: android.view.KeyEvent) => {
-      if ((keycode === keys.volume_up || keycode === keys.volume_down) && event.getAction() === 0) {
-        threads.shutDownAll()
-        resetPhone()
-        toastLog("按下音量键,已中断所有子线程!")
-        /* 调试脚本*/
+    if (this.OBSERVE_VOLUME_KEY_UP) {
+      events.on("key", (keycode: number, event: android.view.KeyEvent) => {
+        if (keycode === keys.volume_up && event.getAction() === 0) {
+          threads.shutDownAll()
+          resetPhone()
+          toastLog("按下音量+键,重启程序!")
+          const exec_path: string = engines.myEngine().getSource().toString()
+          engines.execScriptFile(exec_path)
+          // exit()
+        }
+      })
+    }
 
-        if (isFunction(func)) return func(event)
-        else return
-      }
-    })
+    if (this.OBSERVE_VOLUME_KEY_DOWN) {
+      events.on("key", (keycode: number, event: android.view.KeyEvent) => {
+        if (keycode === keys.volume_down && event.getAction() === 0) {
+          threads.shutDownAll()
+          resetPhone()
+          toastLog("按下音量键,已中断所有子线程!")
+          /* 调试脚本*/
+
+          if (isFunction(func)) return func(event)
+          else return
+        }
+      })
+    }
   }
 
   listenNotification(func?: (notification: org.autojs.autojs.core.notification.Notification) => unknown) {

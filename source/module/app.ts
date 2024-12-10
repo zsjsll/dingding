@@ -1,4 +1,4 @@
-import { backHome, openApp, getCurrentDate, getCurrentTime, holdOn } from "@/tools"
+import { backHome, openApp, getCurrentDate, getCurrentTime, holdOn, openScreen, UnLockScreen } from "@/tools"
 import { Cfg } from "./config"
 import { includes, startsWith } from "lodash"
 
@@ -264,24 +264,35 @@ type CLOCK_Package_Id_List = {
 
 export type ClockCfg = {
   DELAY: number
+  root: boolean
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
+  UNLOCKSCREEN: UnLockScreen
 }
 
 export class Clock implements ClockCfg {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.DELAY = cfg.DELAY
+    this.UNLOCKSCREEN = cfg.UNLOCKSCREEN
+    this.root = cfg.root
   }
 
-  DELAY: number
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
+  DELAY: number
+  UNLOCKSCREEN: UnLockScreen
+  root: boolean
 
+  //需要root
   closeAlarm() {
     sleep(2e3)
-    if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(10e3) !== null) {
+
+    if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(10e3) === null) {
       VolumeDown() //通过音量键来关闭闹钟，需要root权限
       console.log("闹钟已关闭")
-    } else console.warn("无法关闭闹钟")
+    } else {
+      openScreen(this.UNLOCKSCREEN)
+      console.warn("通过滑动关闭闹钟，可能未关闭")
+    }
 
     return this.DELAY //返回的是延时时间
   }

@@ -20,11 +20,11 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
   config.createLog()
   config.information(cfg)
 
+  const phone = new Phone(cfg)
+  const listener = new Listener(cfg)
   const qq = new QQ(cfg)
   const dd = new DD(cfg)
   const clock = new Clock(cfg)
-  const phone = new Phone(cfg)
-  const listener = new Listener(cfg)
   listener.listenVolumeKey()
   listener.listenNotification((notification) => {
     listenMsg(notification)

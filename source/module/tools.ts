@@ -85,18 +85,27 @@ export type UnLockScreen = {
   END: number
 }
 
-export function openScreen(opt: UnLockScreen) {
-  gesture(
-    opt.TIME, // 滑动时间：毫秒 320
-    [
-      device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
-      device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
-    ],
-    [
-      device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
-      device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
-    ]
-  )
+export function openScreen(opt: UnLockScreen, root: boolean = false) {
+  if (root) {
+    console.log("roooooooooot")
+    // const ra = new RootAutomator()
+    // ra.swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END)
+    // ra.exit()
+    Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+  } else {
+    // swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+    gesture(
+      opt.TIME, // 滑动时间：毫秒 320
+      [
+        device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
+        device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
+      ],
+      [
+        device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
+        device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
+      ]
+    )
+  }
 
   sleep(1e3) // 等待解锁动画完成
 }
@@ -108,20 +117,24 @@ export function setVolume(volume: number) {
 }
 
 export function resetPhone() {
-  device.setBrightness(50)
-  device.setBrightnessMode(1) // 自动亮度模式
+  // device.setBrightnessMode(1) // 自动亮度模式
+  device.setBrightness(600)
   device.cancelKeepingAwake() // 取消设备常亮
 }
 
-export function closeScreen() {
+export function closeScreen(root: boolean) {
   device.cancelKeepingAwake() // 取消设备常亮
   // if (isRoot()) shell("input keyevent 26", true)
-  if (isRoot()) Power()
+  if (root) Power()
   else if (parseInt(device.release) > 9) lockScreen()
+  else {
+    // console.error("root手机或者提升系统版本9.0以上，还不行的话换手机或者想想其他办法吧！")
+  }
+
   sleep(2e3)
 }
 
-function isRoot() {
+export function isRoot() {
   return shell("su -v").code === 0 ? true : false
 }
 
