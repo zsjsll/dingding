@@ -43,6 +43,8 @@ export class Listener implements ListenerCfg {
           resetPhone()
           toastLog("按下音量+键,重启程序!")
           reloadScript()
+          if (isFunction(func)) return func(event)
+          else return
         }
       })
     }
@@ -54,7 +56,6 @@ export class Listener implements ListenerCfg {
           resetPhone()
           toastLog("按下音量键,已中断所有子线程!")
           /* 调试脚本*/
-
           if (isFunction(func)) return func(event)
           else return
         }

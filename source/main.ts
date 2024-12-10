@@ -13,7 +13,6 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
   })
 
   auto()
-  // VolumeDown()
   shell("", true)
   const config = new Config()
   const cfg = config.createJsonFile()
@@ -25,7 +24,7 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
   const qq = new QQ(cfg)
   const dd = new DD(cfg)
   const clock = new Clock(cfg)
-  listener.listenVolumeKey()
+  listener.listenVolumeKey(() => {}) //可以添加自己需要的调试函数
   listener.listenNotification((notification) => {
     listenMsg(notification)
     listenClock(notification)
