@@ -1,4 +1,4 @@
-import { resetPhone, inWhiteList, White_list } from "@/tools"
+import { resetPhone, inWhiteList, White_list, reloadScript } from "@/tools"
 import { debounce, forIn, isFunction, toString } from "lodash"
 import { Cfg } from "./config"
 
@@ -42,9 +42,7 @@ export class Listener implements ListenerCfg {
           threads.shutDownAll()
           resetPhone()
           toastLog("按下音量+键,重启程序!")
-          const exec_path: string = engines.myEngine().getSource().toString()
-          engines.execScriptFile(exec_path)
-          // exit()
+          reloadScript()
         }
       })
     }

@@ -122,6 +122,11 @@ export function resetPhone() {
   device.cancelKeepingAwake() // 取消设备常亮
 }
 
+export function reloadScript() {
+  const exec_path: string = engines.myEngine().getSource().toString()
+  engines.execScriptFile(exec_path)
+}
+
 export function closeScreen(root: boolean) {
   device.cancelKeepingAwake() // 取消设备常亮
   // if (isRoot()) shell("input keyevent 26", true)
