@@ -1,11 +1,6 @@
-
-
-function a(b){
-
-  if(b) console.log(b)
-    else console.log(arguments[0])
-
-
+let k = 10
+function a(b) {
+  b -= 1
 }
-
-a(2)
+a(k)
+console.log(k)

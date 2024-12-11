@@ -11,6 +11,7 @@ export type ListenerCfg = {
 
 type Info = {
   PACKAGENAME: string
+  TITLE: string
   TEXT: string
   PRIORITY: number
   CATEGORY: string
@@ -72,6 +73,7 @@ export class Listener implements ListenerCfg {
         (n: org.autojs.autojs.core.notification.Notification) => {
           const info: Info = {
             PACKAGENAME: n.getPackageName(),
+            TITLE: n.getTitle(),
             TEXT: n.getText(),
             PRIORITY: n.priority,
             CATEGORY: n.category,

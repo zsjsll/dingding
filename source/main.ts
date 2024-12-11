@@ -88,13 +88,18 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from 
 
   function listenClock(n: org.autojs.autojs.core.notification.Notification) {
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.CLOCK) return
+    if (n.getText() !== "闹钟") return
+    if (n.when === 0) return
+
     let msg = "! 暂停打卡结束 !"
-    const { after, count } = cfg.suspend
-    if (after > 0) cfg.suspend.after = after - 1
-    else if (count > 0) cfg.suspend.count = count - 1
-    clock.closeAlarm()
+    let daka: boolean //执行打卡操作，或者直接输出现在状态
+    if (cfg.suspend.after > 0 || cfg.suspend.count === 0) daka = true
+
+    if (cfg.suspend.after > 0) cfg.suspend.after -= 1 //如果有延迟打卡， 延迟打卡减1次
+    else if (cfg.suspend.count > 0) cfg.suspend.count = cfg.suspend.count -= 1 //如果没有延迟打卡次数，且有暂停打卡次数， 暂停打卡减1次
+    // clock.closeAlarm() //关闭闹钟
     phone.doIt(() => {
-      if (after > 0 || count === 0) msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
+      if (daka) msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
       else msg = msg + "\n" + showStatus(cfg.suspend)
       qq.openAndSendMsg(msg)
     })

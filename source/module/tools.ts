@@ -260,7 +260,3 @@ export function showStatus(suspend?: Suspend) {
   }
   return msg
 }
-export function changeStatus(suspend?: Suspend){
-
-
-}
