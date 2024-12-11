@@ -3,14 +3,10 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { calculateCount, formatSuspendInfo, status } from "@/tools"
+import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/tools"
 ;(function main() {
   //停止其他脚本 ，只运行当前脚本
-  engines.all().map((ScriptEngine) => {
-    if (engines.myEngine().toString() !== ScriptEngine.toString()) {
-      ScriptEngine.forceStop()
-    }
-  })
+  onlyRunOneScript()
 
   auto()
   shell("", true)
@@ -24,7 +20,7 @@ import { calculateCount, formatSuspendInfo, status } from "@/tools"
   const qq = new QQ(cfg)
   const dd = new DD(cfg)
   const clock = new Clock(cfg)
-  listener.listenVolumeKey(() => {}) //可以添加自己需要的调试函数
+  listener.listenVolumeKey() //可以添加自己需要的调试函数
   listener.listenNotification((notification) => {
     listenMsg(notification)
     listenClock(notification)

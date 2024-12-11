@@ -41,7 +41,7 @@ export class Listener implements ListenerCfg {
         if (keycode === keys.volume_up && event.getAction() === 0) {
           threads.shutDownAll()
           resetPhone()
-          toastLog("按下音量+键,重启程序!")
+          toastLog("按下音量+,重启程序!")
           reloadScript()
           if (isFunction(func)) return func(event)
           else return
@@ -54,7 +54,7 @@ export class Listener implements ListenerCfg {
         if (keycode === keys.volume_down && event.getAction() === 0) {
           threads.shutDownAll()
           resetPhone()
-          toastLog("按下音量键,已中断所有子线程!")
+          toastLog("按下音量-,中断所有子线程!")
           /* 调试脚本*/
           if (isFunction(func)) return func(event)
           else return

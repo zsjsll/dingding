@@ -1,5 +1,87 @@
 import { ceil, floor, includes, parseInt, toNumber } from "lodash"
 
+// -----------以下函数需要root权限-----------------
+
+export function openScreen(opt: UnLockScreen, root: boolean = false) {
+  if (root) {
+    console.log("roooooooooot")
+    // const ra = new RootAutomator()
+    // ra.swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END)
+    // ra.exit()
+    Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+  } else {
+    // swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+    gesture(
+      opt.TIME, // 滑动时间：毫秒 320
+      [
+        device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
+        device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
+      ],
+      [
+        device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
+        device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
+      ]
+    )
+  }
+
+  sleep(1e3) // 等待解锁动画完成
+}
+
+export function closeScreen(root: boolean) {
+  device.cancelKeepingAwake() // 取消设备常亮
+  // if (isRoot()) shell("input keyevent 26", true)
+  if (root) Power()
+  else if (parseInt(device.release) > 9) lockScreen()
+  else {
+    // console.error("root手机或者提升系统版本9.0以上，还不行的话换手机或者想想其他办法吧！")
+  }
+
+  sleep(2e3)
+}
+
+export function isRoot() {
+  return shell("su -v").code === 0 ? true : false
+}
+
+export function openWifi(root: boolean) {
+  if (root) {
+    const wifi_info = shell("settings get global wifi_on", true)
+    if (wifi_info.error !== "") console.error("无法获取wifi信息")
+    const r = toNumber(wifi_info.result)
+    if (r === 0) {
+      console.info("wifi已关闭，正在打开中，等待5s。。。")
+      shell("svc wifi enable", true)
+      sleep(5e3)
+    } else {
+      console.log("wifi已打开")
+      shell("svc wifi enable", true)
+    }
+  } else console.warn("没有root，跳过此操作")
+}
+
+// -----------以上函数需要root权限-----------------
+
+export function resetPhone() {
+  // device.setBrightnessMode(1) // 自动亮度模式
+  device.setBrightness(600)
+  device.cancelKeepingAwake() // 取消设备常亮
+}
+
+export function reloadScript() {
+  const exec_path: string = engines.myEngine().getSource().toString()
+  engines.execScriptFile(exec_path)
+}
+
+export function onlyRunOneScript() {
+  engines.all().map((ScriptEngine) => {
+    if (engines.myEngine().toString() !== ScriptEngine.toString()) {
+      ScriptEngine.forceStop()
+    }
+  })
+}
+
+// --------------------------------------------
+
 export function backHome(home_id: string) {
   for (let i = 0; i < 10; i++) {
     if (currentPackage() === home_id) {
@@ -85,62 +167,10 @@ export type UnLockScreen = {
   END: number
 }
 
-export function openScreen(opt: UnLockScreen, root: boolean = false) {
-  if (root) {
-    console.log("roooooooooot")
-    // const ra = new RootAutomator()
-    // ra.swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END)
-    // ra.exit()
-    Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
-  } else {
-    // swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
-    gesture(
-      opt.TIME, // 滑动时间：毫秒 320
-      [
-        device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
-        device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
-      ],
-      [
-        device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
-        device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
-      ]
-    )
-  }
-
-  sleep(1e3) // 等待解锁动画完成
-}
-
 export function setVolume(volume: number) {
   device.setMusicVolume(volume)
   device.setNotificationVolume(volume)
   device.setAlarmVolume(volume)
-}
-
-export function resetPhone() {
-  // device.setBrightnessMode(1) // 自动亮度模式
-  device.setBrightness(600)
-  device.cancelKeepingAwake() // 取消设备常亮
-}
-
-export function reloadScript() {
-  const exec_path: string = engines.myEngine().getSource().toString()
-  engines.execScriptFile(exec_path)
-}
-
-export function closeScreen(root: boolean) {
-  device.cancelKeepingAwake() // 取消设备常亮
-  // if (isRoot()) shell("input keyevent 26", true)
-  if (root) Power()
-  else if (parseInt(device.release) > 9) lockScreen()
-  else {
-    // console.error("root手机或者提升系统版本9.0以上，还不行的话换手机或者想想其他办法吧！")
-  }
-
-  sleep(2e3)
-}
-
-export function isRoot() {
-  return shell("su -v").code === 0 ? true : false
 }
 
 export type White_list = {
@@ -228,18 +258,4 @@ export function status(suspend?: Suspend) {
     else if (after === 0 && count === 0) return msg
   }
   return msg
-}
-
-export function openWifi() {
-  const wifi_info = shell("settings get global wifi_on", true)
-  if (wifi_info.error !== "") console.error("无法获取wifi信息")
-  const r = toNumber(wifi_info.result)
-  if (r === 0) {
-    console.info("wifi已关闭，正在打开中，等待5s。。。")
-    shell("svc wifi enable", true)
-    sleep(5e3)
-  } else {
-    console.log("wifi已打开")
-    shell("svc wifi enable", true)
-  }
 }

@@ -1,4 +1,10 @@
-declare function lockScreen(): void
+/**
+ * 需要Android 9以上,
+ * 模拟按键 电源键 锁屏
+ *
+ * @return {*}  {boolean}
+ */
+declare function lockScreen(): boolean
 
 declare interface RootAutomator {
   exit(): void

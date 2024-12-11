@@ -76,7 +76,7 @@ export class Phone implements PhoneCfg {
         threads.shutDownAll()
         threads.start(() => {
           this.turnOn()
-          openWifi()
+          openWifi(this.root)
           f()
           this.turnOff()
         })
@@ -85,7 +85,7 @@ export class Phone implements PhoneCfg {
       threads.shutDownAll()
       threads.start(() => {
         this.turnOn()
-        openWifi()
+        openWifi(this.root)
         f()
         this.turnOff()
       })
