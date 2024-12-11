@@ -14,3 +14,5 @@ declare namespace Internal {
     execScriptFile(path: string): void
   }
 }
+
+declare function keyCodeHeadsetHook(): boolean

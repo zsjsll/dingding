@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/tools"
+import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from "@/tools"
 ;(function main() {
   //停止其他脚本 ，只运行当前脚本
   onlyRunOneScript()
@@ -33,7 +33,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/t
       const msg =
         "帮助: 显示所有指令内容\n打卡: 马上打卡\n锁屏: 停止当前动作后锁屏\n{n}暂停{m}: 延迟{n}次,暂停{m}次\n恢复: 恢复自动打卡\n状态: 显示当前状态" +
         "\n" +
-        status(cfg.suspend)
+        showStatus(cfg.suspend)
 
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
@@ -42,23 +42,23 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/t
     }
     if (n.getText() === "打卡") {
       phone.doIt(() => {
-        const msg = dd.openAndPunchIn(-1) + "\n" + status(cfg.suspend)
+        const msg = dd.openAndPunchIn(-1) + "\n" + showStatus(cfg.suspend)
         qq.openAndSendMsg(msg)
       })
       return
     }
     if (n.getText() === "状态") {
-      const msg = status(cfg.suspend)
+      const msg = showStatus(cfg.suspend)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
       })
     }
     if (includes(n.getText(), "暂停")) {
       const arr = formatSuspendInfo(n.getText()) //先把输入的字符串格式化成array<number>
-      let msg = "暂停不能为0" + "\n" + status(cfg.suspend)
+      let msg = "暂停不能为0" + "\n" + showStatus(cfg.suspend)
       if (arr[1] !== 0) {
         cfg.suspend = calculateCount(arr)
-        msg = status(cfg.suspend)
+        msg = showStatus(cfg.suspend)
       }
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
@@ -69,7 +69,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/t
     if (n.getText() === "恢复") {
       cfg.suspend = { after: 0, count: 0 }
       console.info("恢复定时打卡")
-      const msg = "修改成功, 已恢复定时打卡功能" + "\n" + status(cfg.suspend)
+      const msg = "修改成功, 已恢复定时打卡功能" + "\n" + showStatus(cfg.suspend)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
       })
@@ -77,7 +77,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/t
     }
 
     if (n.getText() === "锁屏") {
-      const msg = "已停止当前动作" + "\n" + status(cfg.suspend)
+      const msg = "已停止当前动作" + "\n" + showStatus(cfg.suspend)
       console.info("停止当前动作")
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
@@ -92,11 +92,10 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/t
     const { after, count } = cfg.suspend
     if (after > 0) cfg.suspend.after = after - 1
     else if (count > 0) cfg.suspend.count = count - 1
-
     clock.closeAlarm()
     phone.doIt(() => {
-      if (after > 0 || count === 0) msg = dd.openAndPunchIn() + "\n" + status(cfg.suspend)
-      else msg = msg + "\n" + status(cfg.suspend)
+      if (after > 0 || count === 0) msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
+      else msg = msg + "\n" + showStatus(cfg.suspend)
       qq.openAndSendMsg(msg)
     })
     return
@@ -106,7 +105,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, status } from "@/t
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.DD) return
     if (!includes(n.getText(), "考勤打卡")) return
     cfg.msg = n.getText().replace(/^\[.+?\]/, "")
-    const msg = cfg.msg + "\n" + status(cfg.suspend)
+    const msg = cfg.msg + "\n" + showStatus(cfg.suspend)
 
     phone.doIt(() => {
       qq.openAndSendMsg(msg)

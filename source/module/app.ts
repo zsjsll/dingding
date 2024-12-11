@@ -285,12 +285,11 @@ export class Clock implements ClockCfg {
   //需要root
   closeAlarm() {
     sleep(2e3)
-
     if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(10e3) === null) {
       VolumeDown() //通过音量键来关闭闹钟，需要root权限
       console.log("闹钟已关闭")
     } else {
-      openScreen(this.UNLOCKSCREEN)
+      // openScreen(this.UNLOCKSCREEN, this.root)
       console.warn("通过滑动关闭闹钟，可能未关闭")
     }
 

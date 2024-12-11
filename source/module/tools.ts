@@ -8,7 +8,8 @@ export function openScreen(opt: UnLockScreen, root: boolean = false) {
     // const ra = new RootAutomator()
     // ra.swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END)
     // ra.exit()
-    Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+    keyCodeHeadsetHook()
+    // Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   } else {
     // swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
     gesture(
@@ -245,7 +246,7 @@ export function formatSuspendInfo(input: string) {
   return a.match(/[\d.]+/g)?.map((v) => toNumber(v)) as number[]
 }
 
-export function status(suspend?: Suspend) {
+export function showStatus(suspend?: Suspend) {
   const battery = device.getBattery()
   const charge = device.isCharging()
   const msg = `当前电量: ${battery}%\n是否充电: ${charge}`
@@ -258,4 +259,8 @@ export function status(suspend?: Suspend) {
     else if (after === 0 && count === 0) return msg
   }
   return msg
+}
+export function changeStatus(suspend?: Suspend){
+
+
 }
