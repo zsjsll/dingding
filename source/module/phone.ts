@@ -70,14 +70,14 @@ export class Phone implements PhoneCfg {
     return false
   }
 
-  doIt(f: (root: boolean) => void) {
+  doIt(f: () => void) {
     //默认不延迟
     setTimeout(() => {
       threads.shutDownAll()
       threads.start(() => {
         this.turnOn(false)
         openWifi(this.root)
-        f(this.root)
+        f()
         this.turnOff(this.root)
       })
     }, 1000) //等待，这样可以打断锁屏，并且让console.log()输出完整
