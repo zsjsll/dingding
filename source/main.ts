@@ -42,7 +42,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from 
     }
     if (n.getText() === "打卡") {
       phone.doIt(() => {
-        const msg = dd.openAndPunchIn(-1) + "\n" + showStatus(cfg.suspend)
+        const msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
         qq.openAndSendMsg(msg)
       })
       return
@@ -114,7 +114,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from 
 
     phone.doIt(() => {
       qq.openAndSendMsg(msg)
-    }, 1000) //等待，这样可以打断锁屏，并且让console.log()输出完整
+    }, cfg.DELAY) //随机延迟打卡
     return
   }
 })()

@@ -1,6 +1,5 @@
-let k = 10
-function a(b) {
-  b -= 1
+function aa({ a , b = 2 }) {
+  console.log(a)
 }
-a(k)
-console.log(k)
+
+aa(a:123)

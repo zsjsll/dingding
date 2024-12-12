@@ -55,7 +55,8 @@ export class Config {
       OBSERVE_VOLUME_KEY_UP: true, // 监听音量+键, 开启后无法通过音量+键调整音量, 按下音量+键：重启程序线程
       OBSERVE_VOLUME_KEY_DOWN: false, // 不要监听音量-键, 要作为关闭闹钟的按键，所以禁止监听
       NOTIFICATIONS_FILTER: true, // 是否过滤通知
-      DELAY: 4, //随机等待时间，单位：分钟,如果填写的值<:0，则跳过等待时间，目前手机设置的是5min锁屏，所以设定4min
+      DELAY: [10, 280], //随机等待时间，单位：秒,如果DELAY[1]填写的值<=0，则跳过等待时间，目前手机设置的是5min锁屏，所以设定5min之内打卡
+      // 最小延迟时间,最大延迟时间
       RETRY: 10, //登录和打卡的重试次数
       PACKAGE_ID_LIST: {
         QQ: "com.tencent.tim", // 请使用tim

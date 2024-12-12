@@ -102,7 +102,7 @@ export type DDCfg = {
   ACCOUNT: string
   PASSWD: string
   RETRY: number
-  DELAY: number
+
   CORP_ID: string
 }
 type DD_Package_Id_List = {
@@ -117,9 +117,8 @@ export class DD implements DDCfg {
     this.PASSWD = cfg.PASSWD
     this.RETRY = cfg.RETRY
     this.CORP_ID = cfg.CORP_ID
-    this.DELAY = cfg.DELAY
   }
-  DELAY: number
+
   PACKAGE_ID_LIST: DD_Package_Id_List
   ACCOUNT: string
   PASSWD: string
@@ -236,14 +235,11 @@ export class DD implements DDCfg {
     return e
   }
 
-  /**
-   * @param {number} [retry=this.DELAY] 延时打卡，默认为config中的DELAY
-   */
-  openAndPunchIn(delay: number = this.DELAY) {
+
+  openAndPunchIn() {
     console.log("本地时间: " + getCurrentDate() + " " + getCurrentTime())
     console.log("开始打卡")
     backHome(this.PACKAGE_ID_LIST.HOME)
-    holdOn(delay)
     if (!this.open()) {
       const e = "无法打开钉钉!"
       console.error(e)
@@ -263,7 +259,7 @@ type CLOCK_Package_Id_List = {
 }
 
 export type ClockCfg = {
-  DELAY: number
+
   root: boolean
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
   UNLOCKSCREEN: UnLockScreen
@@ -272,13 +268,13 @@ export type ClockCfg = {
 export class Clock implements ClockCfg {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
-    this.DELAY = cfg.DELAY
+
     this.UNLOCKSCREEN = cfg.UNLOCKSCREEN
     this.root = cfg.root
   }
 
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
-  DELAY: number
+
   UNLOCKSCREEN: UnLockScreen
   root: boolean
 
@@ -293,7 +289,7 @@ export class Clock implements ClockCfg {
       console.warn("通过滑动关闭闹钟，可能未关闭")
     }
 
-    return this.DELAY //返回的是延时时间
+    return  //返回的是延时时间
   }
 }
 

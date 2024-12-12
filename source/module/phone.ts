@@ -1,4 +1,4 @@
-import { brightScreen, isDeviceLocked, backHome, setVolume, openScreen, UnLockScreen, resetPhone, closeScreen, openWifi } from "@/tools"
+import { brightScreen, isDeviceLocked, backHome, setVolume, openScreen, UnLockScreen, resetPhone, closeScreen, openWifi, holdOn } from "@/tools"
 import { Cfg } from "./config"
 
 export type PhoneCfg = {
@@ -8,7 +8,10 @@ export type PhoneCfg = {
   UNLOCKSCREEN: UnLockScreen
   VOLUME: number
   PACKAGE_ID_LIST: Phone_Package_Id_List
+  DELAY: Delay
 }
+
+type Delay = [number, number]
 
 type Phone_Package_Id_List = {
   HOME: string
@@ -21,6 +24,7 @@ export class Phone implements PhoneCfg {
   UNLOCKSCREEN: UnLockScreen
   VOLUME: number
   PACKAGE_ID_LIST: Phone_Package_Id_List
+  DELAY: Delay
 
   constructor(cfg: Cfg) {
     this.DEV = cfg.DEV
@@ -29,6 +33,7 @@ export class Phone implements PhoneCfg {
     this.UNLOCKSCREEN = cfg.UNLOCKSCREEN
     this.VOLUME = cfg.VOLUME
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
+    this.DELAY = cfg.DELAY
   }
 
   turnOn() {
@@ -70,25 +75,17 @@ export class Phone implements PhoneCfg {
     return false
   }
 
-  doIt(f: () => void, wait?: number) {
-    if (wait !== undefined) {
-      setTimeout(() => {
-        threads.shutDownAll()
-        threads.start(() => {
-          this.turnOn()
-          openWifi(this.root)
-          f()
-          this.turnOff()
-        })
-      }, wait) //等待，这样可以打断锁屏，并且让console.log()输出完整
-    } else {
+  doIt(f: () => void, delay: Delay = [0, 0]) {
+    //默认不延迟
+    setTimeout(() => {
       threads.shutDownAll()
       threads.start(() => {
         this.turnOn()
         openWifi(this.root)
+        holdOn(...delay)
         f()
         this.turnOff()
       })
-    }
+    }, 1000) //等待，这样可以打断锁屏，并且让console.log()输出完整
   }
 }
