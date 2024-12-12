@@ -1,8 +1,7 @@
-import { isRoot } from "@/tools"
 import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "@/app"
 import { PhoneCfg } from "@/phone"
 import { ListenerCfg } from "@/listener"
-import { getCurrentDate, Suspend } from "./tools"
+import { getCurrentDate, Suspend, isRoot, Delay } from "@/tools"
 import { toString } from "lodash"
 
 export type Cfg = {
@@ -11,6 +10,7 @@ export type Cfg = {
   msg: string
   suspend: Suspend
   root: boolean
+  DELAY: Delay
 } & QQCfg &
   DDCfg &
   ClockCfg &
@@ -44,7 +44,7 @@ export class Config {
       CORP_ID: "", // 公司的钉钉CorpId, 如果只加入了一家公司, 可以不填
 
       /* 解锁屏幕参数 */
-      UNLOCKSCREEN: {
+      SWIPESCREEN: {
         TIME: 500, // 滑动时间：毫秒
         START: 0.9, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些 0.9
         END: 0.1, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置 0.1

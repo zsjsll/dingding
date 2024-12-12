@@ -1,4 +1,4 @@
-import { backHome, openApp, getCurrentDate, getCurrentTime, openScreen, UnLockScreen } from "@/tools"
+import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, UnLockScreen as SwipeScreen } from "@/tools"
 import { Cfg } from "./config"
 import { includes, startsWith } from "lodash"
 
@@ -260,20 +260,20 @@ type CLOCK_Package_Id_List = {
 export type ClockCfg = {
   root: boolean
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
-  UNLOCKSCREEN: UnLockScreen
+  SWIPESCREEN: SwipeScreen
 }
 
 export class Clock implements ClockCfg {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
 
-    this.UNLOCKSCREEN = cfg.UNLOCKSCREEN
+    this.SWIPESCREEN = cfg.SWIPESCREEN
     this.root = cfg.root
   }
 
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
 
-  UNLOCKSCREEN: UnLockScreen
+  SWIPESCREEN: SwipeScreen
   root: boolean
 
   //需要root
@@ -282,22 +282,19 @@ export class Clock implements ClockCfg {
     if (root) {
       for (let i = 0; i < 10; i++) {
         VolumeDown()
-        if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500) === null) break
-        else {
-          console.warn("尝试通过root权限滑动关闭闹铃")
-          Swipe(device.width * 0.5, device.height * 0.9, device.width * 0.5, device.height * 0.1, 500)
-          if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500) === null) {
-            console.log("应该关闭了闹铃")
-            return
-          }
+        if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500) === null) {
+          console.log("已闭闹钟")
+          return
+        } else {
+          swipeScreen(this.SWIPESCREEN, true)
+          console.warn("通过root权限滑动关闭闹钟，可能未关闭")
+          return
         }
       }
-      console.error("未关闭闹钟")
     } else {
-      console.log(123123123123123)
-
-      swipe(device.width * 0.5, device.height * 0.9, device.width * 0.5, device.height * 0.1, 500)
-      console.warn("通过滑动关闭闹钟，可能未关闭")
+      swipeScreen(this.SWIPESCREEN)
+      console.warn("没有root权限，通过滑动关闭闹钟，可能未关闭")
+      return
     }
 
     return //返回的是延时时间

@@ -3,13 +3,15 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from "@/tools"
+import { calculateCount, formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
 ;(function main() {
-  //停止其他脚本 ，只运行当前脚本
-  onlyRunOneScript()
-
+  //初始化脚本
+  onlyRunOneScript() //停止其他脚本，只运行当前脚本
+  setScreenMetrics(device.width, device.height)
   auto()
   shell("", true)
+
+  //初始化设置
   const config = new Config()
   const cfg = config.createJsonFile()
   config.createLog()
@@ -20,7 +22,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from 
   const qq = new QQ(cfg)
   const dd = new DD(cfg)
   const clock = new Clock(cfg)
-  listener.listenVolumeKey() //可以添加自己需要的调试函数
+  listener.listenVolumeKey(() => {}) //可以添加自己需要的调试函数
   listener.listenNotification((notification) => {
     listenMsg(notification)
     listenClock(notification)
@@ -99,10 +101,12 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from 
     else if (cfg.suspend.count > 0) cfg.suspend.count = cfg.suspend.count -= 1 //如果没有延迟打卡次数，且有暂停打卡次数， 暂停打卡减1次
     clock.closeAlarm(false) //关闭闹钟
     phone.doIt(() => {
+      delay(cfg.DELAY)
+
       if (daka) msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
       else msg = msg + "\n" + showStatus(cfg.suspend)
       qq.openAndSendMsg(msg)
-    }, cfg.DELAY) //随机延迟打卡
+    }) //随机延迟打卡
     return
   }
 

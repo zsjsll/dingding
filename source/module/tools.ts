@@ -2,26 +2,22 @@ import { ceil, floor, includes, parseInt, toNumber } from "lodash"
 
 // -----------以下函数需要root权限-----------------
 
-export function openScreen(opt: UnLockScreen, root: boolean = false) {
-  if (root) {
-    console.log("roooooooooot")
-    Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
-  } else {
-    swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
-    // gesture(
-    //   opt.TIME, // 滑动时间：毫秒 320
-    //   [
-    //     device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
-    //     device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
-    //   ],
-    //   [
-    //     device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
-    //     device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
-    //   ]
-    // )
-  }
+export function swipeScreen(opt: UnLockScreen, root?: boolean) {
+  if (root) Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+  else swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+  // gesture(
+  //   opt.TIME, // 滑动时间：毫秒 320
+  //   [
+  //     device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
+  //     device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
+  //   ],
+  //   [
+  //     device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
+  //     device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
+  //   ]
+  // )
 
-  sleep(1e3) // 等待解锁动画完成
+  sleep(1500) // 等待解锁动画完成
 }
 
 export function closeScreen(root: boolean) {
@@ -123,14 +119,10 @@ export function getCurrentDate() {
   const formattedDateString = year + "-" + month + "-" + date + "-" + WEEK_DAY[week]
   return formattedDateString
 }
+// export type Delay = { min: number; max: number }
+export type Delay = [number, number]
 
-/**
- *
- *
- * @export
- * @param {{ min: number; max: number }} { min = 10, max }
- */
-export function holdOn(min: number, max: number) {
+export function delay([min, max]: Delay = [0, 0]) {
   if (max <= 0 || min >= max) {
     return
   } else {

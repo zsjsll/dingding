@@ -1,17 +1,14 @@
-import { brightScreen, isDeviceLocked, backHome, setVolume, openScreen, UnLockScreen, resetPhone, closeScreen, openWifi, holdOn } from "@/tools"
+import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, UnLockScreen as SwipeScreen, resetPhone, closeScreen, openWifi, delay } from "@/tools"
 import { Cfg } from "./config"
 
 export type PhoneCfg = {
   DEV: boolean
   root: boolean
   SCREEN_BRIGHTNESS: number
-  UNLOCKSCREEN: UnLockScreen
+  SWIPESCREEN: SwipeScreen
   VOLUME: number
   PACKAGE_ID_LIST: Phone_Package_Id_List
-  DELAY: Delay
 }
-
-type Delay = [number, number]
 
 type Phone_Package_Id_List = {
   HOME: string
@@ -21,19 +18,17 @@ export class Phone implements PhoneCfg {
   DEV: boolean
   root: boolean
   SCREEN_BRIGHTNESS: number
-  UNLOCKSCREEN: UnLockScreen
+  SWIPESCREEN: SwipeScreen
   VOLUME: number
   PACKAGE_ID_LIST: Phone_Package_Id_List
-  DELAY: Delay
 
   constructor(cfg: Cfg) {
     this.DEV = cfg.DEV
     this.root = cfg.root
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
-    this.UNLOCKSCREEN = cfg.UNLOCKSCREEN
+    this.SWIPESCREEN = cfg.SWIPESCREEN
     this.VOLUME = cfg.VOLUME
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
-    this.DELAY = cfg.DELAY
   }
 
   turnOn(root: boolean) {
@@ -46,7 +41,7 @@ export class Phone implements PhoneCfg {
     sleep(500)
     if (isDeviceLocked()) {
       console.log("解锁屏幕")
-      openScreen(this.UNLOCKSCREEN, root)
+      swipeScreen(this.SWIPESCREEN, root)
       if (isDeviceLocked()) {
         console.error("上滑解锁失败, 请按脚本中的注释调整UNLOCKSCREEN中的 key[TIME, START, END] 的参数!")
         return false
@@ -75,14 +70,13 @@ export class Phone implements PhoneCfg {
     return false
   }
 
-  doIt(f: (root:boolean) => void, delay: Delay = [0, 0]) {
+  doIt(f: (root: boolean) => void) {
     //默认不延迟
     setTimeout(() => {
       threads.shutDownAll()
       threads.start(() => {
-        this.turnOn(this.root)
+        this.turnOn(false)
         openWifi(this.root)
-        holdOn(...delay)
         f(this.root)
         this.turnOff(this.root)
       })
