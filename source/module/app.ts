@@ -1,4 +1,4 @@
-import { backHome, openApp, getCurrentDate, getCurrentTime, holdOn, openScreen, UnLockScreen } from "@/tools"
+import { backHome, openApp, getCurrentDate, getCurrentTime, openScreen, UnLockScreen } from "@/tools"
 import { Cfg } from "./config"
 import { includes, startsWith } from "lodash"
 
@@ -235,7 +235,6 @@ export class DD implements DDCfg {
     return e
   }
 
-
   openAndPunchIn() {
     console.log("本地时间: " + getCurrentDate() + " " + getCurrentTime())
     console.log("开始打卡")
@@ -259,7 +258,6 @@ type CLOCK_Package_Id_List = {
 }
 
 export type ClockCfg = {
-
   root: boolean
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
   UNLOCKSCREEN: UnLockScreen
@@ -279,17 +277,30 @@ export class Clock implements ClockCfg {
   root: boolean
 
   //需要root
-  closeAlarm() {
+  closeAlarm(root: boolean) {
     sleep(2e3)
-    if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(10e3) === null) {
-      VolumeDown() //通过音量键来关闭闹钟，需要root权限
-      console.log("闹钟已关闭")
+    if (root) {
+      for (let i = 0; i < 10; i++) {
+        VolumeDown()
+        if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500) === null) break
+        else {
+          console.warn("尝试通过root权限滑动关闭闹铃")
+          Swipe(device.width * 0.5, device.height * 0.9, device.width * 0.5, device.height * 0.1, 500)
+          if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500) === null) {
+            console.log("应该关闭了闹铃")
+            return
+          }
+        }
+      }
+      console.error("未关闭闹钟")
     } else {
-      // openScreen(this.UNLOCKSCREEN, this.root)
+      console.log(123123123123123)
+
+      swipe(device.width * 0.5, device.height * 0.9, device.width * 0.5, device.height * 0.1, 500)
       console.warn("通过滑动关闭闹钟，可能未关闭")
     }
 
-    return  //返回的是延时时间
+    return //返回的是延时时间
   }
 }
 

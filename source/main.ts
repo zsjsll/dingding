@@ -97,12 +97,12 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from 
 
     if (cfg.suspend.after > 0) cfg.suspend.after -= 1 //如果有延迟打卡， 延迟打卡减1次
     else if (cfg.suspend.count > 0) cfg.suspend.count = cfg.suspend.count -= 1 //如果没有延迟打卡次数，且有暂停打卡次数， 暂停打卡减1次
-    // clock.closeAlarm() //关闭闹钟
+    clock.closeAlarm(false) //关闭闹钟
     phone.doIt(() => {
       if (daka) msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
       else msg = msg + "\n" + showStatus(cfg.suspend)
       qq.openAndSendMsg(msg)
-    })
+    }, cfg.DELAY) //随机延迟打卡
     return
   }
 
@@ -114,7 +114,7 @@ import { calculateCount, formatSuspendInfo, onlyRunOneScript, showStatus } from 
 
     phone.doIt(() => {
       qq.openAndSendMsg(msg)
-    }, cfg.DELAY) //随机延迟打卡
+    })
     return
   }
 })()

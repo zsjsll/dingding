@@ -36,7 +36,7 @@ export class Phone implements PhoneCfg {
     this.DELAY = cfg.DELAY
   }
 
-  turnOn() {
+  turnOn(root: boolean) {
     if (this.DEV) this.SCREEN_BRIGHTNESS = -1
 
     if (!brightScreen(this.SCREEN_BRIGHTNESS)) {
@@ -46,7 +46,7 @@ export class Phone implements PhoneCfg {
     sleep(500)
     if (isDeviceLocked()) {
       console.log("解锁屏幕")
-      openScreen(this.UNLOCKSCREEN, this.root)
+      openScreen(this.UNLOCKSCREEN, root)
       if (isDeviceLocked()) {
         console.error("上滑解锁失败, 请按脚本中的注释调整UNLOCKSCREEN中的 key[TIME, START, END] 的参数!")
         return false
@@ -58,12 +58,12 @@ export class Phone implements PhoneCfg {
     return true
   }
 
-  turnOff() {
+  turnOff(root: boolean) {
     backHome(this.PACKAGE_ID_LIST.HOME)
     if (this.DEV) resetPhone()
     console.log("关闭屏幕")
     for (let i = 0; i < 10; i++) {
-      closeScreen(this.root)
+      closeScreen(root)
       sleep(2000)
 
       if (!device.isScreenOn()) {
@@ -75,16 +75,16 @@ export class Phone implements PhoneCfg {
     return false
   }
 
-  doIt(f: () => void, delay: Delay = [0, 0]) {
+  doIt(f: (root:boolean) => void, delay: Delay = [0, 0]) {
     //默认不延迟
     setTimeout(() => {
       threads.shutDownAll()
       threads.start(() => {
-        this.turnOn()
+        this.turnOn(this.root)
         openWifi(this.root)
         holdOn(...delay)
-        f()
-        this.turnOff()
+        f(this.root)
+        this.turnOff(this.root)
       })
     }, 1000) //等待，这样可以打断锁屏，并且让console.log()输出完整
   }

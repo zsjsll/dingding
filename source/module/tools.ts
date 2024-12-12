@@ -5,24 +5,20 @@ import { ceil, floor, includes, parseInt, toNumber } from "lodash"
 export function openScreen(opt: UnLockScreen, root: boolean = false) {
   if (root) {
     console.log("roooooooooot")
-    // const ra = new RootAutomator()
-    // ra.swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END)
-    // ra.exit()
-    keyCodeHeadsetHook()
-    // Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+    Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   } else {
-    // swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
-    gesture(
-      opt.TIME, // 滑动时间：毫秒 320
-      [
-        device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
-        device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
-      ],
-      [
-        device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
-        device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
-      ]
-    )
+    swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
+    // gesture(
+    //   opt.TIME, // 滑动时间：毫秒 320
+    //   [
+    //     device.width * 0.5, // 滑动起点 x 坐标：屏幕宽度的一半
+    //     device.height * opt.START, // 滑动起点 y 坐标：距离屏幕底部 10% 的位置, 华为系统需要往上一些
+    //   ],
+    //   [
+    //     device.width * 0.5, // 滑动终点 x 坐标：屏幕宽度的一半
+    //     device.height * opt.END, // 滑动终点 y 坐标：距离屏幕顶部 10% 的位置
+    //   ]
+    // )
   }
 
   sleep(1e3) // 等待解锁动画完成
@@ -135,7 +131,7 @@ export function getCurrentDate() {
  * @param {{ min: number; max: number }} { min = 10, max }
  */
 export function holdOn(min: number, max: number) {
-  if (max <= 0 || max - min <= 0) {
+  if (max <= 0 || min >= max) {
     return
   } else {
     const randomTime = random(min * 1e3, max * 1e3)

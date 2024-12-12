@@ -15,4 +15,9 @@ declare namespace Internal {
   }
 }
 
+/**
+ * 需要Android 12以上
+ *
+ * @return {*}  {boolean}
+ */
 declare function keyCodeHeadsetHook(): boolean
