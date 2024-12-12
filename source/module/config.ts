@@ -98,9 +98,13 @@ export class Config {
   createJsonFile() {
     let config: Cfg = this.config
     if (files.exists(this.config_path)) {
-      const cfg: Cfg = JSON.parse(files.read(this.config_path))
-      config = { ...this.config, ...cfg }
-    } else console.log("不存在config.json文件,创建并使用默认配置")
+      try {
+        const cfg: Cfg = JSON.parse(files.read(this.config_path))
+        config = { ...this.config, ...cfg }
+      } catch (e) {
+        console.error("解析错误，重新生成config.json文件", e)
+      }
+    } else console.warn("不存在config.json文件，创建并使用默认配置")
 
     const final_config = this.updateConfig(config)
     const json = JSON.stringify(final_config, null, 2)
