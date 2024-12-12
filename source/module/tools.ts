@@ -2,7 +2,7 @@ import { ceil, floor, includes, parseInt, toNumber } from "lodash"
 
 // -----------以下函数需要root权限-----------------
 
-export function swipeScreen(opt: UnLockScreen, root?: boolean) {
+export function swipeScreen(opt: UnLockScreen, root: boolean) {
   if (root) Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   else swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   // gesture(
@@ -224,7 +224,6 @@ export function formatSuspendInfo(input: string): Suspend {
   }) ?? [0, 1]
   if (l.length < 2) l.push(1)
   if (l[1] === 0) l[0] = 0
-  else console.error("无法处理信息！")
 
   const after = l[0]
   const count = l[1]

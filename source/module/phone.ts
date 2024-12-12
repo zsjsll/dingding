@@ -1,4 +1,4 @@
-import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, UnLockScreen as SwipeScreen, resetPhone, closeScreen, openWifi, delay } from "@/tools"
+import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, UnLockScreen as SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
 import { Cfg } from "./config"
 
 export type PhoneCfg = {

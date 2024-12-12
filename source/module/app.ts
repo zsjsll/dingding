@@ -282,6 +282,7 @@ export class Clock implements ClockCfg {
     if (root) {
       for (let i = 0; i < 10; i++) {
         VolumeDown()
+        sleep(1e3)
         if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500) === null) {
           console.log("已闭闹钟")
           return
@@ -292,7 +293,7 @@ export class Clock implements ClockCfg {
         }
       }
     } else {
-      swipeScreen(this.SWIPESCREEN)
+      swipeScreen(this.SWIPESCREEN, false)
       console.warn("没有root权限，通过滑动关闭闹钟，可能未关闭")
       return
     }

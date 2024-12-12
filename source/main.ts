@@ -94,19 +94,20 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
     if (n.when === 0) return
 
     let msg = "! 暂停打卡结束 !"
-    let daka: boolean //执行打卡操作，或者直接输出现在状态
+    let daka: boolean = false //执行打卡操作，或者直接输出现在状态
     if (cfg.suspend.after > 0 || cfg.suspend.count === 0) daka = true
+
 
     if (cfg.suspend.after > 0) cfg.suspend.after -= 1 //如果有延迟打卡， 延迟打卡减1次
     else if (cfg.suspend.count > 0) cfg.suspend.count = cfg.suspend.count -= 1 //如果没有延迟打卡次数，且有暂停打卡次数， 暂停打卡减1次
-    clock.closeAlarm(false) //关闭闹钟
+    clock.closeAlarm(cfg.root) //关闭闹钟
     phone.doIt(() => {
-      delay(cfg.DELAY)
-
-      if (daka) msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
-      else msg = msg + "\n" + showStatus(cfg.suspend)
+      if (daka) {
+        delay(cfg.DELAY) //随机延迟打卡
+        msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
+      } else msg = msg + "\n" + showStatus(cfg.suspend)
       qq.openAndSendMsg(msg)
-    }) //随机延迟打卡
+    })
     return
   }
 
