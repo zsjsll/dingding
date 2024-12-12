@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { calculateCount, formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
+import { formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -59,12 +59,9 @@ import { calculateCount, formatSuspendInfo, delay, onlyRunOneScript, showStatus 
       })
     }
     if (includes(n.getText(), "暂停")) {
-      const arr = formatSuspendInfo(n.getText()) //先把输入的字符串格式化成array<number>
-      let msg = "暂停不能为0" + "\n" + showStatus(cfg.suspend)
-      if (arr[1] !== 0) {
-        cfg.suspend = calculateCount(arr)
-        msg = showStatus(cfg.suspend)
-      }
+      cfg.suspend = formatSuspendInfo(n.getText())
+      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + showStatus(cfg.suspend)
+      if (cfg.suspend.count !== 0) msg = showStatus(cfg.suspend)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
       })

@@ -213,26 +213,22 @@ export function calculateDay(input: Array<number>): Suspend {
 
   return { after, count }
 }
-/**
- * 先把str转为数字，丢弃小数部分，返回数字
- *
- * @export
- * @param {string} input
- * @return {*}  {number}
- */
-export function calculateCount(input: Array<number>): Suspend {
-  const to_int_arr = input.map((v) => floor(v)) // 输入数组向下取整
-  const after = to_int_arr[0]
-  let count = to_int_arr[1]
-  count ??= 1
-  // const count = input[1] === undefined ? 1 : input[1]
 
+export function formatSuspendInfo(input: string): Suspend {
+  const a = "0" + input //在字符串前面添加一个0
+  const l = a.match(/[\d.]+/g)?.map((v) => {
+    //匹配所有数字，包括小数，
+    let b = floor(toNumber(v)) //变成数字，向下取整
+    if (isNaN(b)) b = 1 //判断NaN，如果是 变成1
+    return b
+  }) ?? [0, 1]
+  if (l.length < 2) l.push(1)
+  if (l[1] === 0) l[0] = 0
+  else console.error("无法处理信息！")
+
+  const after = l[0]
+  const count = l[1]
   return { after, count }
-}
-
-export function formatSuspendInfo(input: string) {
-  const a = "0" + input
-  return a.match(/[\d.]+/g)?.map((v) => toNumber(v)) as number[]
 }
 
 export function showStatus(suspend?: Suspend) {
