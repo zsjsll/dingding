@@ -10,12 +10,14 @@ import { calculateCount, formatSuspendInfo, delay, onlyRunOneScript, showStatus 
   setScreenMetrics(device.width, device.height)
   auto()
   shell("", true)
+  console.log("完成初始化脚本")
 
   //初始化设置
   const config = new Config()
   const cfg = config.createJsonFile()
   config.createLog()
   config.information(cfg)
+  console.log("完成初始化设置")
 
   const phone = new Phone(cfg)
   const listener = new Listener(cfg)
@@ -28,6 +30,7 @@ import { calculateCount, formatSuspendInfo, delay, onlyRunOneScript, showStatus 
     listenClock(notification)
     listenDD(notification)
   })
+  toastLog("运行中。。。")
 
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
     // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL && n.getPackageName() !== cfg.PACKAGE_ID_LIST.QQ) return

@@ -117,8 +117,8 @@ export class Config {
   information(final_config: Cfg) {
     // console.log(final_config)
     if (final_config.DEV) toastLog("调试模式")
-    else toastLog("正常模式")
-    if (final_config.NOTIFICATIONS_FILTER) toastLog("白名单已开启")
-    else toastLog("白名单已关闭")
+    else console.log("正常模式")
+    if (!final_config.NOTIFICATIONS_FILTER) toastLog("白名单已关闭")
+    else console.log("白名单已开启")
   }
 }
