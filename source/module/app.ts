@@ -67,7 +67,7 @@ export class QQ implements QQCfg {
     if (includes(message, "无效") || includes(message, "失败")) message = wn + "\n" + message
     const defaultMsg = `当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
     if (!(includes(message, "当前电量") || includes(message, "是否充电"))) message = message + "\n" + defaultMsg
-    message = message.replace(/^-+\n/, "") //如果开头有很多的-，则去掉
+    message = message.replace(/^[\n-]+|[\n]+$/g, "") //如果开头有很多的-或者\n，则去掉  如果结尾有\n 去除
 
     input.setText(message)
 
@@ -228,7 +228,8 @@ export class DD implements DDCfg {
         console.log("按下打卡按钮")
       }
       if (textContains("成功").findOne(15e3) === null) return `考勤打卡:${getCurrentTime()}打卡·无效`
-      return `考勤打卡:${getCurrentTime()}打卡·成功\n但未收到成功消息`
+      // return `考勤打卡:${getCurrentTime()}打卡·成功\n但未收到成功消息`
+      return `考勤打卡:${getCurrentTime()}打卡·成功`
     }
     const e = `重试${this.RETRY}次,打卡失败!`
     console.error(e)

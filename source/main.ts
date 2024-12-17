@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
+import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } from "@/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -35,35 +35,42 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
     // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL && n.getPackageName() !== cfg.PACKAGE_ID_LIST.QQ) return
     if (n.getText() === "帮助") {
-      const msg =
+      let msg =
         "帮助: 显示所有指令内容\n打卡: 马上打卡\n锁屏: 停止当前动作后锁屏\n{n}暂停{m}: 延迟{n}次,暂停{m}次\n恢复: 恢复自动打卡\n状态: 显示当前状态" +
         "\n" +
         showStatus(cfg.suspend)
-
+      msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
+        cfg.msgs = []
       })
       return
     }
     if (n.getText() === "打卡") {
       phone.doIt(() => {
-        const msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
+        let msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
+        msg = msg + "\n" + formatMsgs(cfg.msgs)
         qq.openAndSendMsg(msg)
+        cfg.msgs = []
       })
       return
     }
     if (n.getText() === "状态") {
-      const msg = showStatus(cfg.suspend)
+      let msg = showStatus(cfg.suspend)
+      msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
+        cfg.msgs = []
       })
     }
     if (includes(n.getText(), "暂停")) {
       cfg.suspend = formatSuspendInfo(n.getText())
       let msg = "修改成功, 已恢复定时打卡功能" + "\n" + showStatus(cfg.suspend)
       if (cfg.suspend.count !== 0) msg = showStatus(cfg.suspend)
+      msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
+        cfg.msgs = []
       })
       return
     }
@@ -71,27 +78,47 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
     if (n.getText() === "恢复") {
       cfg.suspend = { after: 0, count: 0 }
       console.info("恢复定时打卡")
-      const msg = "修改成功, 已恢复定时打卡功能" + "\n" + showStatus(cfg.suspend)
+      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + showStatus(cfg.suspend)
+      msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
+        cfg.msgs = []
       })
       return
     }
 
     if (n.getText() === "锁屏") {
-      const msg = "已停止当前动作" + "\n" + showStatus(cfg.suspend)
+      let msg = "已停止当前动作" + "\n" + showStatus(cfg.suspend)
       console.info("停止当前动作")
+      msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
+        cfg.msgs = []
       })
+      return
+    }
+
+    if (n.getText() === "测试") {
+      console.info("测试")
+      console.log(threads.currentThread())
+      const t = threads.start(() => {
+        console.log(threads.currentThread())
+      })
+      t.waitFor()
+      t.setTimeout(()=>console.log("hahaha")
+      , 2000)
+      sleep(1000)
+      console.log(t.isAlive())
+
+
       return
     }
   }
 
   function listenClock(n: org.autojs.autojs.core.notification.Notification) {
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.CLOCK) return
-    if (n.getText() !== "闹钟") return
-    if (n.when === 0) return
+    // if (n.getText() !== "闹钟") return
+    // if (n.when === 0) return
 
     let msg = "! 暂停打卡结束 !"
     let daka: boolean = false //执行打卡操作，或者直接输出现在状态
@@ -106,19 +133,28 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus } from "@/tools"
         delay(cfg.DELAY) //随机延迟打卡
         msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
       } else msg = msg + "\n" + showStatus(cfg.suspend)
+      msg = msg + "\n" + formatMsgs(cfg.msgs)
       qq.openAndSendMsg(msg)
+      cfg.msgs = []
     })
     return
   }
 
   function listenDD(n: org.autojs.autojs.core.notification.Notification) {
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.DD) return
-    if (!includes(n.getText(), "考勤打卡")) return
-    cfg.msg = n.getText().replace(/^\[.+?\]/, "")
-    const msg = cfg.msg + "\n" + showStatus(cfg.suspend)
+    // if (!includes(n.getText(), "考勤打卡")) return
+    // cfg.msg = n.getText().replace(/^\[.+?\]/, "")
+    // const msg = cfg.msg + "\n" + showStatus(cfg.suspend)
+    let msg: string = ""
+    if (includes(n.getText(), "考勤打卡")) return
+    else {
+      cfg.msgs.push(n.getText())
+      msg = msg + "\n" + formatMsgs(cfg.msgs)
+    }
 
     phone.doIt(() => {
       qq.openAndSendMsg(msg)
+      cfg.msgs = []
     })
     return
   }

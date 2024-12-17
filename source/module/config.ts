@@ -1,13 +1,13 @@
 import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "@/app"
 import { PhoneCfg } from "@/phone"
 import { ListenerCfg } from "@/listener"
-import { getCurrentDate, Suspend, isRoot, Delay } from "@/tools"
+import { getCurrentDate, Suspend, isRoot, Delay, Msgs } from "@/tools"
 import { toString } from "lodash"
 
 export type Cfg = {
   PACKAGE_ID_LIST: White_list
   GLOBAL_LOG_FILE_DIR: string
-  msg: string
+  msgs: Msgs
   suspend: Suspend
   root: boolean
   DELAY: Delay
@@ -71,7 +71,7 @@ export class Config {
       GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径
 
       suspend: { after: 0, count: 0 }, //暂停打卡次数
-      msg: "",
+      msgs: [],
     }
   }
 

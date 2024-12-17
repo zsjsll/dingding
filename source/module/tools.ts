@@ -244,3 +244,9 @@ export function showStatus(suspend?: Suspend) {
   }
   return msg
 }
+
+export type Msgs = Array<string>
+export function formatMsgs(msgs: Msgs) {
+  const mm = "\n" + msgs.join("\n")
+  return mm
+}
