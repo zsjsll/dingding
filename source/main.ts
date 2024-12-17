@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } from "@/tools"
+import { formatSuspendInfo, delay, onlyRunOneScript, suspendStatus, formatMsgs } from "@/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -38,7 +38,7 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } fr
       let msg =
         "帮助: 显示所有指令内容\n打卡: 马上打卡\n锁屏: 停止当前动作后锁屏\n{n}暂停{m}: 延迟{n}次,暂停{m}次\n恢复: 恢复自动打卡\n状态: 显示当前状态" +
         "\n" +
-        showStatus(cfg.suspend)
+        suspendStatus(cfg.suspend)
       msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
@@ -48,7 +48,7 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } fr
     }
     if (n.getText() === "打卡") {
       phone.doIt(() => {
-        let msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
+        let msg = dd.openAndPunchIn() + "\n" + suspendStatus(cfg.suspend)
         msg = msg + "\n" + formatMsgs(cfg.msgs)
         qq.openAndSendMsg(msg)
         cfg.msgs = []
@@ -56,7 +56,7 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } fr
       return
     }
     if (n.getText() === "状态") {
-      let msg = showStatus(cfg.suspend)
+      let msg = suspendStatus(cfg.suspend)
       msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
@@ -65,8 +65,8 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } fr
     }
     if (includes(n.getText(), "暂停")) {
       cfg.suspend = formatSuspendInfo(n.getText())
-      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + showStatus(cfg.suspend)
-      if (cfg.suspend.count !== 0) msg = showStatus(cfg.suspend)
+      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + suspendStatus(cfg.suspend)
+      if (cfg.suspend.count !== 0) msg = suspendStatus(cfg.suspend)
       msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
@@ -78,7 +78,7 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } fr
     if (n.getText() === "恢复") {
       cfg.suspend = { after: 0, count: 0 }
       console.info("恢复定时打卡")
-      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + showStatus(cfg.suspend)
+      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + suspendStatus(cfg.suspend)
       msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
@@ -88,7 +88,7 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } fr
     }
 
     if (n.getText() === "锁屏") {
-      let msg = "已停止当前动作" + "\n" + showStatus(cfg.suspend)
+      let msg = "已停止当前动作" + "\n" + suspendStatus(cfg.suspend)
       console.info("停止当前动作")
       msg = msg + "\n" + formatMsgs(cfg.msgs)
       phone.doIt(() => {
@@ -131,8 +131,8 @@ import { formatSuspendInfo, delay, onlyRunOneScript, showStatus, formatMsgs } fr
     phone.doIt(() => {
       if (daka) {
         delay(cfg.DELAY) //随机延迟打卡
-        msg = dd.openAndPunchIn() + "\n" + showStatus(cfg.suspend)
-      } else msg = msg + "\n" + showStatus(cfg.suspend)
+        msg = dd.openAndPunchIn() + "\n" + suspendStatus(cfg.suspend)
+      } else msg = msg + "\n" + suspendStatus(cfg.suspend)
       msg = msg + "\n" + formatMsgs(cfg.msgs)
       qq.openAndSendMsg(msg)
       cfg.msgs = []

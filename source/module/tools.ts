@@ -1,4 +1,4 @@
-import { ceil, floor, includes, parseInt, toNumber } from "lodash"
+import { ceil, first, floor, includes, last, parseInt, sampleSize, some, toNumber } from "lodash"
 
 // -----------以下函数需要root权限-----------------
 
@@ -230,7 +230,7 @@ export function formatSuspendInfo(input: string): Suspend {
   return { after, count }
 }
 
-export function showStatus(suspend?: Suspend) {
+export function suspendStatus(suspend?: Suspend) {
   const battery = device.getBattery()
   const charge = device.isCharging()
   const msg = `当前电量: ${battery}%\n是否充电: ${charge}`
@@ -247,6 +247,18 @@ export function showStatus(suspend?: Suspend) {
 
 export type Msgs = Array<string>
 export function formatMsgs(msgs: Msgs) {
-  const mm = "\n" + msgs.join("\n")
-  return mm
+  const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
+  const default_msgs = [`当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
+  const findsomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
+  const add_warn = findsomething(msgs, "无效") || findsomething(msgs, "失败")
+  const del_line = includes(first(msgs), "-") || includes(first(msgs), "\n")
+  const del_space_line = includes(last(msgs), "\n")
+  if (del_line) msgs.shift()
+  if (del_space_line) msgs.pop()
+  if (add_warn) msgs.unshift(wn)
+  msgs = [...msgs, ...default_msgs]
+
+  // message = message.replace(/^[\n-]+|[\n]+$/g, "") //如果开头有很多的-或者\n，则去掉  如果结尾有\n 去除
+
+  return msgs
 }
