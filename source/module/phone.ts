@@ -1,5 +1,5 @@
 import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, UnLockScreen as SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
-import { Cfg, Variable } from "./config"
+import { Cfg } from "./config"
 
 export type PhoneCfg = {
   DEV: boolean
@@ -74,7 +74,7 @@ export class Phone implements PhoneCfg {
     threads.shutDownAll()
 
     threads.start(() => {
-      this.turnOn(false)
+      this.turnOn(this.root)
       openWifi(this.root)
       f()
 

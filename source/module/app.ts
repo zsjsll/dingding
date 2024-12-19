@@ -270,9 +270,9 @@ export class Clock implements ClockCfg {
   root: boolean
 
   //需要root
-  closeAlarm(root: boolean) {
+  closeAlarm() {
     sleep(2e3)
-    if (root) {
+    if (this.root) {
       for (let i = 0; i < 10; i++) {
         VolumeDown()
         sleep(1e3)

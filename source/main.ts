@@ -121,7 +121,7 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, formatMsgsToStri
     const daka = cfg.var.pause[0] > 0 || cfg.var.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
     cfg.var.pause = changePause(cfg.var.pause) //修改pause参数
     const pause_tatus = isEmpty(pauseStatus(cfg.var.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.var.pause)
-    clock.closeAlarm(cfg.var.root) //关闭闹钟
+    clock.closeAlarm() //关闭闹钟
 
     phone.doIt(() => {
       if (daka) {
