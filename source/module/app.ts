@@ -1,6 +1,6 @@
-import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, UnLockScreen as SwipeScreen } from "@/tools"
+import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, UnLockScreen as SwipeScreen, Msgs, formatMsgsToString } from "@/tools"
 import { Cfg } from "./config"
-import { includes, startsWith } from "lodash"
+import { startsWith } from "lodash"
 
 export type QQCfg = {
   PACKAGE_ID_LIST: QQ_Package_Id_List
@@ -26,12 +26,6 @@ export class QQ implements QQCfg {
   }
   private chat() {
     // 最新的tim和qq 如果用意图启动，会出错误，所以改成查找控件来进入聊天窗口
-
-    // app.startActivity({
-    //   action: "android.intent.action.VIEW",
-    //   data: "mqq://im/chat?chat_type=wpa&version=1&src_type=web&uin=" + this.QQ,
-    //   packageName: this.PACKAGE_ID_LIST.QQ,
-    // })
 
     let a: boolean = false
     let b: boolean = false
@@ -63,11 +57,6 @@ export class QQ implements QQCfg {
 
   sendmsg(message: string) {
     const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(10e3)
-    const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
-    if (includes(message, "无效") || includes(message, "失败")) message = wn + "\n" + message
-    const defaultMsg = `当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
-    if (!(includes(message, "当前电量") || includes(message, "是否充电"))) message = message + "\n" + defaultMsg
-    message = message.replace(/^[\n-]+|[\n]+$/g, "") //如果开头有很多的-或者\n，则去掉  如果结尾有\n 去除
 
     input.setText(message)
 
@@ -77,17 +66,18 @@ export class QQ implements QQCfg {
     console.info("发送成功")
     return true
   }
-  openAndSendMsg(message: string = "测试") {
+  openAndSendMsg(message: Msgs) {
     console.log("发送信息")
     backHome(this.PACKAGE_ID_LIST.HOME)
     if (!this.open()) {
       console.error("无法打开QQ!")
       return false
     }
-
     this.chat() //进入聊天界面
 
-    if (includes(message, "无效")) console.warn("打卡无效,也许未到打卡时间!")
+    message = formatMsgsToString(message)
+
+    // if (Array.isArray(message)) message = message.join("\n")
     console.info(message)
     const r = this.sendmsg(message)
     sleep(1e3)
@@ -227,7 +217,10 @@ export class DD implements DDCfg {
         btn.click()
         console.log("按下打卡按钮")
       }
-      if (textContains("成功").findOne(15e3) === null) return `考勤打卡:${getCurrentTime()}打卡·无效`
+      if (textContains("成功").findOne(15e3) === null) {
+        console.warn("打卡无效,也许未到打卡时间!")
+        return `考勤打卡:${getCurrentTime()}打卡·无效`
+      }
       // return `考勤打卡:${getCurrentTime()}打卡·成功\n但未收到成功消息`
       return `考勤打卡:${getCurrentTime()}打卡·成功`
     }
@@ -259,7 +252,6 @@ type CLOCK_Package_Id_List = {
 }
 
 export type ClockCfg = {
-  root: boolean
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
   SWIPESCREEN: SwipeScreen
 }
@@ -269,7 +261,7 @@ export class Clock implements ClockCfg {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
 
     this.SWIPESCREEN = cfg.SWIPESCREEN
-    this.root = cfg.root
+    this.root = cfg.var.root
   }
 
   PACKAGE_ID_LIST: CLOCK_Package_Id_List

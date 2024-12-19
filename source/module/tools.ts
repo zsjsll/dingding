@@ -1,4 +1,4 @@
-import { ceil, first, floor, includes, last, parseInt, sampleSize, some, toNumber } from "lodash"
+import { floor, head, includes, isString, last, parseInt, some, toNumber } from "lodash"
 
 // -----------以下函数需要root权限-----------------
 
@@ -191,74 +191,63 @@ export function getStorageData(name: string, key: string) {
   // 默认返回undefined
 }
 
-export type Suspend = { after: number; count: number }
+export type Pause = [number, number]
 
-/**
- * 输入打卡天数，返回打卡次数
- * 先把str转为数字，整数部分乘以2
- * 小数部分向上取整，相加得到打卡次数
- *
- * @export
- * @param {string} input
- * @return {*}  {number}
- */
-export function calculateDay(input: Array<number>): Suspend {
-  console.log("input", input)
-
-  const day2Times = (day: number) => floor(day) * 2 + ceil(day % 1) // 天数转换成次数
-  const times = input.map(day2Times)
-  const after = times[0]
-  let count = times[1]
-  count ??= 1
-
-  return { after, count }
-}
-
-export function formatSuspendInfo(input: string): Suspend {
-  const a = "0" + input //在字符串前面添加一个0
-  const l = a.match(/[\d.]+/g)?.map((v) => {
-    //匹配所有数字，包括小数，
-    let b = floor(toNumber(v)) //变成数字，向下取整
-    if (isNaN(b)) b = 1 //判断NaN，如果是 变成1
-    return b
+export function formatPauseInfo(input: string): Pause {
+  input = "0" + input //在字符串前面添加一个0
+  //匹配所有数字，包括小数
+  const pause = input.match(/[\d.]+/g)?.map((v) => {
+    let num = floor(toNumber(v)) //变成数字，向下取整
+    if (isNaN(num)) num = 1 //判断NaN，如果是 变成1
+    return num
   }) ?? [0, 1]
-  if (l.length < 2) l.push(1)
-  if (l[1] === 0) l[0] = 0
 
-  const after = l[0]
-  const count = l[1]
-  return { after, count }
+  pause[1] ??= 1 //默认 暂停1次
+  pause[0] = pause[1] === 0 ? 0 : pause[0]
+
+  return [pause[0], pause[1]]
 }
 
-export function suspendStatus(suspend?: Suspend) {
-  const battery = device.getBattery()
-  const charge = device.isCharging()
-  const msg = `当前电量: ${battery}%\n是否充电: ${charge}`
-  const line = "-----------------------------\n"
-  if (suspend !== undefined) {
-    const { after, count } = suspend
-    if (after !== 0 && count !== 0) return line + `# 暂停设置 #\n延迟: ${after}次  ( ${after / 2}天 )\n暂停: ${count}次  ( ${count / 2}天 )\n` + line + msg
-    else if (after === 0 && count !== 0) return line + `* 暂停开始 *\n剩余: ${count}次  ( ${count / 2}天 )\n` + line + msg
-    else if (after !== 0 && count === 0) return `延迟: ${after}次\n暂停: ${count}次\n` + line + msg
-    else if (after === 0 && count === 0) return msg
+export function pauseStatus(pause: Pause) {
+  const line = "-----------------------------"
+  if (pause !== undefined) {
+    const [after, count] = pause
+    if (count === 0) return []
+    else if (after !== 0) return [line, "# 暂停设置 #", `延迟: ${after}次  ( ${after / 2}天 )`, `暂停: ${count}次  ( ${count / 2}天 )`, line]
+    else return [line, "* 暂停开始 *", `剩余: ${count}次  ( ${count / 2}天 )`, line]
   }
-  return msg
+  return ["好像出错了"]
 }
 
-export type Msgs = Array<string>
-export function formatMsgs(msgs: Msgs) {
+export function changePause(pause: Pause) {
+  if (pause[0] > 0) pause[0] -= 1 //如果有延迟打卡， 延迟打卡减1次
+  else if (pause[1] > 0) pause[1] -= 1 //如果没有延迟打卡次数，且有暂停打卡次数， 暂停打卡减1次
+  return pause
+}
+
+export type Info = Array<string>
+// export function formatInfomation(info: Info) {
+//   const line = "============================="
+
+// }
+
+// function baseMsgs() {
+//   return [`当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
+// }
+
+export type Msgs = string[] | string
+export function formatMsgsToString(msgs: Msgs): string {
+  if (isString(msgs)) msgs = [msgs]
   const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
-  const default_msgs = [`当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
-  const findsomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
-  const add_warn = findsomething(msgs, "无效") || findsomething(msgs, "失败")
-  const del_line = includes(first(msgs), "-") || includes(first(msgs), "\n")
-  const del_space_line = includes(last(msgs), "\n")
-  if (del_line) msgs.shift()
-  if (del_space_line) msgs.pop()
+  const base_msgs = [`当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
+  const findSomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
+  const del_head_line = includes(head(msgs), "-") || includes(head(msgs), "\n")
+  const del_last_line = includes(last(msgs), "\n")
+  const add_warn = findSomething(msgs, "无效") || findSomething(msgs, "失败")
+  if (del_head_line) msgs.shift()
+  if (del_last_line) msgs.pop()
   if (add_warn) msgs.unshift(wn)
-  msgs = [...msgs, ...default_msgs]
+  return [...msgs, ...base_msgs].join("\n")
 
   // message = message.replace(/^[\n-]+|[\n]+$/g, "") //如果开头有很多的-或者\n，则去掉  如果结尾有\n 去除
-
-  return msgs
 }

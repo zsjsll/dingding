@@ -1,9 +1,9 @@
-import { includes } from "lodash"
+import { includes, isEmpty } from "lodash"
 import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { formatSuspendInfo, delay, onlyRunOneScript, suspendStatus, formatMsgs } from "@/tools"
+import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, formatMsgsToString, changePause, Msgs } from "@/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -14,7 +14,7 @@ import { formatSuspendInfo, delay, onlyRunOneScript, suspendStatus, formatMsgs }
 
   //初始化设置
   const config = new Config()
-  const cfg = config.createJsonFile()
+  const cfg = config.initCfg()
   config.createLog()
   config.information(cfg)
   console.log("完成初始化设置")
@@ -35,81 +35,77 @@ import { formatSuspendInfo, delay, onlyRunOneScript, suspendStatus, formatMsgs }
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
     // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL && n.getPackageName() !== cfg.PACKAGE_ID_LIST.QQ) return
     if (n.getText() === "帮助") {
-      let msg =
-        "帮助: 显示所有指令内容\n打卡: 马上打卡\n锁屏: 停止当前动作后锁屏\n{n}暂停{m}: 延迟{n}次,暂停{m}次\n恢复: 恢复自动打卡\n状态: 显示当前状态" +
-        "\n" +
-        suspendStatus(cfg.suspend)
-      msg = msg + "\n" + formatMsgs(cfg.msgs)
+      const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
+
+      const pause_tatus = isEmpty(pauseStatus(cfg.var.pause)) ? [] : pauseStatus(cfg.var.pause)
+      const msg = [...default_msg, ...pause_tatus]
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
-        cfg.msgs = []
+        cfg.var.info = []
       })
       return
     }
     if (n.getText() === "打卡") {
       phone.doIt(() => {
-        let msg = dd.openAndPunchIn() + "\n" + suspendStatus(cfg.suspend)
-        msg = msg + "\n" + formatMsgs(cfg.msgs)
+        const msg = dd.openAndPunchIn()
         qq.openAndSendMsg(msg)
-        cfg.msgs = []
+        cfg.var.info = []
       })
       return
     }
-    if (n.getText() === "状态") {
-      let msg = suspendStatus(cfg.suspend)
-      msg = msg + "\n" + formatMsgs(cfg.msgs)
-      phone.doIt(() => {
-        qq.openAndSendMsg(msg)
-        cfg.msgs = []
-      })
-    }
+
     if (includes(n.getText(), "暂停")) {
-      cfg.suspend = formatSuspendInfo(n.getText())
-      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + suspendStatus(cfg.suspend)
-      if (cfg.suspend.count !== 0) msg = suspendStatus(cfg.suspend)
-      msg = msg + "\n" + formatMsgs(cfg.msgs)
+      cfg.var.pause = formatPauseInfo(n.getText())
+      const pause_tatus = isEmpty(pauseStatus(cfg.var.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.var.pause)
+      const msg = pause_tatus
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
-        cfg.msgs = []
+        cfg.var.info = []
       })
       return
     }
 
     if (n.getText() === "恢复") {
-      cfg.suspend = { after: 0, count: 0 }
-      console.info("恢复定时打卡")
-      let msg = "修改成功, 已恢复定时打卡功能" + "\n" + suspendStatus(cfg.suspend)
-      msg = msg + "\n" + formatMsgs(cfg.msgs)
+      cfg.var.pause = [0, 0]
+      const msg = ["恢复定时打卡成功"]
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
-        cfg.msgs = []
+        cfg.var.info = []
       })
       return
     }
 
     if (n.getText() === "锁屏") {
-      let msg = "已停止当前动作" + "\n" + suspendStatus(cfg.suspend)
-      console.info("停止当前动作")
-      msg = msg + "\n" + formatMsgs(cfg.msgs)
+      const msg = ["已停止当前动作", ...pauseStatus(cfg.var.pause)]
       phone.doIt(() => {
         qq.openAndSendMsg(msg)
-        cfg.msgs = []
+        cfg.var.info = []
       })
       return
     }
 
     if (n.getText() === "测试") {
       console.info("测试")
-      console.log(threads.currentThread())
-      const t = threads.start(() => {
-        console.log(threads.currentThread())
+      const lock = threads.lock()
+      threads.start(() => {
+        lock.lock()
+        let k = 50
+        while (k > 0) {
+          console.log(k)
+          k--
+        }
+        lock.unlock()
       })
-      t.waitFor()
-      t.setTimeout(()=>console.log("hahaha")
-      , 2000)
-      sleep(1000)
-      console.log(t.isAlive())
-
+      threads.start(() => {
+        lock.lock()
+        let k = 0
+        while (k < 50) {
+          console.log(k)
+          k++
+        }
+        lock.unlock()
+      })
+      console.log(cfg.var.thread)
 
       return
     }
@@ -120,22 +116,21 @@ import { formatSuspendInfo, delay, onlyRunOneScript, suspendStatus, formatMsgs }
     // if (n.getText() !== "闹钟") return
     // if (n.when === 0) return
 
-    let msg = "! 暂停打卡结束 !"
-    let daka: boolean = false //执行打卡操作，或者直接输出现在状态
-    if (cfg.suspend.after > 0 || cfg.suspend.count === 0) daka = true
+    let msg: Msgs = "! 暂停打卡结束 !"
 
-    if (cfg.suspend.after > 0) cfg.suspend.after -= 1 //如果有延迟打卡， 延迟打卡减1次
-    else if (cfg.suspend.count > 0) cfg.suspend.count = cfg.suspend.count -= 1 //如果没有延迟打卡次数，且有暂停打卡次数， 暂停打卡减1次
+    const daka = cfg.var.pause[0] > 0 || cfg.var.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
+    cfg.var.pause = changePause(cfg.var.pause) //修改pause参数
+    const pause_tatus = isEmpty(pauseStatus(cfg.var.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.var.pause)
+    clock.closeAlarm(cfg.var.root) //关闭闹钟
 
-    clock.closeAlarm(cfg.root) //关闭闹钟
     phone.doIt(() => {
       if (daka) {
         delay(cfg.DELAY) //随机延迟打卡
-        msg = dd.openAndPunchIn() + "\n" + suspendStatus(cfg.suspend)
-      } else msg = msg + "\n" + suspendStatus(cfg.suspend)
-      msg = msg + "\n" + formatMsgs(cfg.msgs)
+        msg = dd.openAndPunchIn()
+      } else msg = pause_tatus
+
       qq.openAndSendMsg(msg)
-      cfg.msgs = []
+      cfg.var.info = []
     })
     return
   }
@@ -144,17 +139,17 @@ import { formatSuspendInfo, delay, onlyRunOneScript, suspendStatus, formatMsgs }
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.DD) return
     // if (!includes(n.getText(), "考勤打卡")) return
     // cfg.msg = n.getText().replace(/^\[.+?\]/, "")
-    // const msg = cfg.msg + "\n" + showStatus(cfg.suspend)
+    // const msg = cfg.msg + "\n" + showStatus(init.pause)
     let msg: string = ""
     if (includes(n.getText(), "考勤打卡")) return
     else {
-      cfg.msgs.push(n.getText())
-      msg = msg + "\n" + formatMsgs(cfg.msgs)
+      cfg.var.info.push(n.getText())
+      msg = msg + "\n" + formatMsgsToString(cfg.var.info)
     }
 
     phone.doIt(() => {
       qq.openAndSendMsg(msg)
-      cfg.msgs = []
+      cfg.var.info = []
     })
     return
   }

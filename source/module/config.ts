@@ -1,15 +1,12 @@
 import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "@/app"
 import { PhoneCfg } from "@/phone"
 import { ListenerCfg } from "@/listener"
-import { getCurrentDate, Suspend, isRoot, Delay, Msgs } from "@/tools"
+import { getCurrentDate, isRoot, Delay, Pause } from "@/tools"
 import { toString } from "lodash"
 
-export type Cfg = {
+type Json = {
   PACKAGE_ID_LIST: White_list
   GLOBAL_LOG_FILE_DIR: string
-  msgs: Msgs
-  suspend: Suspend
-  root: boolean
   DELAY: Delay
 } & QQCfg &
   DDCfg &
@@ -28,16 +25,31 @@ type BASE_CONFIG = {
   CORP_ID?: string
 }
 
+export type Variable = {
+  root: boolean
+  pause: Pause
+  thread: boolean
+  info: string[]
+}
+
+export type Cfg = { var: Variable } & Json
 export class Config {
-  config: Cfg
+  config: Json
   config_path: string
+  var: Variable
 
   constructor() {
+    this.var = {
+      root: false,
+      pause: [0, 0],
+      thread: false,
+      info: [],
+    }
+
     this.config_path = files.join(files.cwd(), "config.json")
 
     this.config = {
       DEV: false,
-      root: false,
       ACCOUNT: "",
       PASSWD: "",
       QQ: "",
@@ -69,13 +81,10 @@ export class Config {
       },
 
       GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径
-
-      suspend: { after: 0, count: 0 }, //暂停打卡次数
-      msgs: [],
     }
   }
 
-  private updateConfig(config: Cfg) {
+  private updateConfig(config: Json) {
     let ACCOUNT = config.ACCOUNT
     let PASSWD = config.PASSWD
     let QQ = config.QQ
@@ -91,12 +100,12 @@ export class Config {
       if (!QQ) QQ = toString(dialogs.rawInput("输入QQ号"))
       else break
     }
-    config.root = isRoot()
+
     return { ...config, ACCOUNT, PASSWD, QQ }
   }
 
-  createJsonFile() {
-    let config: Cfg = this.config
+  private createJsonFile() {
+    let config = this.config
     if (files.exists(this.config_path)) {
       try {
         const cfg: Cfg = JSON.parse(files.read(this.config_path))
@@ -106,9 +115,16 @@ export class Config {
       }
     } else console.warn("不存在config.json文件，创建并使用默认配置")
 
-    const final_config = this.updateConfig(config)
-    const json = JSON.stringify(final_config, null, 2)
+    const cfg = this.updateConfig(config)
+    const json = JSON.stringify(cfg, null, 2)
     files.write(this.config_path, json)
+    return cfg
+  }
+
+  initCfg() {
+    this.var.root = isRoot()
+    const cfg = this.createJsonFile()
+    const final_config: Cfg = { ...cfg, var: this.var }
     return final_config
   }
 

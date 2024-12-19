@@ -1,18 +1,8 @@
-function aaa({ a = "123", b, c }: { a?: string; b?: string; c?: string } = {}) {
-  console.log(a)
-  console.log(b)
-  console.log(c)
-}
-aaa()
+const a = { b: { c: 1 } }
 
-function bbb([min, max]: [number, number] = [11, 22]) {
-  console.log(min)
-  console.log(max)
+function f(k: undefined) {
+  k.c = 5
 }
 
-bbb()
-
-const c = "0   暂停12.235"
-
-const d = c.match(/\d+(\.\d+)?/g)
-console.log(d)
+f(a.b)
+console.log(a)
