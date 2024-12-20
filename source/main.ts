@@ -1,4 +1,4 @@
-import { includes, isEmpty, join } from "lodash"
+import { includes, isEmpty } from "lodash"
 import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
@@ -124,7 +124,7 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.CLOCK) return
     // if (n.getText() !== "闹钟") return
     // if (n.when === 0) return
-    clock.closeAlarm(cfg.root)
+    clock.closeAlarm(cfg.ROOT)
 
     phone.doIt(cfg, () => {
       let msg: Msgs
