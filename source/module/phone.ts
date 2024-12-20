@@ -1,5 +1,5 @@
 import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, UnLockScreen as SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
-import { Cfg } from "./config"
+import { Cfg, Variable } from "./config"
 
 export type PhoneCfg = {
   DEV: boolean
@@ -15,7 +15,6 @@ type Phone_Package_Id_List = {
 
 export class Phone implements PhoneCfg {
   DEV: boolean
-  root: boolean
   SCREEN_BRIGHTNESS: number
   SWIPESCREEN: SwipeScreen
   VOLUME: number
@@ -23,7 +22,6 @@ export class Phone implements PhoneCfg {
 
   constructor(cfg: Cfg) {
     this.DEV = cfg.DEV
-    this.root = cfg.var.root
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.VOLUME = cfg.VOLUME
@@ -69,18 +67,15 @@ export class Phone implements PhoneCfg {
     return false
   }
 
-  doIt(f: () => void) {
-    //默认不延迟
+  doIt(variable: Variable, f: () => void) {
     threads.shutDownAll()
 
-    threads.start(() => {
-      this.turnOn(this.root)
-      openWifi(this.root)
+    variable.thread = threads.start(() => {
+      this.turnOn(variable.root)
+      openWifi(variable.root)
       f()
-
-      this.turnOff(this.root)
+      variable.info = []
+      this.turnOff(variable.root)
     })
-
-    //等待，这样可以打断锁屏，并且让console.log()输出完整
   }
 }

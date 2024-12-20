@@ -1,8 +1,4 @@
-const a = { b: { c: 1 } }
-
-function f(k: undefined) {
-  k.c = 5
+for (;;) {
+  console.log("123123")
+  break
 }
-
-f(a.b)
-console.log(a)

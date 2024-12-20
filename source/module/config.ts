@@ -28,11 +28,11 @@ type BASE_CONFIG = {
 export type Variable = {
   root: boolean
   pause: Pause
-  thread: boolean
+  thread: org.autojs.autojs.core.looper.TimerThread | null
   info: string[]
 }
 
-export type Cfg = { var: Variable } & Json
+export type Cfg = Variable & Json
 export class Config {
   config: Json
   config_path: string
@@ -42,7 +42,7 @@ export class Config {
     this.var = {
       root: false,
       pause: [0, 0],
-      thread: false,
+      thread: null,
       info: [],
     }
 
@@ -124,7 +124,7 @@ export class Config {
   initCfg() {
     this.var.root = isRoot()
     const cfg = this.createJsonFile()
-    const final_config: Cfg = { ...cfg, var: this.var }
+    const final_config: Cfg = { ...cfg, ...this.var }
     return final_config
   }
 

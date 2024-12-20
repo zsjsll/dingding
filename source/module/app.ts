@@ -259,20 +259,17 @@ export type ClockCfg = {
 export class Clock implements ClockCfg {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
-
     this.SWIPESCREEN = cfg.SWIPESCREEN
-    this.root = cfg.var.root
   }
 
   PACKAGE_ID_LIST: CLOCK_Package_Id_List
 
   SWIPESCREEN: SwipeScreen
-  root: boolean
 
   //需要root
-  closeAlarm() {
+  closeAlarm(root: boolean) {
     sleep(2e3)
-    if (this.root) {
+    if (root) {
       for (let i = 0; i < 10; i++) {
         VolumeDown()
         sleep(1e3)

@@ -226,14 +226,11 @@ export function changePause(pause: Pause) {
 }
 
 export type Info = Array<string>
-// export function formatInfomation(info: Info) {
-//   const line = "============================="
 
-// }
-
-// function baseMsgs() {
-//   return [`当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
-// }
+export function formatInfo(n: org.autojs.autojs.core.notification.Notification) {
+  // const line = "============================="
+  return n.getText()
+}
 
 export type Msgs = string[] | string
 export function formatMsgsToString(msgs: Msgs): string {
