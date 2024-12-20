@@ -2,7 +2,7 @@ import { floor, head, includes, isString, last, parseInt, some, toNumber } from 
 
 // -----------以下函数需要root权限-----------------
 
-export function swipeScreen(opt: UnLockScreen, root: boolean) {
+export function swipeScreen(opt: SwipeScreen, root: boolean) {
   if (root) Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   else swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   // gesture(
@@ -148,7 +148,7 @@ export function isDeviceLocked() {
   return km.isKeyguardLocked()
 }
 
-export type UnLockScreen = {
+export type SwipeScreen = {
   TIME: number
   START: number
   END: number
