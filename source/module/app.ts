@@ -1,6 +1,6 @@
 import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, UnLockScreen as SwipeScreen, Msgs, formatMsgsToString } from "@/tools"
 import { Cfg } from "./config"
-import { startsWith } from "lodash"
+import { isEmpty, startsWith } from "lodash"
 
 export type QQCfg = {
   PACKAGE_ID_LIST: QQ_Package_Id_List
@@ -64,25 +64,29 @@ export class QQ implements QQCfg {
     sleep(1000)
     send.click()
     console.info("发送成功")
-    return true
+    return
   }
   openAndSendMsg(message: Msgs) {
-    console.log("发送信息")
-    backHome(this.PACKAGE_ID_LIST.HOME)
-    if (!this.open()) {
-      console.error("无法打开QQ!")
-      return false
+    if (isEmpty(message)) {
+      console.log("消息为空，直接退出！")
+    } else {
+      console.log("发送信息")
+      backHome(this.PACKAGE_ID_LIST.HOME)
+      if (!this.open()) {
+        console.error("无法打开QQ!")
+        return false
+      }
+      this.chat() //进入聊天界面
+
+      message = formatMsgsToString(message)
+
+      // if (Array.isArray(message)) message = message.join("\n")
+      console.info(message)
+      this.sendmsg(message)
     }
-    this.chat() //进入聊天界面
-
-    message = formatMsgsToString(message)
-
-    // if (Array.isArray(message)) message = message.join("\n")
-    console.info(message)
-    const r = this.sendmsg(message)
     sleep(1e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
-    return r
+    return
   }
 }
 
