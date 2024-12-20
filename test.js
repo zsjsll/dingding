@@ -1,5 +1,13 @@
-let k = 50
-while (k) {
-  console.log(k)
-  k--
+
+
+function f(o) {
+  o.before()
+  console.log(1)
+
+  console.log(2)
+
 }
+
+f({
+  before: () => console.log("bbbb"),
+})

@@ -1,4 +1,4 @@
-import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, UnLockScreen as SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
+import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
 import { Cfg, Variable } from "./config"
 import { isEmpty } from "lodash"
 
@@ -69,16 +69,17 @@ export class Phone implements PhoneCfg {
   doIt(variable: Variable, f: () => void, prep = () => false, killall = true) {
     if (killall) threads.shutDownAll()
 
-    variable.thread = threads.start(() => {
+      variable.thread = threads.start(() => {
       const exit = prep()
       if (!exit) {
         this.turnOn(variable.root)
         openWifi(variable.root)
         f()
-        // variable.info = []
+        variable.info = []
         if (!isEmpty(variable.info)) return
         this.turnOff(variable.root)
       }
     })
+
   }
 }

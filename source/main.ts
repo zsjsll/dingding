@@ -84,24 +84,10 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
     if (n.getText() === "测试") {
       console.info("测试")
 
-      // t = threads.start(() => {
-      //   console.log(cfg.info)
-      //   cfg.info = []
-      //   sleep(5000)
-      // })
-
-      // k = threads.start(() => {
-      //   console.log("kkkkkkkkkkkkkkkkk")
-
-      //   k.join(0)
-      //   console.log(cfg.info)
-      //   cfg.info = []
-      //   sleep(5000)
-      // })
       cfg.info = ["123123123123123123123"]
       if (cfg.thread?.isAlive()) {
         console.log("alive")
-        const k = cfg.thread
+        const old_thread = cfg.thread
         if (isEmpty(cfg.info)) return
         phone.doIt(
           cfg,
@@ -112,7 +98,7 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
             }
           },
           () => {
-            k?.join(0)
+            old_thread?.join(0)
             if (isEmpty(cfg.info)) return true
             return false
           },
@@ -162,13 +148,13 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
     cfg.info.push(formatInfo(n))
     if (cfg.thread?.isAlive()) {
       console.log("alive")
-      const k = cfg.thread
+      const old_thread = cfg.thread
       if (isEmpty(cfg.info)) return
       phone.doIt(
         cfg,
         () => qq.openAndSendMsg(cfg.info),
         () => {
-          k?.join(0)
+          old_thread?.join(0)
           if (isEmpty(cfg.info)) return true
           return false
         },
