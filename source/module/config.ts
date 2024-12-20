@@ -28,7 +28,7 @@ type BASE_CONFIG = {
 export type Variable = {
   root: boolean
   pause: Pause
-  thread: org.autojs.autojs.core.looper.TimerThread | null
+  thread: org.autojs.autojs.core.looper.TimerThread | undefined
   info: string[]
 }
 
@@ -42,7 +42,7 @@ export class Config {
     this.var = {
       root: false,
       pause: [0, 0],
-      thread: null,
+      thread: undefined,
       info: [],
     }
 

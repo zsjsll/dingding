@@ -29,7 +29,7 @@ export function closeScreen(root: boolean) {
     // console.error("root手机或者提升系统版本9.0以上，还不行的话换手机或者想想其他办法吧！")
   }
 
-  sleep(2e3)
+  sleep(1e3)
 }
 
 export function isRoot() {
@@ -77,10 +77,7 @@ export function onlyRunOneScript() {
 
 export function backHome(home_id: string) {
   for (let i = 0; i < 10; i++) {
-    if (currentPackage() === home_id) {
-      sleep(1e3)
-      return
-    }
+    if (currentPackage() === home_id) break
     back()
     sleep(200)
   }

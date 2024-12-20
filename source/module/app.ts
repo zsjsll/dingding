@@ -55,7 +55,7 @@ export class QQ implements QQCfg {
     sleep(2e3)
   }
 
-  sendmsg(message: string) {
+  private sendmsg(message: string) {
     const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(10e3)
 
     input.setText(message)
@@ -82,7 +82,6 @@ export class QQ implements QQCfg {
     const r = this.sendmsg(message)
     sleep(1e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
-    sleep(5e3)
     return r
   }
 }
@@ -241,7 +240,6 @@ export class DD implements DDCfg {
     const r = this.punchIn()
     sleep(3e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
-    sleep(2e3)
     return r
   }
 }

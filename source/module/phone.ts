@@ -1,5 +1,6 @@
 import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, UnLockScreen as SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
 import { Cfg, Variable } from "./config"
+import { isEmpty } from "lodash"
 
 export type PhoneCfg = {
   DEV: boolean
@@ -56,8 +57,6 @@ export class Phone implements PhoneCfg {
     console.log("关闭屏幕")
     for (let i = 0; i < 10; i++) {
       closeScreen(root)
-      sleep(2000)
-
       if (!device.isScreenOn()) {
         console.info("屏幕已关闭")
         return true
@@ -67,15 +66,19 @@ export class Phone implements PhoneCfg {
     return false
   }
 
-  doIt(variable: Variable, f: () => void) {
-    threads.shutDownAll()
+  doIt(variable: Variable, f: () => void, prep = () => false, killall = true) {
+    if (killall) threads.shutDownAll()
 
     variable.thread = threads.start(() => {
-      this.turnOn(variable.root)
-      openWifi(variable.root)
-      f()
-      variable.info = []
-      this.turnOff(variable.root)
+      const exit = prep()
+      if (!exit) {
+        this.turnOn(variable.root)
+        openWifi(variable.root)
+        f()
+        // variable.info = []
+        if (!isEmpty(variable.info)) return
+        this.turnOff(variable.root)
+      }
     })
   }
 }
