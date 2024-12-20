@@ -91,7 +91,7 @@ export class Phone implements PhoneCfg {
   }
 }
 
-type Hook = {
+export type Hook = {
   beforeCreateThread: () => void
   afterCreateThread: () => void
   beforeTurnOn: () => void

@@ -2,7 +2,7 @@ import { includes, isEmpty } from "lodash"
 import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
-import { Phone } from "@/phone"
+import { Hook, Phone } from "@/phone"
 import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msgs, formatInfo } from "@/tools"
 ;(function main() {
   //初始化脚本
@@ -37,12 +37,14 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
     // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL && n.getPackageName() !== cfg.PACKAGE_ID_LIST.QQ) return
     if (n.getText() === "帮助") {
-      phone.doIt(cfg, () => {
-        const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
+      const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
 
-        const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
-        const msg = [...default_msg, ...pause_tatus]
-        qq.openAndSendMsg(msg)
+      const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
+      const msg = [...default_msg, ...pause_tatus]
+      const hook: Hook = phone.doIt({
+        running: () => {
+          console.log(213)
+        },
       })
       return
     }
