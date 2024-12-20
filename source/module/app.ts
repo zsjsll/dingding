@@ -1,4 +1,4 @@
-import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, UnLockScreen as SwipeScreen, Msgs, formatMsgsToString } from "@/tools"
+import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, SwipeScreen as SwipeScreen, Msgs, formatMsgsToString } from "@/tools"
 import { Cfg } from "./config"
 import { isEmpty, startsWith } from "lodash"
 
