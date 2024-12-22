@@ -1,6 +1,5 @@
 import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
-import { Cfg, Variable } from "./config"
-import { isEmpty } from "lodash"
+import { Cfg } from "./config"
 
 export type PhoneCfg = {
   DEV: boolean
@@ -14,21 +13,25 @@ type Phone_Package_Id_List = {
   HOME: string
 }
 
-export class Phone implements PhoneCfg {
-  DEV: boolean
-  ROOT: boolean
-  SCREEN_BRIGHTNESS: number
-  SWIPESCREEN: SwipeScreen
-  VOLUME: number
-  PACKAGE_ID_LIST: Phone_Package_Id_List
+export class Phone {
+  private DEV: boolean
+  private SCREEN_BRIGHTNESS: number
+  private SWIPESCREEN: SwipeScreen
+  private VOLUME: number
+  private PACKAGE_ID_LIST: Phone_Package_Id_List
+  private ROOT: boolean
+  next: step
+  exit: step
 
   constructor(cfg: Cfg) {
-    this.ROOT = cfg.ROOT
     this.DEV = cfg.DEV
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.VOLUME = cfg.VOLUME
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
+    this.ROOT = cfg.ROOT
+    this.next = step.next
+    this.exit = step.exit
   }
 
   turnOn(root: boolean) {
@@ -69,32 +72,17 @@ export class Phone implements PhoneCfg {
     return false
   }
 
-  doIt(
-    hook: Hook = {
-      beforeCreateThread: function (): void {},
-      beforeTurnOn: function (): void {},
-      running: function (): void {},
-      afterTurnOff: function (): void {},
-      afterCreateThread: function (): void {},
-    }
-  ) {
-    hook.beforeCreateThread()
+  doIt(f: (...args: any[]) => step | void) {
     const thread = threads.start(() => {
-      hook.beforeTurnOn
       this.turnOn(this.ROOT) //打开wifi也在这个地方完成
-      hook.running()
+      if (f() === this.exit) return
       this.turnOff(this.ROOT)
-      hook.afterTurnOff()
     })
-    hook.afterCreateThread()
+
     return thread
   }
 }
-
-export type Hook = {
-  beforeCreateThread: () => void
-  afterCreateThread: () => void
-  beforeTurnOn: () => void
-  running: () => void
-  afterTurnOff: () => void
+enum step {
+  next = "next",
+  exit = "exit",
 }

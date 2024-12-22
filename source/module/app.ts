@@ -186,7 +186,7 @@ export class DD implements DDCfg {
     return false
   }
 
-  private punchIn() {
+  private punchIn(): Msgs {
     const u = "dingtalk://dingtalkclient/page/link?url=https://attend.dingtalk.com/attend/index.html"
     const url = this.CORP_ID === "" ? u : `${u}?corpId=${this.CORP_ID}`
 
@@ -232,7 +232,7 @@ export class DD implements DDCfg {
     return e
   }
 
-  openAndPunchIn() {
+  openAndPunchIn(): Msgs {
     console.log("本地时间: " + getCurrentDate() + " " + getCurrentTime())
     console.log("开始打卡")
     backHome(this.PACKAGE_ID_LIST.HOME)

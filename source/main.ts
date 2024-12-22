@@ -2,7 +2,7 @@ import { includes, isEmpty } from "lodash"
 import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
-import { Hook, Phone } from "@/phone"
+import { Phone } from "@/phone"
 import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msgs, formatInfo } from "@/tools"
 ;(function main() {
   //初始化脚本
@@ -11,8 +11,6 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
   auto()
   shell("", true)
   console.log("完成初始化脚本")
-  let t: org.autojs.autojs.core.looper.TimerThread
-  let k: org.autojs.autojs.core.looper.TimerThread
 
   //初始化设置
   const config = new Config()
@@ -34,90 +32,71 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
   })
   toastLog("运行中。。。")
 
-  function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
-    // if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.EMAIL && n.getPackageName() !== cfg.PACKAGE_ID_LIST.QQ) return
-    if (n.getText() === "帮助") {
-      const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
+  //构造默认函数
+  const sendMsg = (final_msg: Msgs) => {
+    qq.openAndSendMsg(final_msg)
+    cfg.info = []
+    if (isEmpty(cfg.info)) return phone.next
+    else return phone.exit
+  }
 
+  function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
+    if (n.getText() === "帮助") {
+      threads.shutDownAll()
+      const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
       const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
       const msg = [...default_msg, ...pause_tatus]
-      const hook: Hook = phone.doIt({
-        running: () => {
-          console.log(213)
-        },
-      })
+      cfg.thread = phone.doIt(() => sendMsg(msg))
+
       return
     }
+
     if (n.getText() === "打卡") {
-      phone.doIt(cfg, () => {
-        const msg = dd.openAndPunchIn()
-        qq.openAndSendMsg(msg)
-      })
+      threads.shutDownAll()
+      cfg.thread = phone.doIt(() => sendMsg(dd.openAndPunchIn()))
       return
     }
 
     if (includes(n.getText(), "暂停")) {
-      phone.doIt(cfg, () => {
-        cfg.pause = formatPauseInfo(n.getText())
-        const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
-        const msg = pause_tatus
-        qq.openAndSendMsg(msg)
-      })
+      threads.shutDownAll()
+      cfg.pause = formatPauseInfo(n.getText())
+      const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
+      cfg.thread = phone.doIt(() => sendMsg(pause_tatus))
       return
     }
 
     if (n.getText() === "恢复") {
-      phone.doIt(cfg, () => {
-        cfg.pause = [0, 0]
-        const msg = ["恢复定时打卡成功"]
-        qq.openAndSendMsg(msg)
-      })
+      threads.shutDownAll()
+      cfg.pause = [0, 0]
+      const msg = ["恢复定时打卡成功"]
+      cfg.thread = phone.doIt(() => sendMsg(msg))
       return
     }
 
     if (n.getText() === "锁屏") {
-      phone.doIt(cfg, () => {
-        const msg = ["已停止当前动作", ...pauseStatus(cfg.pause)]
-        qq.openAndSendMsg(msg)
-      })
+      threads.shutDownAll()
+      const msg = ["已停止当前动作", ...pauseStatus(cfg.pause)]
+      cfg.thread = phone.doIt(() => sendMsg(msg))
       return
     }
 
     if (n.getText() === "测试") {
       console.info("测试")
+      const t = threads.start(() => {
+        for (let i = 0; i < 10; i++) {
+          console.log(i)
+          sleep(500)
+        }
+      })
+      threads.start(() => {
+        console.log("开机")
+        t.join(0)
 
-      cfg.info = ["123123123123123123123"]
-      if (cfg.thread?.isAlive()) {
-        console.log("alive")
-        const old_thread = cfg.thread
-        if (isEmpty(cfg.info)) return
-        phone.doIt(
-          cfg,
-          () => {
-            for (let a = 0; a < 5; a++) {
-              console.log(a)
-              sleep(1000)
-            }
-          },
-          () => {
-            old_thread?.join(0)
-            if (isEmpty(cfg.info)) return true
-            return false
-          },
-          false
-        )
-      } else {
-        phone.doIt(cfg, () => {
-          for (let a = 0; a < 5; a++) {
-            console.log(a)
-            sleep(1000)
-          }
-        })
-      }
-
-      // t.interrupt()
-      // if (t.isAlive() && c) t.interrupt()
-
+        for (let i = 10; i > 10; i--) {
+          console.log(i)
+          sleep(500)
+        }
+      })
       return
     }
   }
@@ -127,18 +106,17 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
     // if (n.getText() !== "闹钟") return
     // if (n.when === 0) return
     clock.closeAlarm(cfg.ROOT)
-
-    phone.doIt(cfg, () => {
-      let msg: Msgs
-      const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
-      cfg.pause = changePause(cfg.pause) //修改pause参数
-      const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)
+    threads.shutDownAll()
+    let msg: Msgs
+    const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
+    cfg.pause = changePause(cfg.pause) //修改pause参数
+    const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)
+    cfg.thread = phone.doIt(() => {
       if (daka) {
         delay(cfg.DELAY) //随机延迟打卡
         msg = dd.openAndPunchIn()
       } else msg = pause_tatus
-
-      qq.openAndSendMsg(msg)
+      return sendMsg(msg)
     })
     return
   }
@@ -152,17 +130,13 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
       console.log("alive")
       const old_thread = cfg.thread
       if (isEmpty(cfg.info)) return
-      phone.doIt(
-        cfg,
-        () => qq.openAndSendMsg(cfg.info),
-        () => {
-          old_thread?.join(0)
-          if (isEmpty(cfg.info)) return true
-          return false
-        },
-        false
-      )
-    } else phone.doIt(cfg, () => qq.openAndSendMsg(cfg.info))
+      //FIX 这个地方有问题，不能在线程的中间join进去，这样会导致2个线程同时执行
+      cfg.thread = phone.doIt(() => {
+        old_thread?.join(0)
+        if (isEmpty(cfg.info)) return phone.exit
+        return sendMsg(cfg.info)
+      })
+    } else cfg.thread = phone.doIt(() => sendMsg(cfg.info))
 
     // if (cfg.thread?.isAlive()) {
     //   console.log("alive")
