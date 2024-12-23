@@ -108,7 +108,6 @@ export function getCurrentTime() {
 
 export function getCurrentDate() {
   const WEEK_DAY = ["(日)", "(一)", "(二)", "(三)", "(四)", "(五)", "(六)"]
-  //TODO 可以枚举一下
   const currentDate = new Date()
   const year = formatDateDigit(currentDate.getFullYear())
   const month = formatDateDigit(currentDate.getMonth() + 1)

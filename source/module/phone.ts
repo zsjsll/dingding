@@ -19,9 +19,9 @@ export class Phone {
   private SWIPESCREEN: SwipeScreen
   private VOLUME: number
   private PACKAGE_ID_LIST: Phone_Package_Id_List
-  private ROOT: boolean
-  next: step
-  exit: step
+
+  next: step = step.next
+  exit: step = step.exit
 
   constructor(cfg: Cfg) {
     this.DEV = cfg.DEV
@@ -29,9 +29,6 @@ export class Phone {
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.VOLUME = cfg.VOLUME
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
-    this.ROOT = cfg.ROOT
-    this.next = step.next
-    this.exit = step.exit
   }
 
   turnOn(root: boolean) {
@@ -71,17 +68,8 @@ export class Phone {
     console.error("需root权限或Android 9 以上版本,等待屏幕自动关闭")
     return false
   }
-
-  doIt(f: (...args: any[]) => step | void) {
-    const thread = threads.start(() => {
-      this.turnOn(this.ROOT) //打开wifi也在这个地方完成
-      if (f() === this.exit) return
-      this.turnOff(this.ROOT)
-    })
-
-    return thread
-  }
 }
+
 enum step {
   next = "next",
   exit = "exit",

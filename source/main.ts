@@ -46,14 +46,22 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
       const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
       const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
       const msg = [...default_msg, ...pause_tatus]
-      cfg.thread = phone.doIt(() => sendMsg(msg))
+      cfg.thread = threads.start(() => {
+        phone.turnOn(cfg.ROOT)
+        if (sendMsg(msg) === phone.exit) return
+        phone.turnOff(cfg.ROOT)
+      })
 
       return
     }
 
     if (n.getText() === "打卡") {
       threads.shutDownAll()
-      cfg.thread = phone.doIt(() => sendMsg(dd.openAndPunchIn()))
+      cfg.thread = threads.start(() => {
+        phone.turnOn(cfg.ROOT)
+        if (sendMsg(dd.openAndPunchIn()) === phone.exit) return
+        phone.turnOff(cfg.ROOT)
+      })
       return
     }
 
@@ -61,7 +69,11 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
       threads.shutDownAll()
       cfg.pause = formatPauseInfo(n.getText())
       const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
-      cfg.thread = phone.doIt(() => sendMsg(pause_tatus))
+      cfg.thread = threads.start(() => {
+        phone.turnOn(cfg.ROOT)
+        if (sendMsg(pause_tatus) === phone.exit) return
+        phone.turnOff(cfg.ROOT)
+      })
       return
     }
 
@@ -69,35 +81,27 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
       threads.shutDownAll()
       cfg.pause = [0, 0]
       const msg = ["恢复定时打卡成功"]
-      cfg.thread = phone.doIt(() => sendMsg(msg))
+      cfg.thread = threads.start(() => {
+        phone.turnOn(cfg.ROOT)
+        if (sendMsg(msg) === phone.exit) return
+        phone.turnOff(cfg.ROOT)
+      })
       return
     }
 
     if (n.getText() === "锁屏") {
       threads.shutDownAll()
       const msg = ["已停止当前动作", ...pauseStatus(cfg.pause)]
-      cfg.thread = phone.doIt(() => sendMsg(msg))
+      cfg.thread = threads.start(() => {
+        phone.turnOn(cfg.ROOT)
+        if (sendMsg(msg) === phone.exit) return
+        phone.turnOff(cfg.ROOT)
+      })
       return
     }
 
     if (n.getText() === "测试") {
       console.info("测试")
-      const t = threads.start(() => {
-        for (let i = 0; i < 10; i++) {
-          console.log(i)
-          sleep(500)
-        }
-      })
-      threads.start(() => {
-        console.log("开机")
-        t.join(0)
-
-        for (let i = 10; i > 10; i--) {
-          console.log(i)
-          sleep(500)
-        }
-      })
-      return
     }
   }
 
@@ -105,19 +109,23 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.CLOCK) return
     // if (n.getText() !== "闹钟") return
     // if (n.when === 0) return
-    clock.closeAlarm(cfg.ROOT)
     threads.shutDownAll()
+    clock.closeAlarm(cfg.ROOT)
     let msg: Msgs
     const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
     cfg.pause = changePause(cfg.pause) //修改pause参数
     const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)
-    cfg.thread = phone.doIt(() => {
+
+    cfg.thread = threads.start(() => {
+      phone.turnOn(cfg.ROOT)
       if (daka) {
         delay(cfg.DELAY) //随机延迟打卡
         msg = dd.openAndPunchIn()
       } else msg = pause_tatus
-      return sendMsg(msg)
+      if (sendMsg(msg) === phone.exit) return
+      phone.turnOff(cfg.ROOT)
     })
+
     return
   }
 
@@ -130,20 +138,20 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
       console.log("alive")
       const old_thread = cfg.thread
       if (isEmpty(cfg.info)) return
-      //FIX 这个地方有问题，不能在线程的中间join进去，这样会导致2个线程同时执行
-      cfg.thread = phone.doIt(() => {
+      cfg.thread = threads.start(() => {
         old_thread?.join(0)
-        if (isEmpty(cfg.info)) return phone.exit
-        return sendMsg(cfg.info)
+        phone.turnOn(cfg.ROOT)
+        if (isEmpty(cfg.info)) return
+        if (sendMsg(cfg.info) === phone.exit) return
+        phone.turnOff(cfg.ROOT)
       })
-    } else cfg.thread = phone.doIt(() => sendMsg(cfg.info))
+    } else
+      cfg.thread = threads.start(() => {
+        phone.turnOn(cfg.ROOT)
+        if (sendMsg(cfg.info) === phone.exit) return
+        phone.turnOff(cfg.ROOT)
+      })
 
-    // if (cfg.thread?.isAlive()) {
-    //   console.log("alive")
-    //   const old_thread = cfg.thread
-    //   if (isEmpty(cfg.info)) return
-    //   cfg.thread = threads.start(() => {})
-    // }
     return
   }
 })()

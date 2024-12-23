@@ -34,12 +34,12 @@ export type Variable = {
 
 export type Cfg = Variable & Json
 export class Config {
-  config: Json
-  config_path: string
-  var: Variable
+  private config: Json
+  private config_path: string
+  private variable: Variable
 
   constructor() {
-    this.var = {
+    this.variable = {
       ROOT: false,
       pause: [0, 0],
       thread: undefined,
@@ -122,9 +122,9 @@ export class Config {
   }
 
   initCfg() {
-    this.var.ROOT = isRoot()
+    this.variable.ROOT = isRoot()
     const cfg = this.createJsonFile()
-    const final_config: Cfg = { ...cfg, ...this.var }
+    const final_config: Cfg = { ...cfg, ...this.variable }
     return final_config
   }
 

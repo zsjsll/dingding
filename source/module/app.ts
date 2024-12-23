@@ -12,9 +12,9 @@ type QQ_Package_Id_List = {
   HOME: string
 }
 
-export class QQ implements QQCfg {
-  PACKAGE_ID_LIST: QQ_Package_Id_List
-  QQ: string
+export class QQ {
+  private PACKAGE_ID_LIST: QQ_Package_Id_List
+  private QQ: string
 
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
@@ -103,7 +103,7 @@ type DD_Package_Id_List = {
   HOME: string
 }
 
-export class DD implements DDCfg {
+export class DD {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.ACCOUNT = cfg.ACCOUNT
@@ -112,11 +112,11 @@ export class DD implements DDCfg {
     this.CORP_ID = cfg.CORP_ID
   }
 
-  PACKAGE_ID_LIST: DD_Package_Id_List
-  ACCOUNT: string
-  PASSWD: string
-  RETRY: number
-  CORP_ID: string
+  private PACKAGE_ID_LIST: DD_Package_Id_List
+  private ACCOUNT: string
+  private PASSWD: string
+  private RETRY: number
+  private CORP_ID: string
 
   private isLogin() {
     if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3) !== null) return false
@@ -258,15 +258,14 @@ export type ClockCfg = {
   SWIPESCREEN: SwipeScreen
 }
 
-export class Clock implements ClockCfg {
+export class Clock {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.SWIPESCREEN = cfg.SWIPESCREEN
   }
 
-  PACKAGE_ID_LIST: CLOCK_Package_Id_List
-
-  SWIPESCREEN: SwipeScreen
+  private PACKAGE_ID_LIST: CLOCK_Package_Id_List
+  private SWIPESCREEN: SwipeScreen
 
   //需要root
   closeAlarm(root: boolean) {
@@ -289,8 +288,7 @@ export class Clock implements ClockCfg {
       console.warn("没有root权限，通过滑动关闭闹钟，可能未关闭")
       return
     }
-
-    return //返回的是延时时间
+    return
   }
 }
 
