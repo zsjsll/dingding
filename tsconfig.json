@@ -1,29 +1,24 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "allowSyntheticDefaultImports": true,
-        "noImplicitAny": true,
-        "module": "commonjs",
-        "lib": ["es2022", "DOM"],
-        "target": "es5",
-        "allowJs": false,
-        "typeRoots": [
-            "./source/@types",
-            "./node_modules/@types",
-            "./node_modules/@autojs",
-            "./node_modules/@sm003/autojs6-dts/declarations"
-        ],
+  "compilerOptions": {
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "lib": ["es2022", "DOM"],
+    "target": "es5",
+    "allowJs": false,
+    "typeRoots": ["./node_modules/@sm003/autojs6-dts/declarations"],
 
-        "esModuleInterop": true,
-        "outDir": "./dist",
-        "baseUrl": "./source/",
-        "paths": {
-            "@/*": ["module/*"]
-        }
-    },
-    "ts-node": {
-        "transpileOnly": true,
-        "swc": true
-    },
-    "exclude": ["node_modules"]
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "baseUrl": "./source/",
+    "paths": {
+      "@/*": ["module/*"]
+    }
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "swc": true
+  },
+  "exclude": ["node_modules"]
 }

@@ -27,19 +27,15 @@
 - 熄屏时间 5min
 - 闹钟
 
-### 下载 bun
-
-`powershell -c "irm bun.sh/install.ps1 | iex"`
-
 ### 使用
 
-`bun i`
+`pnpm i`
 
-`bun add -g @swc/cli @swc/core`
+`pnpm add -g @swc/cli @swc/core`
 
 ### 打包
 
-`bun run build`
+`pnpm run build`
 
 打包文件存放于 `dist/`
 

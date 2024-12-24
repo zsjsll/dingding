@@ -4,10 +4,10 @@
   "description": "My webpack project",
   "main": "./source/main.ts",
   "scripts": {
-    "watch": "bunx webpack --watch",
-    "build": "bunx webpack --config webpack.config.js --mode=production --node-env=default",
-    "obfuscator": "bunx webpack --config webpack.config.js --mode=production --node-env=obfuscator",
-    "ui": "bunx webpack --config webpack.config.js --mode=production --node-env=ui"
+    "watch": "npx webpack --watch",
+    "build": "npx webpack --config webpack.config.js --mode=production --node-env=default",
+    "obfuscator": "npx webpack --config webpack.config.js --mode=production --node-env=obfuscator",
+    "ui": "npx webpack --config webpack.config.js --mode=production --node-env=ui"
   },
   "keywords": [],
   "author": "",

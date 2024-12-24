@@ -13,6 +13,12 @@ const fs = require("fs")
 
 const header = fs.readFileSync(path.posix.resolve("header.js"), "utf8").trim()
 
+const fix_webpack_autojs_loader = () => {
+  let a = fs.readFileSync(path.posix.resolve("./node_modules/webpack-autojs-loader/index.js"), "utf-8")
+  console.log(a)
+}
+fix_webpack_autojs_loader()
+
 const headerConfig = { base64: false, advancedEngines: true, header: header }
 const cleanConfig = {
   cleanStaleWebpackAssets: false,
@@ -43,8 +49,8 @@ module.exports = (_, a) => {
 
   if (a.watch) {
     watchOptions = {
-      aggregateTimeout: 2000,
-      poll: 1000,
+      // aggregateTimeout: 2000,
+      // poll: 1000,
       ignored: ["**/*.js", "**/node_modules"],
     }
     console.log("开启监听模式")
@@ -63,6 +69,7 @@ module.exports = (_, a) => {
   }
 
   const config = {
+    mode: "production",
     watchOptions,
     target: "node",
     entry: "./source/main.ts",
@@ -81,10 +88,10 @@ module.exports = (_, a) => {
           exclude: /node_modules/,
           use: [
             {
-              loader: "babel-loader",
+              loader: "webpack-autojs-loader",
             },
             {
-              loader: "webpack-autojs-loader",
+              loader: "babel-loader",
             },
           ],
         },

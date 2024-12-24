@@ -129,7 +129,6 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
     return
   }
 
-
   function listenDD(n: org.autojs.autojs.core.notification.Notification) {
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.DD) return
     if (includes(n.getText(), "考勤打卡")) return
