@@ -39,13 +39,22 @@ let plugins = [
 
 module.exports = (_, a) => {
   console.log(a)
-  let mode
+  let watchOptions = {}
 
-  if (a.nodeEnv === "obfuscator") {
-    plugins.unshift(new JavascriptObfuscator())
+  if (a.watch) {
+    watchOptions = {
+      aggregateTimeout: 2000,
+      poll: 1000,
+      ignored: ["**/*.js", "**/node_modules"],
+    }
+    console.log("开启监听模式")
   }
 
   if (a.nodeEnv === "default" || a.nodeEnv === undefined) {
+  }
+
+  if (a.nodeEnv === "obfuscator") {
+    plugins.unshift(new JavascriptObfuscator())
   }
 
   if (a.nodeEnv === "ui") {
@@ -54,6 +63,7 @@ module.exports = (_, a) => {
   }
 
   const config = {
+    watchOptions,
     target: "node",
     entry: "./source/main.ts",
     output: {
