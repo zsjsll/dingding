@@ -210,7 +210,6 @@ export type Info = Array<string>
 export function formatNotification(n: org.autojs.autojs.core.notification.Notification): string {
   // const line = "============================="
   const line = "^"
-
   const msgs = `${line}\n${formatTime("HH:mm")} ${n.getTitle()}: ${n.getText()}`
   return msgs
 }

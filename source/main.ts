@@ -39,75 +39,44 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
     if (isEmpty(cfg.info)) return phone.next
     else return phone.exit
   }
-// const doIt=(default_msg,info_msg,pause_status_msg)=>{
-//   threads.shutDownAll()
-
-
-// }
-
-
-
 
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
-    if (n.getText() === "帮助") {
+    const doIt = (default_msg: string[], pause_status_msg: string[] = [], info_msg: string[] = cfg.info) => {
       threads.shutDownAll()
-      const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
-      const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
-      const msg = [...default_msg, ...cfg.info, ...pause_tatus]
       cfg.thread = threads.start(() => {
         phone.turnOn(cfg.ROOT)
+        const msg = [...default_msg, ...pause_status_msg, ...info_msg]
         if (sendMsg(msg) === phone.exit) return
         phone.turnOff(cfg.ROOT)
       })
+    }
 
+    if (n.getText() === "帮助") {
+      const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
+      doIt(default_msg, pauseStatus(cfg.pause))
       return
     }
 
     if (n.getText() === "打卡") {
-      threads.shutDownAll()
-      const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
-      cfg.thread = threads.start(() => {
-        phone.turnOn(cfg.ROOT)
-        const msg = [...dd.openAndPunchIn(), ...cfg.info, ...pause_tatus]
-        if (sendMsg(msg) === phone.exit) return
-        phone.turnOff(cfg.ROOT)
-      })
+      doIt(dd.openAndPunchIn(), pauseStatus(cfg.pause))
       return
     }
 
     if (includes(n.getText(), "暂停")) {
-      threads.shutDownAll()
       cfg.pause = formatPause(n.getText())
-      const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
-      const msg = [...cfg.info, ...pause_tatus]
-      cfg.thread = threads.start(() => {
-        phone.turnOn(cfg.ROOT)
-        if (sendMsg(msg) === phone.exit) return
-        phone.turnOff(cfg.ROOT)
-      })
+      const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
+      doIt([], pause_tatus_msg)
       return
     }
 
     if (n.getText() === "恢复") {
-      threads.shutDownAll()
       cfg.pause = [0, 0]
-      const msg = ["恢复定时打卡成功"]
-      cfg.thread = threads.start(() => {
-        phone.turnOn(cfg.ROOT)
-        if (sendMsg(msg) === phone.exit) return
-        phone.turnOff(cfg.ROOT)
-      })
+      doIt(["恢复定时打卡成功"])
       return
     }
 
     if (n.getText() === "锁屏") {
-      threads.shutDownAll()
-      const msg = ["已停止当前动作", ...pauseStatus(cfg.pause)]
-      cfg.thread = threads.start(() => {
-        phone.turnOn(cfg.ROOT)
-        if (sendMsg(msg) === phone.exit) return
-        phone.turnOff(cfg.ROOT)
-      })
+      doIt(["已停止当前动作"])
       return
     }
 
