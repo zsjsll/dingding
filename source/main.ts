@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msgs, formatInfo } from "@/tools"
+import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, formatInfo } from "@/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -33,7 +33,7 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
   toastLog("运行中。。。")
 
   //构造默认函数
-  const sendMsg = (final_msg: Msgs) => {
+  const sendMsg = (final_msg: string[]) => {
     qq.openAndSendMsg(final_msg)
     cfg.info = []
     if (isEmpty(cfg.info)) return phone.next
@@ -111,7 +111,7 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, Msg
     // if (n.when === 0) return
     threads.shutDownAll()
     clock.closeAlarm(cfg.ROOT)
-    let msg: Msgs
+    let msg: string[]
     const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
     cfg.pause = changePause(cfg.pause) //修改pause参数
     const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)

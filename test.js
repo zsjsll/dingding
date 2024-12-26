@@ -1,6 +1,3 @@
-hello
-1
-2
-3
-4
-world
+const date=new Date()
+
+console.log()

@@ -224,14 +224,13 @@ export function changePause(pause: Pause) {
 
 export type Info = Array<string>
 
-export function formatInfo(n: org.autojs.autojs.core.notification.Notification) {
+export function formatInfo(n: org.autojs.autojs.core.notification.Notification): string {
   // const line = "============================="
-  return n.getText()
+  const msgs = `${n.getTitle()}: ${n.getText()}`
+  return msgs
 }
 
-export type Msgs = string[] | string
-export function formatMsgsToString(msgs: Msgs): string {
-  if (isString(msgs)) msgs = [msgs]
+export function formatMsgs(msgs: string[]): string {
   const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
   const base_msgs = [`当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
   const findSomething = (list: string[], val: string) => some(list, (v) => includes(v, val))

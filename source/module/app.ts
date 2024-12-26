@@ -1,4 +1,4 @@
-import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, SwipeScreen as SwipeScreen, Msgs, formatMsgsToString } from "@/tools"
+import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, SwipeScreen as SwipeScreen, formatMsgs } from "@/tools"
 import { Cfg } from "./config"
 import { isEmpty, startsWith } from "lodash"
 
@@ -66,7 +66,7 @@ export class QQ {
     console.info("发送成功")
     return
   }
-  openAndSendMsg(message: Msgs) {
+  openAndSendMsg(message: string[]) {
     if (isEmpty(message)) {
       console.log("消息为空，直接退出！")
     } else {
@@ -78,11 +78,10 @@ export class QQ {
       }
       this.chat() //进入聊天界面
 
-      message = formatMsgsToString(message)
+      const msgs = formatMsgs(message)
 
-      // if (Array.isArray(message)) message = message.join("\n")
-      console.info(message)
-      this.sendmsg(message)
+      console.info(msgs)
+      this.sendmsg(msgs)
     }
     sleep(1e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
@@ -186,7 +185,7 @@ export class DD {
     return false
   }
 
-  private punchIn(): Msgs {
+  private punchIn(): string[] {
     const u = "dingtalk://dingtalkclient/page/link?url=https://attend.dingtalk.com/attend/index.html"
     const url = this.CORP_ID === "" ? u : `${u}?corpId=${this.CORP_ID}`
 
@@ -222,22 +221,22 @@ export class DD {
       }
       if (textContains("成功").findOne(15e3) === null) {
         console.warn("打卡无效,也许未到打卡时间!")
-        return `考勤打卡:${getCurrentTime()}打卡·无效`
+        return [`考勤打卡:${getCurrentTime()}打卡·无效`]
       }
       // return `考勤打卡:${getCurrentTime()}打卡·成功\n但未收到成功消息`
-      return `考勤打卡:${getCurrentTime()}打卡·成功`
+      return [`考勤打卡:${getCurrentTime()}打卡·成功`]
     }
-    const e = `重试${this.RETRY}次,打卡失败!`
+    const e = [`重试${this.RETRY}次,打卡失败!`]
     console.error(e)
     return e
   }
 
-  openAndPunchIn(): Msgs {
+  openAndPunchIn(): string[] {
     console.log("本地时间: " + getCurrentDate() + " " + getCurrentTime())
     console.log("开始打卡")
     backHome(this.PACKAGE_ID_LIST.HOME)
     if (!this.open()) {
-      const e = "无法打开钉钉!"
+      const e = ["无法打开钉钉!"]
       console.error(e)
       return e
     }
