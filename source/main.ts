@@ -65,7 +65,7 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
     if (includes(n.getText(), "暂停")) {
       cfg.pause = formatPause(n.getText())
       const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
-      doIt(() => [...pauseStatus(cfg.pause)])
+      doIt(() => [...pause_tatus_msg])
       return
     }
 
@@ -76,7 +76,7 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
     }
 
     if (n.getText() === "锁屏") {
-      doIt(() => ["已停止当前动作"])
+      doIt(() => ["已停止当前动作", ...pauseStatus(cfg.pause)])
       return
     }
 
@@ -94,14 +94,14 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
     let msg: string[]
     const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
     cfg.pause = changePause(cfg.pause) //修改pause参数
-    const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)
+    const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)
 
     cfg.thread = threads.start(() => {
       phone.turnOn(cfg.ROOT)
       if (daka) {
         delay(cfg.DELAY) //随机延迟打卡
         msg = dd.openAndPunchIn()
-      } else msg = pause_tatus
+      } else msg = pause_tatus_msg
       if (sendMsg(msg) === phone.exit) return
       phone.turnOff(cfg.ROOT)
     })
