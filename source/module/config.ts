@@ -1,7 +1,7 @@
 import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "@/app"
 import { PhoneCfg } from "@/phone"
 import { ListenerCfg } from "@/listener"
-import { getCurrentDate, isRoot, Delay, Pause } from "@/tools"
+import {  isRoot, Delay, Pause, formatTime } from "@/tools"
 import { toString } from "lodash"
 
 type Json = {
@@ -129,7 +129,7 @@ export class Config {
   }
 
   createLog() {
-    const log = files.join(files.cwd(), this.config.GLOBAL_LOG_FILE_DIR, `${getCurrentDate()}.log`)
+    const log = files.join(files.cwd(), this.config.GLOBAL_LOG_FILE_DIR, `${formatTime("YYYY-MM-DD-(d)")}.log`)
     console.log("创建运行日志...\n" + log)
     console.setGlobalLogConfig({ file: log })
   }

@@ -1,5 +1,5 @@
-import { resetPhone, inWhiteList, White_list, reloadScript } from "@/tools"
-import { debounce, forIn, isFunction, toString } from "lodash"
+import { resetPhone, inWhiteList, White_list, reloadScript, formatTime } from "@/tools"
+import { debounce, forIn, isFunction } from "lodash"
 import { Cfg } from "./config"
 
 export type ListenerCfg = {
@@ -77,7 +77,7 @@ export class Listener implements ListenerCfg {
             TEXT: n.getText(),
             PRIORITY: n.priority,
             CATEGORY: n.category,
-            TIME: toString(new Date(n.when)),
+            TIME: formatTime("YYYY-MM-DD HH-mm-ss", n.when),
             NUMBER: n.number,
             TICKER_TEXT: n.tickerText,
           }

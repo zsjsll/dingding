@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "@/app"
 import { Listener } from "@/listener"
 import { Config } from "@/config"
 import { Phone } from "@/phone"
-import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, formatInfo } from "@/tools"
+import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatNotification } from "@/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -39,13 +39,21 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, for
     if (isEmpty(cfg.info)) return phone.next
     else return phone.exit
   }
+// const doIt=(default_msg,info_msg,pause_status_msg)=>{
+//   threads.shutDownAll()
+
+
+// }
+
+
+
 
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
     if (n.getText() === "帮助") {
       threads.shutDownAll()
       const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
       const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
-      const msg = [...default_msg, ...pause_tatus]
+      const msg = [...default_msg, ...cfg.info, ...pause_tatus]
       cfg.thread = threads.start(() => {
         phone.turnOn(cfg.ROOT)
         if (sendMsg(msg) === phone.exit) return
@@ -57,9 +65,11 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, for
 
     if (n.getText() === "打卡") {
       threads.shutDownAll()
+      const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? [] : pauseStatus(cfg.pause)
       cfg.thread = threads.start(() => {
         phone.turnOn(cfg.ROOT)
-        if (sendMsg(dd.openAndPunchIn()) === phone.exit) return
+        const msg = [...dd.openAndPunchIn(), ...cfg.info, ...pause_tatus]
+        if (sendMsg(msg) === phone.exit) return
         phone.turnOff(cfg.ROOT)
       })
       return
@@ -67,11 +77,12 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, for
 
     if (includes(n.getText(), "暂停")) {
       threads.shutDownAll()
-      cfg.pause = formatPauseInfo(n.getText())
+      cfg.pause = formatPause(n.getText())
       const pause_tatus = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
+      const msg = [...cfg.info, ...pause_tatus]
       cfg.thread = threads.start(() => {
         phone.turnOn(cfg.ROOT)
-        if (sendMsg(pause_tatus) === phone.exit) return
+        if (sendMsg(msg) === phone.exit) return
         phone.turnOff(cfg.ROOT)
       })
       return
@@ -133,7 +144,7 @@ import { formatPauseInfo, delay, onlyRunOneScript, pauseStatus, changePause, for
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.DD) return
     if (includes(n.getText(), "考勤打卡")) return
 
-    cfg.info.push(formatInfo(n))
+    cfg.info.push(formatNotification(n))
     if (cfg.thread?.isAlive()) {
       console.log("alive")
       const old_thread = cfg.thread

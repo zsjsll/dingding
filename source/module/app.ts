@@ -1,4 +1,4 @@
-import { backHome, openApp, getCurrentDate, getCurrentTime, swipeScreen, SwipeScreen as SwipeScreen, formatMsgs } from "@/tools"
+import { backHome, openApp, swipeScreen, SwipeScreen, formatMsgs, formatTime } from "@/tools"
 import { Cfg } from "./config"
 import { isEmpty, startsWith } from "lodash"
 
@@ -221,18 +221,18 @@ export class DD {
       }
       if (textContains("成功").findOne(15e3) === null) {
         console.warn("打卡无效,也许未到打卡时间!")
-        return [`考勤打卡:${getCurrentTime()}打卡·无效`]
+        return [`考勤打卡:${formatTime("HH:mm")} 打卡·无效`]
       }
-      // return `考勤打卡:${getCurrentTime()}打卡·成功\n但未收到成功消息`
-      return [`考勤打卡:${getCurrentTime()}打卡·成功`]
+      // return `考勤打卡:${formatTime("HH:mm")}打卡·成功\n但未收到成功消息`
+      return [`考勤打卡:${formatTime("HH:mm")} 打卡·成功`]
     }
-    const e = [`重试${this.RETRY}次,打卡失败!`]
+    const e = [`重试${this.RETRY}次, 打卡失败!`]
     console.error(e)
     return e
   }
 
   openAndPunchIn(): string[] {
-    console.log("本地时间: " + getCurrentDate() + " " + getCurrentTime())
+    console.log("本地时间: " + formatTime("YYYY-MM-DD HH-mm-ss"))
     console.log("开始打卡")
     backHome(this.PACKAGE_ID_LIST.HOME)
     if (!this.open()) {

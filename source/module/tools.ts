@@ -1,4 +1,5 @@
-import { floor, head, includes, isString, last, parseInt, some, toNumber } from "lodash"
+import { floor, head, includes, last, parseInt, some, toNumber } from "lodash"
+import moment from "moment"
 
 // -----------以下函数需要root权限-----------------
 
@@ -93,29 +94,11 @@ export function openApp(package_id: string) {
   else return true
 }
 
-function formatDateDigit(num: number) {
-  return num < 10 ? "0" + num.toString() : num.toString()
+export function formatTime(style: string, timestamp?: number) {
+  if (timestamp) return moment(timestamp).format(style)
+  else return moment().format(style)
 }
 
-export function getCurrentTime() {
-  const currentDate = new Date()
-  const hours = formatDateDigit(currentDate.getHours())
-  const minute = formatDateDigit(currentDate.getMinutes())
-  // let second = formatDateDigit(currentDate.getSeconds())
-  const formattedTimeString = hours + ":" + minute
-  return formattedTimeString
-}
-
-export function getCurrentDate() {
-  const WEEK_DAY = ["(日)", "(一)", "(二)", "(三)", "(四)", "(五)", "(六)"]
-  const currentDate = new Date()
-  const year = formatDateDigit(currentDate.getFullYear())
-  const month = formatDateDigit(currentDate.getMonth() + 1)
-  const date = formatDateDigit(currentDate.getDate())
-  const week = currentDate.getDay()
-  const formattedDateString = year + "-" + month + "-" + date + "-" + WEEK_DAY[week]
-  return formattedDateString
-}
 // export type Delay = { min: number; max: number }
 export type Delay = [number, number]
 
@@ -190,7 +173,7 @@ export function getStorageData(name: string, key: string) {
 
 export type Pause = [number, number]
 
-export function formatPauseInfo(input: string): Pause {
+export function formatPause(input: string): Pause {
   input = "0" + input //在字符串前面添加一个0
   //匹配所有数字，包括小数
   const pause = input.match(/[\d.]+/g)?.map((v) => {
@@ -224,17 +207,19 @@ export function changePause(pause: Pause) {
 
 export type Info = Array<string>
 
-export function formatInfo(n: org.autojs.autojs.core.notification.Notification): string {
+export function formatNotification(n: org.autojs.autojs.core.notification.Notification): string {
   // const line = "============================="
-  const msgs = `${n.getTitle()}: ${n.getText()}`
+  const line = "^"
+
+  const msgs = `${line}\n${formatTime("HH:mm")} ${n.getTitle()}: ${n.getText()}`
   return msgs
 }
 
 export function formatMsgs(msgs: string[]): string {
   const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
-  const base_msgs = [`当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
+  const base_msgs = ["\n", `当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
   const findSomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
-  const del_head_line = includes(head(msgs), "-") || includes(head(msgs), "\n")
+  const del_head_line = includes(head(msgs), "-") || includes(head(msgs), "\n") || includes(head(msgs), "^")
   const del_last_line = includes(last(msgs), "\n")
   const add_warn = findSomething(msgs, "无效") || findSomething(msgs, "失败")
   if (del_head_line) msgs.shift()
