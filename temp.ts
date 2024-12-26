@@ -1,11 +1,11 @@
-import moment from "moment"
+const t = "[2条]12345689"
 
-const k = new Date()
-
-function formatTime(style: string, timestamp?: number) {
-  if (timestamp) return moment(timestamp).format(style)
-  else return moment().format(style)
+if (t.startsWith("[")) {
+  const k = t.split("]")
+  console.log(k.at(-1))
 }
 
-const t = formatTime("YYYY-MM-DD-(d)")
-console.log(t)
+const tt = t.replace(/^\[\d+条\]\s*/g, "")
+console.log(tt)
+
+let a: any

@@ -67,9 +67,7 @@ export class QQ {
     return
   }
   openAndSendMsg(message: string[]) {
-    if (isEmpty(message)) {
-      console.log("消息为空，直接退出！")
-    } else {
+    if (!isEmpty(message)) {
       console.log("发送信息")
       backHome(this.PACKAGE_ID_LIST.HOME)
       if (!this.open()) {
@@ -82,7 +80,8 @@ export class QQ {
 
       console.info(msgs)
       this.sendmsg(msgs)
-    }
+    } else console.log("消息为空，直接退出！")
+
     sleep(1e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
     return
@@ -232,7 +231,7 @@ export class DD {
   }
 
   openAndPunchIn(): string[] {
-    console.log("本地时间: " + formatTime("YYYY-MM-DD HH-mm-ss"))
+    console.log("本地时间: " + formatTime("YYYY-MM-DD HH:mm:ss"))
     console.log("开始打卡")
     backHome(this.PACKAGE_ID_LIST.HOME)
     if (!this.open()) {

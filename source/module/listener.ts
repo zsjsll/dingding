@@ -77,7 +77,7 @@ export class Listener implements ListenerCfg {
             TEXT: n.getText(),
             PRIORITY: n.priority,
             CATEGORY: n.category,
-            TIME: formatTime("YYYY-MM-DD HH-mm-ss", n.when),
+            TIME: formatTime("YYYY-MM-DD HH:mm:ss", n.when),
             NUMBER: n.number,
             TICKER_TEXT: n.tickerText,
           }

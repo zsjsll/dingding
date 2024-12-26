@@ -208,23 +208,22 @@ export function changePause(pause: Pause) {
 export type Info = Array<string>
 
 export function formatNotification(n: org.autojs.autojs.core.notification.Notification): string {
-  // const line = "============================="
-  const line = "^"
-  const msgs = `${line}\n${formatTime("HH:mm")} ${n.getTitle()}: ${n.getText()}`
+  const text = n.getText().replace(/^\[\d+条\]\s*/g, "") //去除前面的 [number条]
+  const msgs = `${formatTime("HH:mm")} ${n.getTitle()}: ${text}`
   return msgs
 }
 
 export function formatMsgs(msgs: string[]): string {
   const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
-  const base_msgs = ["\n", `当前电量: ${device.getBattery()}%`, `是否充电: ${device.isCharging()}`]
+  const base_msgs = `\n当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
   const findSomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
-  const del_head_line = includes(head(msgs), "-") || includes(head(msgs), "\n") || includes(head(msgs), "^")
+  const del_head_line = includes(head(msgs), "-") || includes(head(msgs), "\n")
   const del_last_line = includes(last(msgs), "\n")
   const add_warn = findSomething(msgs, "无效") || findSomething(msgs, "失败")
   if (del_head_line) msgs.shift()
   if (del_last_line) msgs.pop()
   if (add_warn) msgs.unshift(wn)
-  return [...msgs, ...base_msgs].join("\n")
+  return [...msgs, base_msgs].join("\n")
 
   // message = message.replace(/^[\n-]+|[\n]+$/g, "") //如果开头有很多的-或者\n，则去掉  如果结尾有\n 去除
 }

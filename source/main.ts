@@ -32,7 +32,7 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
   })
   toastLog("运行中。。。")
 
-  //构造默认函数
+  //重写发送函数
   const sendMsg = (final_msg: string[]) => {
     qq.openAndSendMsg(final_msg)
     cfg.info = []
@@ -41,11 +41,11 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
   }
 
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
-    const doIt = (default_msg: string[], pause_status_msg: string[] = [], info_msg: string[] = cfg.info) => {
+    const doIt = (f: () => string[]) => {
       threads.shutDownAll()
       cfg.thread = threads.start(() => {
         phone.turnOn(cfg.ROOT)
-        const msg = [...default_msg, ...pause_status_msg, ...info_msg]
+        const msg = [...f(), ...cfg.info]
         if (sendMsg(msg) === phone.exit) return
         phone.turnOff(cfg.ROOT)
       })
@@ -53,30 +53,30 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
 
     if (n.getText() === "帮助") {
       const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
-      doIt(default_msg, pauseStatus(cfg.pause))
+      doIt(() => [...default_msg, ...pauseStatus(cfg.pause)])
       return
     }
 
     if (n.getText() === "打卡") {
-      doIt(dd.openAndPunchIn(), pauseStatus(cfg.pause))
+      doIt(() => [...dd.openAndPunchIn(), ...pauseStatus(cfg.pause)])
       return
     }
 
     if (includes(n.getText(), "暂停")) {
       cfg.pause = formatPause(n.getText())
       const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
-      doIt([], pause_tatus_msg)
+      doIt(() => [...pauseStatus(cfg.pause)])
       return
     }
 
     if (n.getText() === "恢复") {
       cfg.pause = [0, 0]
-      doIt(["恢复定时打卡成功"])
+      doIt(() => ["恢复定时打卡成功"])
       return
     }
 
     if (n.getText() === "锁屏") {
-      doIt(["已停止当前动作"])
+      doIt(() => ["已停止当前动作"])
       return
     }
 
@@ -114,6 +114,7 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
     if (includes(n.getText(), "考勤打卡")) return
 
     cfg.info.push(formatNotification(n))
+
     if (cfg.thread?.isAlive()) {
       console.log("alive")
       const old_thread = cfg.thread
