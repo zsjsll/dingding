@@ -16,25 +16,25 @@ importers:
         version: 2.30.1
     devDependencies:
       '@babel/core':
-        specifier: ^7.23.7
+        specifier: ^7.26.0
         version: 7.26.0
       '@babel/plugin-transform-modules-commonjs':
-        specifier: ^7.23.3
+        specifier: ^7.26.3
         version: 7.26.3(@babel/core@7.26.0)
       '@babel/plugin-transform-runtime':
-        specifier: ^7.23.7
+        specifier: ^7.25.9
         version: 7.25.9(@babel/core@7.26.0)
       '@babel/preset-env':
-        specifier: ^7.23.7
+        specifier: ^7.26.0
         version: 7.26.0(@babel/core@7.26.0)
       '@babel/preset-typescript':
-        specifier: ^7.23.3
+        specifier: ^7.26.0
         version: 7.26.0(@babel/core@7.26.0)
       '@babel/runtime':
-        specifier: ^7.23.8
+        specifier: ^7.26.0
         version: 7.26.0
       '@babel/runtime-corejs3':
-        specifier: ^7.23.8
+        specifier: ^7.26.0
         version: 7.26.0
       '@sm003/autojs6-dts':
         specifier: ^2.1.3
@@ -43,7 +43,7 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(@swc/core@1.10.1)
       '@swc/core':
-        specifier: ^1.6.6
+        specifier: ^1.10.1
         version: 1.10.1
       '@types/lodash':
         specifier: ^4.17.13
@@ -52,22 +52,22 @@ importers:
         specifier: ^22.10.2
         version: 22.10.2
       '@typescript-eslint/eslint-plugin':
-        specifier: ^6.18.1
+        specifier: ^6.21.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1)(typescript@5.7.2)
       '@typescript-eslint/parser':
-        specifier: ^6.18.1
+        specifier: ^6.21.0
         version: 6.21.0(eslint@8.57.1)(typescript@5.7.2)
       '@webpack-cli/generators':
         specifier: ^3.0.7
         version: 3.0.7(encoding@0.1.13)(mem-fs@2.3.0)(webpack-cli@5.1.4)(webpack@5.97.1)
       autox-deploy-webpack-plugin:
-        specifier: git+https://github.com/kkevsekk1/AutoxDeployWebpackPlugin.git
+        specifier: github:kkevsekk1/AutoxDeployWebpackPlugin
         version: https://codeload.github.com/kkevsekk1/AutoxDeployWebpackPlugin/tar.gz/7b0862666367af4d9acedec7ab33157aa2023eaf
       autox-header-webpack-plugin:
         specifier: ^1.0.3
         version: 1.0.3
       babel-loader:
-        specifier: ^9.1.3
+        specifier: ^9.2.1
         version: 9.2.1(@babel/core@7.26.0)(webpack@5.97.1)
       babel-plugin-transform-remove-strict-mode:
         specifier: ^0.0.2
@@ -79,16 +79,16 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0(webpack@5.97.1)
       core-js:
-        specifier: '3'
+        specifier: ^3.39.0
         version: 3.39.0
       eslint:
-        specifier: ^8.56.0
+        specifier: ^8.57.1
         version: 8.57.1
       html-webpack-plugin:
-        specifier: ^5.6.0
+        specifier: ^5.6.3
         version: 5.6.3(webpack@5.97.1)
       javascript-obfuscator:
-        specifier: ^4.1.0
+        specifier: ^4.1.1
         version: 4.1.1
       randomstring:
         specifier: ^1.3.0
@@ -97,10 +97,10 @@ importers:
         specifier: ^9.5.1
         version: 9.5.1(typescript@5.7.2)(webpack@5.97.1)
       typescript:
-        specifier: ^5.3.3
+        specifier: ^5.7.2
         version: 5.7.2
       webpack:
-        specifier: ^5.89.0
+        specifier: ^5.97.1
         version: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
       webpack-autojs-loader:
         specifier: ^1.1.3
