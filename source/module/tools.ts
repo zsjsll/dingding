@@ -188,8 +188,8 @@ export function formatPause(input: string): Pause {
   return [pause[0], pause[1]]
 }
 
+const line = "-----------------------------"
 export function pauseStatus(pause: Pause) {
-  const line = "-----------------------------"
   if (pause !== undefined) {
     const [after, count] = pause
     if (count === 0) return []
@@ -217,8 +217,8 @@ export function formatMsgs(msgs: string[]): string {
   const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
   const base_msgs = `\n当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
   const findSomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
-  const del_head_line = includes(head(msgs), "-") || includes(head(msgs), "\n")
-  const del_last_line = includes(last(msgs), "\n")
+  const del_head_line = head(msgs) === line || head(msgs) === "\n"
+  const del_last_line = last(msgs) === "\n"
   const add_warn = findSomething(msgs, "无效") || findSomething(msgs, "失败")
   if (del_head_line) msgs.shift()
   if (del_last_line) msgs.pop()
