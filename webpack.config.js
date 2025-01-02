@@ -80,8 +80,10 @@ let plugins = [
 module.exports = (_, a) => {
   console.log(a)
   let watchOptions = {}
+  let is_mini = true
 
   if (a.watch) {
+    is_mini = false
     watchOptions = {
       // aggregateTimeout: 5000,
       // poll: 1000,
@@ -132,7 +134,7 @@ module.exports = (_, a) => {
               loader: "webpack-autojs-loader",
             },
             {
-              loader: "babel-loader",
+              loader: "swc-loader",
             },
           ],
         },
@@ -148,15 +150,15 @@ module.exports = (_, a) => {
       },
     },
     optimization: {
-      minimize: true,
+      minimize: is_mini,
       minimizer: [
         // new EsbuildPlugin({
         //   // target: "es6",
         //   legalComments: "none", // 去除注释
         //   minify: true,
-        //   minifyWhitespace: true, // 去掉空格
-        //   minifyIdentifiers: true, // 缩短标识符
-        //   minifySyntax: true, // 缩短语法
+        //   minifyWhitespace: false, // 去掉空格
+        //   minifyIdentifiers: false, // 缩短标识符
+        //   minifySyntax: false, // 缩短语法
         //   // implementation: esbuild, // 自定义 esbuild instance 实现
         // }),
 
