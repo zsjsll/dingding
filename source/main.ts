@@ -111,7 +111,7 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
 
   function listenDD(n: org.autojs.autojs.core.notification.Notification) {
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.DD) return
-    if (includes(n.getText(), "考勤打卡")) return
+    if (includes(n.getText(), "考勤打卡") && includes(n.getText(), "成功") && includes(n.getText(), "全部正常")) return
 
     cfg.info.push(formatNotification(n))
 

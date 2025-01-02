@@ -1,0 +1,26 @@
+{
+  "jsc": {
+    "parser": {
+      "syntax": "typescript", // 解析ts
+      "tsx": false,
+      "decorators": false,
+      "dynamicImport": true
+    },
+    "target": "es3",
+    "loose": false,
+    "externalHelpers": false, // 把兼容低版本的公共函数抽离到独立模块
+    // Requires v1.2.50 or upper and requires target to be es2016 or upper.
+    "keepClassNames": false,
+    "minify": {
+      "compress": true,
+      "mangle": true,
+      "format": { "comments": false }
+    }
+  },
+  "minify": true
+  // "env": {
+  //   "forceAllTransforms": true,
+  //   "mode": "usage", // 按需引入core-js
+  //   "coreJs": "3" // core-js版本
+  // }
+}

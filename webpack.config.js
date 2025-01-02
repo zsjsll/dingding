@@ -7,6 +7,9 @@ const AutoxHeaderWebpackPlugin = require("autox-header-webpack-plugin")
 const CopyPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
 
+const { EsbuildPlugin } = require("esbuild-loader")
+const esbuild = require("esbuild")
+
 const path = require("path")
 const fs = require("fs")
 const readline = require("readline")
@@ -100,9 +103,16 @@ module.exports = (_, a) => {
   }
 
   const config = {
+    //关闭 webpack 的性能提示
+    performance: {
+      // hints: false,
+      maxEntrypointSize: 50000000,
+      maxAssetSize: 30000000,
+    },
+
     mode: "production",
     watchOptions,
-    target: "node",
+    target: ["web", "es3"],
     entry: "./source/main.ts",
     output: {
       path: path.posix.resolve("dist"),
@@ -140,6 +150,16 @@ module.exports = (_, a) => {
     optimization: {
       minimize: true,
       minimizer: [
+        // new EsbuildPlugin({
+        //   // target: "es6",
+        //   legalComments: "none", // 去除注释
+        //   minify: true,
+        //   minifyWhitespace: true, // 去掉空格
+        //   minifyIdentifiers: true, // 缩短标识符
+        //   minifySyntax: true, // 缩短语法
+        //   // implementation: esbuild, // 自定义 esbuild instance 实现
+        // }),
+
         new TerserPlugin({
           extractComments: false, //不将注释提取到单独的文件中
           terserOptions: {
