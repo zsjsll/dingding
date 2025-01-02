@@ -189,6 +189,8 @@ export function formatPause(input: string): Pause {
 }
 
 const line = "-----------------------------"
+const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
+
 export function pauseStatus(pause: Pause) {
   if (pause !== undefined) {
     const [after, count] = pause
@@ -205,8 +207,6 @@ export function changePause(pause: Pause) {
   return pause
 }
 
-export type Info = Array<string>
-
 export function formatNotification(n: org.autojs.autojs.core.notification.Notification): string {
   const text = n.getText().replace(/^\[\d+条\]\s*/g, "") //去除前面的 [number条]
   const msgs = `${formatTime("HH:mm")} ${n.getTitle()}: ${text}`
@@ -214,7 +214,6 @@ export function formatNotification(n: org.autojs.autojs.core.notification.Notifi
 }
 
 export function formatMsgs(msgs: string[]): string {
-  const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
   const base_msgs = `\n当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
   const findSomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
   const del_head_line = head(msgs) === line || head(msgs) === "\n"
