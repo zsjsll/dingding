@@ -54,7 +54,6 @@ const fix_webpack_autojs_loader = () => {
   })
 }
 
-
 const headerConfig = { base64: false, advancedEngines: true, header: header }
 const cleanConfig = {
   cleanStaleWebpackAssets: false,
@@ -76,28 +75,6 @@ module.exports = (_, a) => {
   console.log(a)
   let watchOptions = {}
   let is_mini = true
-
-  if (a.watch) {
-    is_mini = false
-    watchOptions = {
-      // aggregateTimeout: 5000,
-      // poll: 1000,
-      ignored: ["**/*.js", "**/node_modules"],
-    }
-    console.log("开启监听模式")
-  }
-
-  if (a.nodeEnv === "default" || a.nodeEnv === undefined) {
-  }
-
-  if (a.nodeEnv === "obfuscator") {
-    plugins.unshift(new JavascriptObfuscator())
-  }
-
-  if (a.nodeEnv === "ui") {
-    plugins.unshift(new AutoxHeaderWebpackPlugin(headerConfig))
-    plugins.unshift(new JavascriptObfuscator())
-  }
 
   const config = {
     //关闭 webpack 的性能提示
@@ -180,6 +157,28 @@ module.exports = (_, a) => {
         }),
       ],
     },
+  }
+
+  if (a.watch) {
+    is_mini = false
+    watchOptions = {
+      // aggregateTimeout: 5000,
+      // poll: 1000,
+      ignored: ["**/*.js", "**/node_modules"],
+    }
+    console.log("开启监听模式")
+  }
+
+  if (a.nodeEnv === "default" || a.nodeEnv === undefined) {
+  }
+
+  if (a.nodeEnv === "obfuscator") {
+    config.plugins.unshift(new JavascriptObfuscator())
+  }
+
+  if (a.nodeEnv === "ui") {
+    config.plugins.unshift(new AutoxHeaderWebpackPlugin(headerConfig))
+    config.plugins.unshift(new JavascriptObfuscator())
   }
 
   return config

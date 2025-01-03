@@ -26,7 +26,8 @@ class WatchDeployPlugin {
   apply(compiler) {
     if (this.options.type != null && this.options.type != "none") {
       compiler.hooks.watchRun.tap("WatchDeployPlugin", (compiler) => {
-        const changedTimes = compiler.watchFileSystem.watcher.mtimes
+        const changedTimes = compiler.modifiedFiles
+        console.log("[ changedTimes ]-30", changedTimes)
         const changedFiles = Object.keys(changedTimes)
         console.error("重新编译，改变的文件：", changedFiles)
         this.changFile = changedFiles[0]
