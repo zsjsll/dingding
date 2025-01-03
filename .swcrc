@@ -1,5 +1,6 @@
 {
   "jsc": {
+    "output": { "charset": "ascii" },
     "parser": {
       "syntax": "typescript", // 解析ts
       "tsx": false,

@@ -3,12 +3,13 @@
 
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const JavascriptObfuscator = require("webpack-obfuscator")
-const AutoxHeaderWebpackPlugin = require("autox-header-webpack-plugin")
+const AutoxHeaderWebpackPlugin = require("./webpack/autox-header-webpack-plugin")
 const CopyPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
+const WatchDeployPlugin = require("./webpack/autox-deploy-webpack-plugin")
 
-const { EsbuildPlugin } = require("esbuild-loader")
-const esbuild = require("esbuild")
+// const { EsbuildPlugin } = require("esbuild-loader")
+// const esbuild = require("esbuild")
 
 const path = require("path")
 const fs = require("fs")
@@ -52,7 +53,7 @@ const fix_webpack_autojs_loader = () => {
     }
   })
 }
-fix_webpack_autojs_loader()
+
 
 const headerConfig = { base64: false, advancedEngines: true, header: header }
 const cleanConfig = {
@@ -70,12 +71,6 @@ const copyConfig = {
     },
   ],
 }
-
-let plugins = [
-  // new AutoxHeaderWebpackPlugin(headerConfig),
-  new CleanWebpackPlugin(cleanConfig),
-  new CopyPlugin(copyConfig),
-]
 
 module.exports = (_, a) => {
   console.log(a)
@@ -120,7 +115,15 @@ module.exports = (_, a) => {
       path: path.posix.resolve("dist"),
     },
 
-    plugins,
+    plugins: [
+      // new AutoxHeaderWebpackPlugin(headerConfig),
+      new CleanWebpackPlugin(cleanConfig),
+      new CopyPlugin(copyConfig),
+      new WatchDeployPlugin({
+        type: "rerun",
+        projects: { projectName: "/dist/main.js" },
+      }),
+    ],
     // Add your plugins here
     // Learn more about plugins from https://webpack.js.org/configuration/plugins/
 
@@ -131,10 +134,15 @@ module.exports = (_, a) => {
           exclude: /node_modules/,
           use: [
             {
-              loader: "webpack-autojs-loader",
+              loader: "./webpack/webpack-autojs-loader",
             },
             {
               loader: "swc-loader",
+              // options: {
+              //   jsc: {
+              //     output: { charset: "ascii" },
+              //   },
+              // },
             },
           ],
         },

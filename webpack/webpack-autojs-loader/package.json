@@ -1,0 +1,46 @@
+{
+  "_from": "webpack-autojs-loader@^1.1.1",
+  "_id": "webpack-autojs-loader@1.1.2",
+  "_inBundle": false,
+  "_integrity": "sha512-6JICFEwG+moIrkM9V581CRHbBC5gjqRU/34GFiSPVBseyUkp+vmplzivf2ANpX3nCOkQLCpjartSrfQF+lywOA==",
+  "_location": "/webpack-autojs-loader",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "webpack-autojs-loader@^1.1.1",
+    "name": "webpack-autojs-loader",
+    "escapedName": "webpack-autojs-loader",
+    "rawSpec": "^1.1.1",
+    "saveSpec": null,
+    "fetchSpec": "^1.1.1"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/webpack-autojs-loader/-/webpack-autojs-loader-1.1.2.tgz",
+  "_shasum": "959b353b54b0b8e4b8c8aba966a1008161d7e289",
+  "_spec": "webpack-autojs-loader@^1.1.1",
+  "_where": "F:\\myGithub\\webpack-autojs",
+  "author": "",
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "用于webpack打包时, autojs文件的预处理, 这是一个loader",
+  "keywords": [
+    "webpack",
+    "autojs",
+    "aj"
+  ],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "webpack-autojs-loader",
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:autojs/webpack-autojs-loader.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.1.3"
+}
