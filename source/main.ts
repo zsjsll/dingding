@@ -40,6 +40,8 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
     else return phone.exit
   }
 
+
+
   function listenMsg(n: org.autojs.autojs.core.notification.Notification) {
     const doIt = (f: () => string[]) => {
       threads.shutDownAll()
@@ -132,6 +134,13 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
         if (sendMsg(cfg.info) === phone.exit) return
         phone.turnOff(cfg.ROOT)
       })
+
+
+
+
+
+
+
 
     return
   }

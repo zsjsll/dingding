@@ -64,8 +64,8 @@ const cleanConfig = {
 const copyConfig = {
   patterns: [
     {
-      from: path.posix.resolve("./source").replace(/\\/g, "/") + "",
-      to: path.posix.resolve("./dist").replace(/\\/g, "/") + "",
+      from: path.posix.resolve("./source"),
+      to: path.posix.resolve("./dist"),
       globOptions: { ignore: ["**/*.js", "**/*.ts"] },
     },
   ],
@@ -74,7 +74,7 @@ const copyConfig = {
 module.exports = (_, a) => {
   console.log(a)
   let watchOptions = {}
-  let is_mini = true
+
 
   const config = {
     //关闭 webpack 的性能提示
@@ -135,7 +135,7 @@ module.exports = (_, a) => {
       },
     },
     optimization: {
-      minimize: is_mini,
+      minimize: true,
       minimizer: [
         // new EsbuildPlugin({
         //   // target: "es6",
@@ -160,7 +160,8 @@ module.exports = (_, a) => {
   }
 
   if (a.watch) {
-    is_mini = false
+    config.optimization.minimize = false
+
     watchOptions = {
       // aggregateTimeout: 5000,
       // poll: 1000,
