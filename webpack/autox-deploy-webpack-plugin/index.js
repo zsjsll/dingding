@@ -1,6 +1,6 @@
 var http = require("http")
 var path = require("path")
-class WatchDeployPlugin {
+class AutoDeployPlugin {
   sendCmd(cmd, path) {
     console.error("执行命令：", cmd)
     path = encodeURI(path)
@@ -19,58 +19,47 @@ class WatchDeployPlugin {
       console.error("请使用 ctrl+shift+p 快捷键，启动auto.js服务")
     })
   }
-  constructor(options = {}) {
+
+  opt = { type: undefined, path: undefined }
+  /**
+   * Creates an instance of AutoDeployPlugin.
+   * @param {object} [options={ type: undefined, path: undefined }]
+   * @param {"rerun"|"save"} [options.type=undefined]
+   * @param {string} [options.path=undefined]
+   * @memberof AutoDeployPlugin
+   */
+  constructor(options = this.opt) {
     this.options = options
     this.changFile = undefined
   }
+
   apply(compiler) {
-    if (this.options.type != null && this.options.type != "none") {
-      compiler.hooks.watchRun.tap("WatchDeployPlugin", (compiler) => {
-        this.changFile ??= compiler?.modifiedFiles?.values()?.next()?.value
-        if (this.changFile) this.changFile = path.posix.normalize(this.changFile)
-        console.log("重新编译，改变的文件：", this.changFile)
-      })
-      compiler.hooks.done.tap("WatchDeployPlugin", (stats) => {
-        const compilation = stats.compilation
-        // console.log("----->[compilation] =", compilation.moduleGraph._moduleMap)
+    if (this.options === this.opt) return console.log("没有options，不进行任何操作！")
 
-        compilation.moduleGraph._moduleMap.forEach((_,k) => {
-        console.log(Object.keys(k))
-        })
+    // compiler.hooks.watchRun.tap("AutoDeployPlugin", () => {
+    //   this.changFile ??= compiler?.modifiedFiles?.values()?.next()?.value
+    //   if (this.changFile) this.changFile = path.posix.normalize(this.changFile)
+    //   console.log("重新编译，改变的文件：", this.changFile)
+    // })
+    compiler.hooks.done.tap("AutoDeployPlugin", (stats) => {
+      if (typeof this.options.path !== "string") {
+        throw new Error("必须提供一个有效的相对路径")
+      }
+      const out = path.posix.resolve(this.options.path)
+      console.log("----->[out_file_path] =", out)
 
-        // if (this.changFile != "") {
-        //   compilation.chunks.forEach((chunk) => {
-        //     var modules = chunk.getModules()
-        //     modules.forEach((module) => {
-        //       //   console.error("r---c", module.userRequest,this.changFile);
-        //       let userRequest = module.userRequest.replaceAll("\\", "/")
-        //       this.changFile = this.changFile.replaceAll("\\", "/")
-        //       if (userRequest == this.changFile) {
-        //         //  console.error("chunk", chunk.files);
-        //         chunk.files.forEach((file) => {
-        //           var projectName = path.posix.normalize(file).split(path.posix.sep)[1]
-        //           var outProjecPath = path.resolve(compiler.outputPath, projectName)
-        //           var outFilePath = path.resolve(compiler.outputPath, projectName, this.options.projects[projectName])
-        //           //  console.error("projectName", projectName,outProjecPath);
-        //           //  console.error("outFilePath", outFilePath);
-        //           switch (this.options.type) {
-        //             case "deploy":
-        //               this.sendCmd("save", "/" + outProjecPath)
-        //               break
-        //             case "rerun":
-        //               this.sendCmd("rerun", "/" + outFilePath)
-        //               break
-        //             default:
-        //               console.error("重新编译后,不进行任何操作")
-        //               break
-        //           }
-        //         })
-        //       }
-        //     })
-        //   })
-        // }
-      })
-    }
+      switch (this.options.type) {
+        case "rerun":
+          this.sendCmd("rerun", out)
+          break
+        case "save":
+          this.sendCmd("save", out)
+          break
+        default:
+          console.error("重新编译后,不进行任何操作")
+          break
+      }
+    })
   }
 }
-module.exports = WatchDeployPlugin
+module.exports = AutoDeployPlugin

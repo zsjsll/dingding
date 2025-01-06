@@ -2,11 +2,11 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
-const JavascriptObfuscator = require("webpack-obfuscator")
+// const JavascriptObfuscator = require("webpack-obfuscator")
 const AutoxHeaderWebpackPlugin = require("./webpack/autox-header-webpack-plugin")
 const CopyPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
-const WatchDeployPlugin = require("./webpack/autox-deploy-webpack-plugin")
+const AutoDeployPlugin = require("./webpack/autox-deploy-webpack-plugin")
 
 // const { EsbuildPlugin } = require("esbuild-loader")
 // const esbuild = require("esbuild")
@@ -71,10 +71,14 @@ const copyConfig = {
   ],
 }
 
+const autoDeployConfig = {
+  type: "save",
+  path: "dist",
+}
+
 module.exports = (_, a) => {
   console.log(a)
   let watchOptions = {}
-
 
   const config = {
     //关闭 webpack 的性能提示
@@ -93,16 +97,14 @@ module.exports = (_, a) => {
     },
 
     plugins: [
+      // Add your plugins here
+      // Learn more about plugins from https://webpack.js.org/configuration/plugins/
+
       // new AutoxHeaderWebpackPlugin(headerConfig),
       new CleanWebpackPlugin(cleanConfig),
       new CopyPlugin(copyConfig),
-      new WatchDeployPlugin({
-        type: "rerun",
-        projects: { projectName: "/dist/main.js" },
-      }),
+      // new AutoDeployPlugin(autoDeployConfig),
     ],
-    // Add your plugins here
-    // Learn more about plugins from https://webpack.js.org/configuration/plugins/
 
     module: {
       rules: [
@@ -137,16 +139,6 @@ module.exports = (_, a) => {
     optimization: {
       minimize: true,
       minimizer: [
-        // new EsbuildPlugin({
-        //   // target: "es6",
-        //   legalComments: "none", // 去除注释
-        //   minify: true,
-        //   minifyWhitespace: false, // 去掉空格
-        //   minifyIdentifiers: false, // 缩短标识符
-        //   minifySyntax: false, // 缩短语法
-        //   // implementation: esbuild, // 自定义 esbuild instance 实现
-        // }),
-
         new TerserPlugin({
           extractComments: false, //不将注释提取到单独的文件中
           terserOptions: {
@@ -161,7 +153,6 @@ module.exports = (_, a) => {
 
   if (a.watch) {
     config.optimization.minimize = false
-
     watchOptions = {
       // aggregateTimeout: 5000,
       // poll: 1000,
@@ -174,12 +165,12 @@ module.exports = (_, a) => {
   }
 
   if (a.nodeEnv === "obfuscator") {
-    config.plugins.unshift(new JavascriptObfuscator())
+    // config.plugins.unshift(new JavascriptObfuscator())
   }
 
   if (a.nodeEnv === "ui") {
     config.plugins.unshift(new AutoxHeaderWebpackPlugin(headerConfig))
-    config.plugins.unshift(new JavascriptObfuscator())
+    // config.plugins.unshift(new JavascriptObfuscator())
   }
 
   return config
