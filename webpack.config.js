@@ -103,7 +103,6 @@ module.exports = (_, a) => {
       // new AutoxHeaderWebpackPlugin(headerConfig),
       new CleanWebpackPlugin(cleanConfig),
       new CopyPlugin(copyConfig),
-      // new AutoDeployPlugin(autoDeployConfig),
     ],
 
     module: {
@@ -153,6 +152,7 @@ module.exports = (_, a) => {
 
   if (a.watch) {
     config.optimization.minimize = false
+    config.plugins.push(new AutoDeployPlugin(autoDeployConfig))
     watchOptions = {
       // aggregateTimeout: 5000,
       // poll: 1000,
