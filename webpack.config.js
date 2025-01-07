@@ -2,57 +2,15 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
-// const JavascriptObfuscator = require("webpack-obfuscator")
-const AutoxHeaderWebpackPlugin = require("./webpack/autox-header-webpack-plugin")
 const CopyPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
 const AutoDeployPlugin = require("./webpack/autox-deploy-webpack-plugin")
-
-// const { EsbuildPlugin } = require("esbuild-loader")
-// const esbuild = require("esbuild")
 
 const path = require("path")
 const fs = require("fs")
 const readline = require("readline")
 
 const header = fs.readFileSync(path.posix.resolve("header.js"), "utf8").trim()
-
-const fix_webpack_autojs_loader = () => {
-  const file_path = path.posix.resolve("node_modules\\webpack-autojs-loader\\index.js")
-  const temp_file_path = path.posix.resolve("node_modules\\webpack-autojs-loader\\temp.js")
-  const head = "//fix"
-
-  const readInterface = readline.createInterface({
-    input: fs.createReadStream(file_path),
-  })
-
-  const writeInterface = fs.createWriteStream(temp_file_path)
-  writeInterface.write(head + "\n")
-
-  let out = false
-  readInterface.on("line", (line) => {
-    if (line === head) {
-      out = true
-      return
-    }
-    if (line.includes("console.log = () => {}")) line = ""
-    writeInterface.write(line + "\n")
-  })
-
-  readInterface.on("close", () => {
-    readInterface.close()
-    if (out) {
-      fs.unlink(temp_file_path, (e) => {
-        if (e) console.log(e)
-      })
-    } else {
-      fs.unlink(file_path, (e) => {
-        if (e) console.log(e)
-      })
-      fs.renameSync(temp_file_path, file_path)
-    }
-  })
-}
 
 const headerConfig = { base64: false, advancedEngines: true, header: header }
 const cleanConfig = {
