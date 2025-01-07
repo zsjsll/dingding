@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "My webpack project",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "watch": "npx webpack --watch",
-    "build": "npx webpack --config webpack.config.js --mode=production --node-env=default",
-    "obfuscator": "npx webpack --config webpack.config.js --mode=production --node-env=obfuscator",
-    "ui": "npx webpack --config webpack.config.js --mode=production --node-env=ui"
+    "watch": "npx webpack watch",
+    "build": "npx webpack build "
   },
   "keywords": [],
   "author": "",
@@ -24,6 +23,7 @@
     "copy-webpack-plugin": "^12.0.2",
     "eslint": "^8.57.1",
     "swc-loader": "^0.2.6",
+    "terser-webpack-plugin": "^5.3.11",
     "typescript": "^5.7.2",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"

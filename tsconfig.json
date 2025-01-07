@@ -3,9 +3,9 @@
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "lib": ["es2022", "DOM"],
-    "target": "es5",
+    "target": "ES5",
     "allowJs": false,
     "typeRoots": ["./node_modules/@sm003/autojs6-dts/declarations", "./node_modules/@types", "./@types"],
 
