@@ -1,22 +1,7 @@
-/* eslint-disable no-constant-condition */
-
-/*
- * @Author: 家
- * @QQ: 203118908
- * @QQ交流群: 1019208967
- * @bilibili: 晓宇小凡
- * @versioin: 1.0
- * @Date: 2020-05-03 14:40:27
- * @LastEditTime: 2020-09-20 22:35:50
- * @LastEditors: 家
- * @Description: 用于webpack的loader 预处理autojs格式的文件
- * @学习格言: 即用即学, 即学即用
- */
-
-let 替换双花括号 = function () {
+const 替换双花括号 = function () {
   let str = arguments[0]
 
-  while (1) {
+  for (;;) {
     if (/\{\{(?!this).*?\}\}/.test(str)) {
       str = str.replace(/\{\{(?!this)(.*?)\}\}/, "$${$1}")
     } else {
@@ -25,10 +10,10 @@ let 替换双花括号 = function () {
   }
   return str
 }
-let 替换双花括号_xml添加反引号 = function () {
+const 替换双花括号_xml添加反引号 = function () {
   let str = arguments[0]
 
-  while (1) {
+  for (;;) {
     if (/<.*\/>(?!`)/.test(str)) {
       str = str.replace(/(<.*\/>)/, "`$1`")
     } else {
@@ -39,17 +24,17 @@ let 替换双花括号_xml添加反引号 = function () {
   // process.exit()
   return str
 }
-let 去掉单引号 = function () {
+const 去掉单引号 = function () {
   let str = arguments[0]
 
-  while (1) {
+  for (;;) {
     if (/'/.test(str)) {
       str = str.replace(/'/g, "")
     } else {
       break
     }
   }
-  while (1) {
+  for (;;) {
     if (/['"]\s*<.*?>\s*['"]/.test(str)) {
       str = str.replace(/['"]\s*(<.*?>)\s*['"]/g, "$1")
     } else {
@@ -59,7 +44,7 @@ let 去掉单引号 = function () {
   return str
 }
 
-let xml添加反引号 = function (content) {
+const xml添加反引号 = function (content) {
   // return content.replace(/ui.layout\((.*?)\)/g, "ui.layout(`$1`)")
 
   let result = content
@@ -78,8 +63,8 @@ let xml添加反引号 = function (content) {
   result = result.replace(/ui\.inflate\(([^()]+?),([^()]+?)\)/gm, "ui.inflate(`$1`,$2)")
   result = result.replace(/ui\.inflate\(([^(,)]+?)\)/gm, "ui.inflate(`$1`)")
 
-  let reg = /(ui\.inflate\(`\s*['"][^()]*?)'\s*\+\s*([a-zA-Z_]+)\s*\+\s*'([^()]*?['"]\s*`,[^()]+?\))/
-  while (1) {
+  const reg = /(ui\.inflate\(`\s*['"][^()]*?)'\s*\+\s*([a-zA-Z_]+)\s*\+\s*'([^()]*?['"]\s*`,[^()]+?\))/
+  for (;;) {
     if (reg.test(result)) {
       result = result.replace(/(ui\.inflate\(`\s*['"][^()]*?)'\s*\+\s*([a-zA-Z_]+)\s*\+\s*'([^()]*?['"]\s*`,[^()]+?\))/gm, "$1$${$2}$3")
     } else {
@@ -92,7 +77,7 @@ let xml添加反引号 = function (content) {
   return result
 }
 
-let someAsyncOperation = function (content, callback) {
+const someAsyncOperation = function (content, callback) {
   let err = ""
   try {
     content = xml添加反引号(content)
@@ -102,10 +87,10 @@ let someAsyncOperation = function (content, callback) {
   callback(err, content)
 }
 
-module.exports = function (content, map, meta) {
-  // @ts-expect-error async()
-  let callback = this.async()
-  someAsyncOperation(content, function (err, result) {
+export default function (content, map, meta) {
+  // @ts-ignore
+  const callback = this.async()
+  someAsyncOperation(content, (err, result) => {
     if (err) return callback(err)
     callback(null, result, map, meta)
   })

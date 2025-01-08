@@ -1,7 +1,8 @@
-import path from "path"
-import http from "http"
+import { posix } from "path"
+import { get } from "http"
 
 export default class AutoxDeployPlugin {
+
   /**
    * @param {string} cmd
    * @param {string} path
@@ -9,7 +10,7 @@ export default class AutoxDeployPlugin {
   sendCmd(cmd, path) {
     console.error("执行命令：", cmd)
     path = encodeURI(path)
-    const req = http.get("http://127.0.0.1:9317/exec?cmd=" + cmd + "&path=" + path, (res) => {
+    const req = get("http://127.0.0.1:9317/exec?cmd=" + cmd + "&path=" + path, (res) => {
       res.setEncoding("utf8")
       res
         .on("data", (data) => {
@@ -19,7 +20,7 @@ export default class AutoxDeployPlugin {
           console.error("返回数据错误")
         })
     })
-    req.on("error", function (err) {
+    req.on("error", () => {
       console.error("watch模式，自动" + cmd + "失败,autox.js服务未启动")
       console.error("请使用 ctrl+shift+p 快捷键，启动auto.js服务")
     })
@@ -38,6 +39,9 @@ export default class AutoxDeployPlugin {
     this.changFile = undefined
   }
 
+  /**
+   * @param {{ hooks: { done: { tap: (arg0: string, arg1: () => void) => void; }; }; }} compiler
+   */
   apply(compiler) {
     if (this.options === this.opt) return console.log("没有options，不进行任何操作！")
 
@@ -46,11 +50,11 @@ export default class AutoxDeployPlugin {
     //   if (this.changFile) this.changFile = path.posix.normalize(this.changFile)
     //   console.log("重新编译，改变的文件：", this.changFile)
     // })
-    compiler.hooks.done.tap("AutoxDeployPlugin", (stats) => {
+    compiler.hooks.done.tap("AutoxDeployPlugin", () => {
       if (typeof this.options.path !== "string") {
         throw new Error("必须提供一个有效的相对路径")
       }
-      const out = path.posix.resolve(this.options.path)
+      const out = posix.resolve(this.options.path)
       console.log("----->[out_file_path] =", out)
 
       switch (this.options.type) {

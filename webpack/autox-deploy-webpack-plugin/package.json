@@ -2,8 +2,9 @@
   "name": "autox-deploy-webpack-plugin",
   "version": "1.0.0",
   "description": "",
-  "main": "index.mjs",
   "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

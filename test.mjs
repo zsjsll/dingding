@@ -15,4 +15,4 @@ map1.set("c", 3)
 
 console.log(map1.forEach((v) => console.log(v)))
 
-let aaa = 123
+const aaa = 123

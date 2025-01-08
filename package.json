@@ -22,6 +22,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",
     "eslint": "^8.57.1",
+    "moment-locales-webpack-plugin": "^1.2.0",
     "swc-loader": "^0.2.6",
     "terser-webpack-plugin": "^5.3.11",
     "typescript": "^5.7.2",
