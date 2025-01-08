@@ -155,7 +155,7 @@ export class DD {
     const message = id("home_app_item").indexInParent(0).findOne(5e3)
     if (message !== null) message.click()
     else if (packageName(this.PACKAGE_ID_LIST.DD).findOne(2e3) !== null) click(device.width / 10, device.height * 0.95)
-    else false
+    else return false
     return true
   }
 
