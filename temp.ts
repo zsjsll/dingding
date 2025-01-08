@@ -8,4 +8,5 @@ if (t.startsWith("[")) {
 const tt = t.replace(/^\[\d+条\]\s*/g, "")
 console.log(tt)
 
-let a: any
+const aaa=123
+console.log(aaa)

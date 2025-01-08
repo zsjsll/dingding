@@ -83,11 +83,6 @@ const config = {
   },
 }
 
-// function fn() {}
-// fn()
-// console.log(123)
-// new
-// undefined
 export default (_, a) => {
   console.log(a)
 
