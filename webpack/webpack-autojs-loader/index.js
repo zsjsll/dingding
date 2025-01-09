@@ -94,5 +94,3 @@ export default function (content, map, meta) {
     callback(null, result, map, meta)
   })
 }
-
-let cbb=123
