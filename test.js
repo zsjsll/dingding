@@ -16,9 +16,3 @@ map1.set("b", 2)
 map1.set("c", 3)
 
 console.log(map1.forEach((v) => console.log(v)))
-
-const aaa = 123
-
-const bb = 123
-
-// const kk=require("lodash")

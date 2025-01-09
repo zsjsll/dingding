@@ -10,5 +10,3 @@ console.log(tt)
 
 const aaa = 123
 console.log(aaa)
-
-const a = 123

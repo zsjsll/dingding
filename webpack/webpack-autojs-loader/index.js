@@ -49,7 +49,6 @@ const xml添加反引号 = function (content) {
 
   let result = content
 
-  result = content
   result = result.replace(/ui\.layout\([^()]*?\)/gm, 替换双花括号)
   result = result.replace(/floaty\.rawWindow\([^()]*?\)/gm, 替换双花括号)
   result = result.replace(/floaty\.window\([^()]*?\)/gm, 替换双花括号)
