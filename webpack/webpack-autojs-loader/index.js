@@ -88,10 +88,11 @@ const someAsyncOperation = function (content, callback) {
 }
 
 export default function (content, map, meta) {
-  // @ts-ignore
   const callback = this.async()
   someAsyncOperation(content, (err, result) => {
     if (err) return callback(err)
     callback(null, result, map, meta)
   })
 }
+
+let cbb=123

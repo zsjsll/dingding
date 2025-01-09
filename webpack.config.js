@@ -92,13 +92,15 @@ export default (_, a) => {
     config.watchOptions = {
       ignored: ["**/*.js", "**/*.json", "**/node_modules", "**/webpack"],
     }
-    // @ts-ignore
+
+    // @ts-expect-error kkkk
     config.optimization.minimize = false
   }
 
   if (a.env.WEBPACK_BUILD) {
     console.log("开始打包")
-    // @ts-ignore
+
+    // @ts-expect-error kkkk
     config.optimization.minimize = true
   }
   return config
