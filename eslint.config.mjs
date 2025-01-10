@@ -4,10 +4,10 @@ import tseslint from "typescript-eslint"
 import sonarjs from "eslint-plugin-sonarjs"
 
 /** @type {import('eslint').Linter.Config[]} */
-const global_cfg = [{ ignores: ["dist", "node_modules"], rules: {} }]
+const global_cfg = [{ ignores: ["dist", "node_modules"], rules: { eqeqeq: 2 } }]
 
 /** @type {import('eslint').Linter.Config[]} */
-const js_cfg = [{ name: "js", files: ["**/*.js", "**/*.mjs"], rules: {} }]
+const js_cfg = [{ name: "js", files: ["**/*.js", "**/*.mjs"], rules: { "prefer-const": 2 } }]
 
 /** @type {import('eslint').Linter.Config[]} */
 const ts_cfg = [{ name: "ts", files: ["**/*.ts"], rules: {} }]

@@ -1,3 +1,4 @@
+import _ from "lodash"
 import { posix, resolve } from "path"
 
 let aa = posix.resolve("./dist")
@@ -16,3 +17,6 @@ map1.set("b", 2)
 map1.set("c", 3)
 
 console.log(map1.forEach((v) => console.log(v)))
+
+const a = _.some([1, 2, 3, 4], (v) => v===1)
+console.log(a)

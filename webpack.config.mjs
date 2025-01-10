@@ -48,15 +48,7 @@ const config = {
         exclude: /node_modules/,
         use: [
           {
-            loader: "./webpack/webpack-autojs-loader",
-          },
-          {
             loader: "swc-loader",
-            // options: {
-            //   jsc: {
-            //     output: { charset: "ascii" },
-            //   },
-            // },
           },
         ],
       },
@@ -95,13 +87,14 @@ export default (_, a) => {
 
     // @ts-expect-error kkkk
     config.optimization.minimize = false
-  }
-
-  if (a.env.WEBPACK_BUILD) {
+  } else {
     console.log("开始打包")
 
     // @ts-expect-error kkkk
     config.optimization.minimize = true
   }
+
+  // if (a.env.WEBPACK_BUILD) {
+  // }
   return config
 }

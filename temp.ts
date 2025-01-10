@@ -1,3 +1,5 @@
+import { forEach, includes, isString, some } from "lodash"
+
 const t = "[2条]12345689"
 
 if (t.startsWith("[")) {
@@ -8,5 +10,14 @@ if (t.startsWith("[")) {
 const tt = t.replace(/^\[\d+条\]\s*/g, "")
 console.log(tt)
 
-const aaa = 123
-console.log(aaa)
+function findsome(a: string | Array<string>, find?: string | Array<string>) {
+  if (isString(a)) {
+    if (isString(find)) {
+      return includes(a, find)
+    } else {
+
+    }
+  }
+}
+console.log(findsome("aaaaa", "b"))
+console.log(some("aaaaa", (v) => v === "a"))
