@@ -1,22 +1,21 @@
 import { backHome, openApp, swipeScreen, SwipeScreen, formatMsgs, formatTime } from "@/tools"
-import { Cfg } from "./config"
 import { isEmpty, startsWith } from "lodash"
 
-export type QQCfg = {
-  PACKAGE_ID_LIST: QQ_Package_Id_List
+export interface QQCfg {
+  PACKAGE_ID_LIST: QQPackageIdList
   QQ: string
 }
 
-type QQ_Package_Id_List = {
+interface QQPackageIdList {
   QQ: string
   HOME: string
 }
 
 export class QQ {
-  private readonly PACKAGE_ID_LIST: QQ_Package_Id_List
+  private readonly PACKAGE_ID_LIST: QQPackageIdList
   private readonly QQ: string
 
-  constructor(cfg: Cfg) {
+  constructor(cfg: QQCfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.QQ = cfg.QQ
   }
@@ -27,8 +26,8 @@ export class QQ {
   private chat() {
     // 最新的tim和qq 如果用意图启动，会出错误，所以改成查找控件来进入聊天窗口
 
-    let a: boolean = false
-    let b: boolean = false
+    let a = false
+    let b = false
     sleep(1e3)
     let nav = id("kbi").findOne(2e3)
 
@@ -86,21 +85,21 @@ export class QQ {
   }
 }
 
-export type DDCfg = {
-  PACKAGE_ID_LIST: DD_Package_Id_List
+export interface DDCfg {
+  PACKAGE_ID_LIST: DDPackageIdList
   ACCOUNT: string
   PASSWD: string
   RETRY: number
 
   CORP_ID: string
 }
-type DD_Package_Id_List = {
+interface DDPackageIdList {
   DD: string
   HOME: string
 }
 
 export class DD {
-  constructor(cfg: Cfg) {
+  constructor(cfg: DDCfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.ACCOUNT = cfg.ACCOUNT
     this.PASSWD = cfg.PASSWD
@@ -108,7 +107,7 @@ export class DD {
     this.CORP_ID = cfg.CORP_ID
   }
 
-  private readonly PACKAGE_ID_LIST: DD_Package_Id_List
+  private readonly PACKAGE_ID_LIST: DDPackageIdList
   private readonly ACCOUNT: string
   private readonly PASSWD: string
   private readonly RETRY: number
@@ -242,24 +241,25 @@ export class DD {
   }
 }
 
-type CLOCK_Package_Id_List = {
+interface ClockPackageIdList {
   CLOCK: string
   HOME: string
 }
 
-export type ClockCfg = {
-  PACKAGE_ID_LIST: CLOCK_Package_Id_List
+export interface ClockCfg {
+  PACKAGE_ID_LIST: ClockPackageIdList
   SWIPESCREEN: SwipeScreen
+  RETRY: number
 }
 
 export class Clock {
-  constructor(cfg: Cfg) {
+  constructor(cfg: ClockCfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.RETRY = cfg.RETRY
   }
 
-  private readonly PACKAGE_ID_LIST: CLOCK_Package_Id_List
+  private readonly PACKAGE_ID_LIST: ClockPackageIdList
   private readonly SWIPESCREEN: SwipeScreen
   private readonly RETRY: number
 
@@ -291,10 +291,10 @@ export class Clock {
   }
 }
 
-type Email_Package_Id_List = {
+interface EmailPackageIdList {
   EMAIL: string
 }
 
-export type EmailCfg = {
-  PACKAGE_ID_LIST: Email_Package_Id_List
+export interface EmailCfg {
+  PACKAGE_ID_LIST: EmailPackageIdList
 }

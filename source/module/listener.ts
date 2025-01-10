@@ -2,14 +2,14 @@ import { resetPhone, inWhiteList, White_list, reloadScript, formatTime } from "@
 import { debounce, forIn, isFunction } from "lodash"
 import { Cfg } from "./config"
 
-export type ListenerCfg = {
+export interface ListenerCfg {
   OBSERVE_VOLUME_KEY_UP: boolean
   OBSERVE_VOLUME_KEY_DOWN: boolean
   NOTIFICATIONS_FILTER: boolean
   PACKAGE_ID_LIST: White_list
 }
 
-type Info = {
+interface Info {
   PACKAGENAME: string
   TITLE: string
   TEXT: string

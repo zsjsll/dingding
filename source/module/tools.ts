@@ -128,7 +128,7 @@ export function isDeviceLocked() {
   return km.isKeyguardLocked()
 }
 
-export type SwipeScreen = {
+export interface SwipeScreen {
   TIME: number
   START: number
   END: number
@@ -140,10 +140,8 @@ export function setVolume(volume: number) {
   device.setAlarmVolume(volume)
 }
 
-export type White_list = {
-  [k: string]: string
-}
-export function inWhiteList(filter_switch: boolean = true, white_list: White_list, package_name: string) {
+export type White_list = Record<string, string>
+export function inWhiteList(filter_switch = true, white_list: White_list, package_name: string) {
   if (filter_switch === false) {
     console.log("放行")
     return true

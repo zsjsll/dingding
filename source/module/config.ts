@@ -5,7 +5,7 @@ import { isRoot, Delay, Pause, formatTime } from "@/tools"
 import { toString } from "lodash"
 
 type Json = {
-  PACKAGE_ID_LIST: White_list
+  PACKAGE_ID_LIST: WhiteList
   GLOBAL_LOG_FILE_DIR: string
   DELAY: Delay
 } & QQCfg &
@@ -14,18 +14,20 @@ type Json = {
   PhoneCfg &
   ListenerCfg &
   EmailCfg &
-  BASE_CONFIG
+  BaseConfig
 
-type White_list = { [k: string]: string; XMSF: string }
+interface WhiteList {
+  XMSF: string
+}
 
-type BASE_CONFIG = {
+interface BaseConfig {
   ACCOUNT: string
   PASSWD: string
   QQ: string
-  CORP_ID?: string
+  CORP_ID: string
 }
 
-export type Variable = {
+export interface Variable {
   ROOT: boolean
   pause: Pause
   thread: org.autojs.autojs.core.looper.TimerThread | undefined

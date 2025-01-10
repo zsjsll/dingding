@@ -1,15 +1,14 @@
 import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
-import { Cfg } from "./config"
 
-export type PhoneCfg = {
+export interface PhoneCfg {
   DEV: boolean
   SCREEN_BRIGHTNESS: number
   SWIPESCREEN: SwipeScreen
   VOLUME: number
-  PACKAGE_ID_LIST: Phone_Package_Id_List
+  PACKAGE_ID_LIST: PhonePackageIdList
 }
 
-type Phone_Package_Id_List = {
+interface PhonePackageIdList {
   HOME: string
 }
 
@@ -18,12 +17,12 @@ export class Phone {
   private readonly SCREEN_BRIGHTNESS: number
   private readonly SWIPESCREEN: SwipeScreen
   private readonly VOLUME: number
-  private readonly PACKAGE_ID_LIST: Phone_Package_Id_List
+  private readonly PACKAGE_ID_LIST: PhonePackageIdList
 
   next: step = step.next
   exit: step = step.exit
 
-  constructor(cfg: Cfg) {
+  constructor(cfg: PhoneCfg) {
     this.DEV = cfg.DEV
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
     this.SWIPESCREEN = cfg.SWIPESCREEN

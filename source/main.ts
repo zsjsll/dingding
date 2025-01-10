@@ -24,7 +24,7 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
   const qq = new QQ(cfg)
   const dd = new DD(cfg)
   const clock = new Clock(cfg)
-  listener.listenVolumeKey(() => {}) //可以添加自己需要的调试函数
+  listener.listenVolumeKey() //可以添加自己需要的调试函数
   listener.listenNotification((notification) => {
     listenMsg(notification)
     listenClock(notification)
