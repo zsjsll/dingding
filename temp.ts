@@ -1,27 +1,38 @@
 import { includes, isString, some } from "lodash"
 
-const t = "[2条]12345689"
-
-if (t.startsWith("[")) {
-  const k = t.split("]")
-  console.log(k.at(-1))
-}
-
-const tt = t.replace(/^\[\d+条\]\s*/g, "")
-console.log(tt)
-
-function findsome(a: string | string[], find?: string | string[]) {
-  if (isString(a)) {
+function findsome(original: string | string[], find: string | string[]) {
+  if (isString(original)) {
+    //original is string
     if (isString(find)) {
-      return includes(a, find)
+      return includes(original, find)
     } else {
-      console.log(123)
+      //find is array
+      let isfind = false
+      for (const value of find) {
+        isfind = includes(original, value)
+        // console.log(f)
+        if (isfind) break
+      }
+      return isfind
+    }
+  } else {
+    //original is array
+    if (isString(find)) {
+      return some(original, (v) => includes(v, find))
+    } else {
+      let isfind = some(original, (v) => {
+        for (const value of find) {
+          isfind = includes(v, value)
+          console.log("----->[isfind] =", isfind)
+
+          if (isfind) return true
+        }
+      })
+      return isfind
     }
   }
 }
-console.log(findsome("aaaaa", "b"))
-console.log(some("aaaaa", (v) => v === "a"))
+console.log(findsome(["bba", "cccc"], ["bvb", "cccccccc", "c"]))
 
-for (const key in [1, 2, 3, 4]) {
-  console.log(key)
-}
+const aaa = some({ a: 1, b: 2, c: 3 }, (v) => v === 1)
+console.log("----->[aaa] =", aaa)
