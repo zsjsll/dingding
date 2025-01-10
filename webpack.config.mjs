@@ -85,12 +85,12 @@ export default (_, a) => {
       ignored: ["**/*.js", "**/*.json", "**/node_modules", "**/webpack"],
     }
 
-    // @ts-expect-error kkkk
+    // @ts-expect-error config.optimization.minimize
     config.optimization.minimize = false
   } else {
     console.log("开始打包")
 
-    // @ts-expect-error kkkk
+    // @ts-expect-error config.optimization.minimize
     config.optimization.minimize = true
   }
 

@@ -6,7 +6,7 @@ import sonarjs from "eslint-plugin-sonarjs"
 /** @type {import('eslint').Linter.Config[]} */
 const global_cfg = [{ ignores: ["dist", "node_modules"], rules: { eqeqeq: 2 } }],
   /** @type {import('eslint').Linter.Config[]} */
-  js_cfg = [{ name: "js", files: ["**/*.js", "**/*.mjs"], rules: { "sort-imports": 2 } }],
+  js_cfg = [{ name: "js", files: ["**/*.js", "**/*.mjs"], rules: {} }],
   /** @type {import('eslint').Linter.Config[]} */
   ts_cfg = [{ name: "ts", files: ["**/*.ts"], rules: {} }]
 
@@ -16,7 +16,6 @@ export default [
   { files: ["**/*.{js,mjs,cjs,ts}"] },
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   pluginJs.configs.recommended,
-  // PluginJs.configs.all,
   sonarjs.configs.recommended,
   ...tseslint.configs.strict,
   ...tseslint.configs.stylistic,
