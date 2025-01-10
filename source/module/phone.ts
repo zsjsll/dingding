@@ -14,11 +14,11 @@ type Phone_Package_Id_List = {
 }
 
 export class Phone {
-  private DEV: boolean
-  private SCREEN_BRIGHTNESS: number
-  private SWIPESCREEN: SwipeScreen
-  private VOLUME: number
-  private PACKAGE_ID_LIST: Phone_Package_Id_List
+  private readonly DEV: boolean
+  private readonly SCREEN_BRIGHTNESS: number
+  private readonly SWIPESCREEN: SwipeScreen
+  private readonly VOLUME: number
+  private readonly PACKAGE_ID_LIST: Phone_Package_Id_List
 
   next: step = step.next
   exit: step = step.exit
@@ -32,9 +32,8 @@ export class Phone {
   }
 
   turnOn(root: boolean) {
-    if (this.DEV) this.SCREEN_BRIGHTNESS = -1
-
-    if (!brightScreen(this.SCREEN_BRIGHTNESS)) {
+    const screen_brightness = this.DEV ? -1 : this.SCREEN_BRIGHTNESS
+    if (!brightScreen(screen_brightness)) {
       console.error("唤醒设备失败!")
       return false
     }

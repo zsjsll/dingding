@@ -34,21 +34,21 @@ export type Variable = {
 
 export type Cfg = Variable & Json
 export class Config {
-  private config: Json
-  private config_path: string
-  private variable: Variable
+  private readonly CONFIG: Json
+  private readonly CONFIG_PATH: string
+  private readonly VARIABLE: Variable
 
   constructor() {
-    this.variable = {
+    this.VARIABLE = {
       ROOT: false,
       pause: [0, 0],
       thread: undefined,
       info: [],
     }
 
-    this.config_path = files.join(files.cwd(), "config.json")
+    this.CONFIG_PATH = files.join(files.cwd(), "config.json")
 
-    this.config = {
+    this.CONFIG = {
       DEV: false,
       ACCOUNT: "",
       PASSWD: "",
@@ -105,11 +105,11 @@ export class Config {
   }
 
   private createJsonFile() {
-    let config = this.config
-    if (files.exists(this.config_path)) {
+    let config = this.CONFIG
+    if (files.exists(this.CONFIG_PATH)) {
       try {
-        const cfg: Cfg = JSON.parse(files.read(this.config_path))
-        config = { ...this.config, ...cfg }
+        const cfg: Cfg = JSON.parse(files.read(this.CONFIG_PATH))
+        config = { ...this.CONFIG, ...cfg }
       } catch (e) {
         console.error("解析错误，重新生成config.json文件", e)
       }
@@ -117,19 +117,19 @@ export class Config {
 
     const cfg = this.updateConfig(config)
     const json = JSON.stringify(cfg, null, 2)
-    files.write(this.config_path, json)
+    files.write(this.CONFIG_PATH, json)
     return cfg
   }
 
   initCfg() {
-    this.variable.ROOT = isRoot()
+    this.VARIABLE.ROOT = isRoot()
     const cfg = this.createJsonFile()
-    const final_config: Cfg = { ...cfg, ...this.variable }
+    const final_config: Cfg = { ...cfg, ...this.VARIABLE }
     return final_config
   }
 
   createLog() {
-    const log = files.join(files.cwd(), this.config.GLOBAL_LOG_FILE_DIR, `${formatTime("YYYY-MM-DD-(d)")}.log`)
+    const log = files.join(files.cwd(), this.CONFIG.GLOBAL_LOG_FILE_DIR, `${formatTime("YYYY-MM-DD-(d)")}.log`)
     console.log("创建运行日志...\n" + log)
     console.setGlobalLogConfig({ file: log })
   }

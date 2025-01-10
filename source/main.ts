@@ -87,12 +87,10 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
 
   function listenClock(n: org.autojs.autojs.core.notification.Notification) {
     if (n.getPackageName() !== cfg.PACKAGE_ID_LIST.CLOCK) return
-    // if (n.getText() !== "闹钟") return
-    // if (n.when === 0) return
     threads.shutDownAll()
     clock.closeAlarm(cfg.ROOT)
     let msg: string[]
-    const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 ? true : false //执行打卡操作，或者直接输出现在状态
+    const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 //执行打卡操作，或者直接输出现在状态
     cfg.pause = changePause(cfg.pause) //修改pause参数
     const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)
 
@@ -105,8 +103,6 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
       if (sendMsg(msg) === phone.exit) return
       phone.turnOff(cfg.ROOT)
     })
-
-    return
   }
 
   function listenDD(n: org.autojs.autojs.core.notification.Notification) {
@@ -132,7 +128,5 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
         if (sendMsg(cfg.info) === phone.exit) return
         phone.turnOff(cfg.ROOT)
       })
-
-    return
   }
 })()

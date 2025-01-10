@@ -84,7 +84,6 @@ export class Listener implements ListenerCfg {
           forIn(info, (v, k) => console.verbose(`${k}: ${v}`))
           if (!inWhiteList(this.NOTIFICATIONS_FILTER, this.PACKAGE_ID_LIST, info.PACKAGENAME)) return
           if (isFunction(func)) return func(n)
-          return
         },
         200,
         { leading: true, trailing: false }

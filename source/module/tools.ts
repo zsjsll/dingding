@@ -34,7 +34,7 @@ export function closeScreen(root: boolean) {
 }
 
 export function isRoot() {
-  return shell("su -v").code === 0 ? true : false
+  return !shell("su -v").code
 }
 
 export function openWifi(root: boolean) {
@@ -85,13 +85,11 @@ export function backHome(home_id: string) {
   // 再点击home键
   home()
   sleep(1e3)
-  return
 }
 
 export function openApp(package_id: string) {
   app.launchPackage(package_id)
-  if (packageName(package_id).findOne(20e3) === null) return false
-  else return true
+  return !!packageName(package_id).findOne(20e3)
 }
 
 export function formatTime(style: string, timestamp?: number) {
@@ -99,7 +97,6 @@ export function formatTime(style: string, timestamp?: number) {
   else return moment().format(style)
 }
 
-// export type Delay = { min: number; max: number }
 export type Delay = [number, number]
 
 export function delay([min, max]: Delay = [0, 0]) {
@@ -121,7 +118,7 @@ export function brightScreen(brightness: number) {
   }
   device.cancelVibration() //取消震动
 
-  return device.isScreenOn() ? true : false
+  return !!device.isScreenOn()
 }
 
 export function isDeviceLocked() {

@@ -13,8 +13,8 @@ type QQ_Package_Id_List = {
 }
 
 export class QQ {
-  private PACKAGE_ID_LIST: QQ_Package_Id_List
-  private QQ: string
+  private readonly PACKAGE_ID_LIST: QQ_Package_Id_List
+  private readonly QQ: string
 
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
@@ -64,7 +64,6 @@ export class QQ {
     sleep(1000)
     send.click()
     console.info("发送成功")
-    return
   }
   openAndSendMsg(message: string[]) {
     if (!isEmpty(message)) {
@@ -84,7 +83,6 @@ export class QQ {
 
     sleep(1e3)
     backHome(this.PACKAGE_ID_LIST.HOME)
-    return
   }
 }
 
@@ -110,16 +108,14 @@ export class DD {
     this.CORP_ID = cfg.CORP_ID
   }
 
-  private PACKAGE_ID_LIST: DD_Package_Id_List
-  private ACCOUNT: string
-  private PASSWD: string
-  private RETRY: number
-  private CORP_ID: string
+  private readonly PACKAGE_ID_LIST: DD_Package_Id_List
+  private readonly ACCOUNT: string
+  private readonly PASSWD: string
+  private readonly RETRY: number
+  private readonly CORP_ID: string
 
   private isLogin() {
-    if (id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3) !== null) return false
-    // else if (id(this.PACKAGE_ID_LIST.DD + ":id/home_app_item").findOne(5e3) !== null) return true
-    return true
+    return !id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3)
   }
   // 登录钉钉，如果已经登录，false
   private logining() {
@@ -260,33 +256,38 @@ export class Clock {
   constructor(cfg: Cfg) {
     this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
     this.SWIPESCREEN = cfg.SWIPESCREEN
+    this.RETRY = cfg.RETRY
   }
 
-  private PACKAGE_ID_LIST: CLOCK_Package_Id_List
-  private SWIPESCREEN: SwipeScreen
+  private readonly PACKAGE_ID_LIST: CLOCK_Package_Id_List
+  private readonly SWIPESCREEN: SwipeScreen
+  private readonly RETRY: number
 
   //需要root
   closeAlarm(root: boolean) {
     sleep(2e3)
-    if (root) {
-      for (let i = 0; i < 10; i++) {
+    for (let i = 1; i <= this.RETRY; i++) {
+      console.log(`第${i}次关闭闹钟...`)
+      if (root) {
         VolumeDown()
         sleep(1e3)
-        if (packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500) === null) {
+        if (!packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500)) {
           console.log("已闭闹钟")
-          return
+          return true
         } else {
           swipeScreen(this.SWIPESCREEN, true)
-          console.warn("通过root权限滑动关闭闹钟，可能未关闭")
-          return
+        }
+      } else {
+        console.warn("没有root权限，通过滑动关闭闹钟")
+        swipeScreen(this.SWIPESCREEN, false)
+        if (!packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500)) {
+          console.log("已闭闹钟")
+          return true
         }
       }
-    } else {
-      swipeScreen(this.SWIPESCREEN, false)
-      console.warn("没有root权限，通过滑动关闭闹钟，可能未关闭")
-      return
     }
-    return
+    console.warn(`重试${this.RETRY}次, 可能未关闭!`)
+    return false
   }
 }
 

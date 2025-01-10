@@ -16,5 +16,3 @@ map1.set("b", 2)
 map1.set("c", 3)
 
 console.log(map1.forEach((v) => console.log(v)))
-
-console.log(!null)
