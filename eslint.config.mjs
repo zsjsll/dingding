@@ -20,6 +20,7 @@ export default [
   pluginJs.configs.recommended,
   sonarjs.configs.recommended,
   ...tseslint.configs.recommended,
+  // ...tseslint.configs.stylistic,
   ...global_cfg,
   ...js_cfg,
   ...ts_cfg,
