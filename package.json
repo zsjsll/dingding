@@ -21,6 +21,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",
     "eslint": "^9.17.0",
+    "eslint-plugin-sonarjs": "^3.0.1",
     "globals": "^15.14.0",
     "moment-locales-webpack-plugin": "^1.2.0",
     "swc-loader": "^0.2.6",
