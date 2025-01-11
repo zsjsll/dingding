@@ -11,7 +11,7 @@
 
     "esModuleInterop": true,
     "outDir": "./dist",
-    "baseUrl": "./source/",
+    "baseUrl": "src",
     "paths": {
       "@/*": ["module/*"]
     }

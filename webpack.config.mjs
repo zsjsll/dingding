@@ -3,9 +3,12 @@ import CopyPlugin from "copy-webpack-plugin"
 import TerserPlugin from "terser-webpack-plugin"
 import AutoxDeployPlugin from "./webpack/autox-deploy-webpack-plugin/index.js"
 import MomentLocalesPlugin from "moment-locales-webpack-plugin"
-import { posix } from "path"
+import path from "path"
 
-const entry_path = "./source/main.ts"
+const entry_path = "./src"
+const entry_file = path.join(entry_path, "main.ts")
+const alias_path = "./src/module"
+
 const output_path = "./dist"
 
 /** @type {import("webpack").Configuration} */
@@ -13,9 +16,9 @@ const config = {
   watchOptions: {},
   mode: "production",
   target: ["web", "es3"],
-  entry: entry_path,
+  entry: path.posix.resolve(entry_file),
   output: {
-    path: posix.resolve(output_path),
+    path: path.posix.resolve(output_path),
   },
   plugins: [
     new CleanWebpackPlugin({
@@ -27,8 +30,8 @@ const config = {
     new CopyPlugin({
       patterns: [
         {
-          from: posix.resolve("./source"),
-          to: posix.resolve(output_path),
+          from: path.posix.resolve(entry_path),
+          to: path.posix.resolve(output_path),
           globOptions: { ignore: ["**/*.js", "**/*.ts"] },
         },
       ],
@@ -57,7 +60,7 @@ const config = {
   resolve: {
     extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
     alias: {
-      "@": posix.resolve("source/module"),
+      "@": path.posix.resolve(alias_path),
     },
   },
   optimization: {

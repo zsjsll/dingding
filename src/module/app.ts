@@ -1,4 +1,4 @@
-import { backHome, openApp, swipeScreen, SwipeScreen, formatMsgs, formatTime } from "@/tools"
+import { backHome, openApp, swipeScreen, SwipeScreen, formatMsgs, formatTime } from "./tools"
 import { isEmpty, startsWith } from "lodash"
 
 export interface QQCfg {

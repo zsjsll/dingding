@@ -1,4 +1,4 @@
-import { resetPhone, inWhiteList, White_list, reloadScript, formatTime } from "@/tools"
+import { resetPhone, inWhiteList, White_list, reloadScript, formatTime } from "./tools"
 import { debounce, forIn, isFunction } from "lodash"
 import { Cfg } from "./config"
 

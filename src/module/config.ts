@@ -1,7 +1,7 @@
-import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "@/app"
-import { PhoneCfg } from "@/phone"
-import { ListenerCfg } from "@/listener"
-import { isRoot, Delay, Pause, formatTime } from "@/tools"
+import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "./app"
+import { PhoneCfg } from "./phone"
+import { ListenerCfg } from "./listener"
+import { isRoot, Delay, Pause, formatTime } from "./tools"
 import { toString } from "lodash"
 
 type Json = {

@@ -1,9 +1,9 @@
 import { includes, isEmpty } from "lodash"
-import { QQ, DD, Clock } from "@/app"
-import { Listener } from "@/listener"
-import { Config } from "@/config"
-import { Phone } from "@/phone"
-import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatNotification } from "@/tools"
+import { QQ, DD, Clock } from "./module/app"
+import { Listener } from "./module/listener"
+import { Config } from "./module/config"
+import { Phone } from "./module/phone"
+import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatNotification } from "./module/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本

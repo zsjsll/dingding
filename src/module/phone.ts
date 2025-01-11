@@ -1,4 +1,4 @@
-import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, SwipeScreen, resetPhone, closeScreen, openWifi } from "@/tools"
+import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, SwipeScreen, resetPhone, closeScreen, openWifi } from "./tools"
 
 export interface PhoneCfg {
   DEV: boolean
