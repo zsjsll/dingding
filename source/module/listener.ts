@@ -6,7 +6,7 @@ export interface ListenerCfg {
   OBSERVE_VOLUME_KEY_UP: boolean
   OBSERVE_VOLUME_KEY_DOWN: boolean
   NOTIFICATIONS_FILTER: boolean
-  PACKAGE_ID_LIST: White_list
+  PACKAGES: White_list
 }
 
 interface Info {
@@ -25,11 +25,11 @@ export class Listener implements ListenerCfg {
     this.OBSERVE_VOLUME_KEY_UP = cfg.OBSERVE_VOLUME_KEY_UP
     this.OBSERVE_VOLUME_KEY_DOWN = cfg.OBSERVE_VOLUME_KEY_DOWN
     this.NOTIFICATIONS_FILTER = cfg.NOTIFICATIONS_FILTER
-    this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
+    this.PACKAGES = cfg.PACKAGES
   }
   OBSERVE_VOLUME_KEY_UP: boolean
   OBSERVE_VOLUME_KEY_DOWN: boolean
-  PACKAGE_ID_LIST: White_list
+  PACKAGES: White_list
   NOTIFICATIONS_FILTER: boolean
 
   listenVolumeKey(func?: (e: android.view.KeyEvent) => unknown) {
@@ -82,7 +82,7 @@ export class Listener implements ListenerCfg {
             TICKER_TEXT: n.tickerText,
           }
           forIn(info, (v, k) => console.verbose(`${k}: ${v}`))
-          if (!inWhiteList(this.NOTIFICATIONS_FILTER, this.PACKAGE_ID_LIST, info.PACKAGENAME)) return
+          if (!inWhiteList(this.NOTIFICATIONS_FILTER, this.PACKAGES, info.PACKAGENAME)) return
           if (isFunction(func)) return func(n)
         },
         200,

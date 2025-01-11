@@ -2,7 +2,7 @@ import { backHome, openApp, swipeScreen, SwipeScreen, formatMsgs, formatTime } f
 import { isEmpty, startsWith } from "lodash"
 
 export interface QQCfg {
-  PACKAGE_ID_LIST: QQPackageIdList
+  PACKAGES: QQPackageIdList
   QQ: string
 }
 
@@ -16,7 +16,7 @@ export class QQ {
   private readonly QQ: string
 
   constructor(cfg: QQCfg) {
-    this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
+    this.PACKAGE_ID_LIST = cfg.PACKAGES
     this.QQ = cfg.QQ
   }
 
@@ -86,7 +86,7 @@ export class QQ {
 }
 
 export interface DDCfg {
-  PACKAGE_ID_LIST: DDPackageIdList
+  PACKAGES: DDPackageIdList
   ACCOUNT: string
   PASSWD: string
   RETRY: number
@@ -100,7 +100,7 @@ interface DDPackageIdList {
 
 export class DD {
   constructor(cfg: DDCfg) {
-    this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
+    this.PACKAGE_ID_LIST = cfg.PACKAGES
     this.ACCOUNT = cfg.ACCOUNT
     this.PASSWD = cfg.PASSWD
     this.RETRY = cfg.RETRY
@@ -247,14 +247,14 @@ interface ClockPackageIdList {
 }
 
 export interface ClockCfg {
-  PACKAGE_ID_LIST: ClockPackageIdList
+  PACKAGES: ClockPackageIdList
   SWIPESCREEN: SwipeScreen
   RETRY: number
 }
 
 export class Clock {
   constructor(cfg: ClockCfg) {
-    this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
+    this.PACKAGE_ID_LIST = cfg.PACKAGES
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.RETRY = cfg.RETRY
   }
@@ -296,5 +296,5 @@ interface EmailPackageIdList {
 }
 
 export interface EmailCfg {
-  PACKAGE_ID_LIST: EmailPackageIdList
+  PACKAGES: EmailPackageIdList
 }

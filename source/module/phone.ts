@@ -5,7 +5,7 @@ export interface PhoneCfg {
   SCREEN_BRIGHTNESS: number
   SWIPESCREEN: SwipeScreen
   VOLUME: number
-  PACKAGE_ID_LIST: PhonePackageIdList
+  PACKAGES: PhonePackageIdList
 }
 
 interface PhonePackageIdList {
@@ -27,7 +27,7 @@ export class Phone {
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.VOLUME = cfg.VOLUME
-    this.PACKAGE_ID_LIST = cfg.PACKAGE_ID_LIST
+    this.PACKAGE_ID_LIST = cfg.PACKAGES
   }
 
   turnOn(root: boolean) {

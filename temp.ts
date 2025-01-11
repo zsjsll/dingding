@@ -36,3 +36,7 @@ console.log(findsome(["bba", "cccc"], ["bvb", "cccccccc", "c"]))
 
 const aaa = some({ a: 1, b: 2, c: 3 }, (v) => v === 1)
 console.log("----->[aaa] =", aaa)
+
+function m() {
+  console.log(123)
+}

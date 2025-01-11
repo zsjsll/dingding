@@ -5,7 +5,7 @@ import { isRoot, Delay, Pause, formatTime } from "@/tools"
 import { toString } from "lodash"
 
 type Json = {
-  PACKAGE_ID_LIST: WhiteList
+  PACKAGES: WhiteList
   GLOBAL_LOG_FILE_DIR: string
   DELAY: Delay
 } & QQCfg &
@@ -18,6 +18,7 @@ type Json = {
 
 interface WhiteList {
   XMSF: string
+  HWID: string
 }
 
 interface BaseConfig {
@@ -72,7 +73,7 @@ export class Config {
       DELAY: [10, 280], //随机等待时间，单位：秒,如果DELAY[1]填写的值<=0，则跳过等待时间，目前手机设置的是5min锁屏，所以设定5min之内打卡
       // 最小延迟时间,最大延迟时间
       RETRY: 10, //登录和打卡的重试次数
-      PACKAGE_ID_LIST: {
+      PACKAGES: {
         QQ: "com.tencent.tim", // 请使用tim
         DD: "com.alibaba.android.rimet", // 钉钉
         EMAIL: "com.tencent.androidqqmail", // QQ邮箱
