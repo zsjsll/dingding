@@ -1,12 +1,13 @@
 import { includes, isEmpty } from "lodash"
-import { QQ, DD, Clock } from "./module/app"
-import { Listener } from "./module/listener"
-import { Config } from "./module/config"
-import { Phone } from "./module/phone"
-import { formatPauseInput, delay, onlyRunOneScript, pauseStatus, changePause, formatNotification } from "./module/tools"
+
+import { script } from "@/tools"
+import Listener from "@/listener"
+import Config from "@/config"
+import Phone from "@/phone"
+import { QQ, DD, Clock } from "@/app"
 ;(function main() {
   //初始化脚本
-  onlyRunOneScript() //停止其他脚本，只运行当前脚本
+  script.onlyRunOneScript() //停止其他脚本，只运行当前脚本
   setScreenMetrics(device.width, device.height)
   auto()
   shell("", true)
@@ -53,18 +54,18 @@ import { formatPauseInput, delay, onlyRunOneScript, pauseStatus, changePause, fo
 
     if (n.getText() === "帮助") {
       const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
-      doIt(() => [...default_msg, ...pauseStatus(cfg.pause)])
+      doIt(() => [...default_msg, ...script.pauseStatus(cfg.pause)])
       return
     }
 
     if (n.getText() === "打卡") {
-      doIt(() => [...dd.openAndPunchIn(), ...pauseStatus(cfg.pause)])
+      doIt(() => [...dd.openAndPunchIn(), ...script.pauseStatus(cfg.pause)])
       return
     }
 
     if (includes(n.getText(), "暂停")) {
-      cfg.pause = formatPauseInput(n.getText())
-      const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
+      cfg.pause = script.formatPauseInput(n.getText())
+      const pause_tatus_msg = isEmpty(script.pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : script.pauseStatus(cfg.pause)
       doIt(() => [...pause_tatus_msg])
       return
     }
@@ -76,7 +77,7 @@ import { formatPauseInput, delay, onlyRunOneScript, pauseStatus, changePause, fo
     }
 
     if (n.getText() === "锁屏") {
-      doIt(() => ["已停止当前动作", ...pauseStatus(cfg.pause)])
+      doIt(() => ["已停止当前动作", ...script.pauseStatus(cfg.pause)])
       return
     }
 
@@ -91,13 +92,13 @@ import { formatPauseInput, delay, onlyRunOneScript, pauseStatus, changePause, fo
     clock.closeAlarm(cfg.ROOT)
     let msg: string[]
     const daka = cfg.pause[0] > 0 || cfg.pause[1] === 0 //执行打卡操作，或者直接输出现在状态
-    cfg.pause = changePause(cfg.pause) //修改pause参数
-    const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : pauseStatus(cfg.pause)
+    cfg.pause = script.changePause(cfg.pause) //修改pause参数
+    const pause_tatus_msg = isEmpty(script.pauseStatus(cfg.pause)) ? ["! 暂停打卡结束 !"] : script.pauseStatus(cfg.pause)
 
     cfg.thread = threads.start(() => {
       phone.turnOn(cfg.ROOT)
       if (daka) {
-        delay(cfg.DELAY) //随机延迟打卡
+        script.delay(cfg.DELAY) //随机延迟打卡
         msg = dd.openAndPunchIn()
       } else msg = pause_tatus_msg
       if (sendMsg(msg) === phone.exit) return
@@ -109,7 +110,7 @@ import { formatPauseInput, delay, onlyRunOneScript, pauseStatus, changePause, fo
     if (n.getPackageName() !== cfg.PACKAGES.DD) return
     if (includes(n.getText(), "考勤打卡") && (includes(n.getText(), "成功") || includes(n.getText(), "全部正常"))) return
 
-    cfg.info.push(formatNotification(n))
+    cfg.info.push(script.formatNotification(n))
 
     if (cfg.thread?.isAlive()) {
       console.log("alive")

@@ -1,27 +1,17 @@
-import { backHome, openApp, swipeScreen, SwipeScreen, formatMsgs, formatTime } from "./tools"
 import { isEmpty, startsWith } from "lodash"
-
-export interface QQCfg {
-  PACKAGES: QQPackageIdList
-  QQ: string
-}
-
-interface QQPackageIdList {
-  QQ: string
-  HOME: string
-}
+import { script, system } from "@/tools"
 
 export class QQ {
-  private readonly PACKAGE_ID_LIST: QQPackageIdList
+  private readonly PACKAGES: QQPackages
   private readonly QQ: string
 
   constructor(cfg: QQCfg) {
-    this.PACKAGE_ID_LIST = cfg.PACKAGES
+    this.PACKAGES = cfg.PACKAGES
     this.QQ = cfg.QQ
   }
 
   private open() {
-    return openApp(this.PACKAGE_ID_LIST.QQ)
+    return system.openApp(this.PACKAGES.QQ)
   }
   private chat() {
     // 最新的tim和qq 如果用意图启动，会出错误，所以改成查找控件来进入聊天窗口
@@ -48,14 +38,14 @@ export class QQ {
       app.startActivity({
         action: "android.intent.action.VIEW",
         data: "mqq://im/chat?chat_type=wpa&version=1&src_type=web&uin=" + this.QQ,
-        packageName: this.PACKAGE_ID_LIST.QQ,
+        packageName: this.PACKAGES.QQ,
       })
     }
     sleep(2e3)
   }
 
   private sendmsg(message: string) {
-    const input = id(this.PACKAGE_ID_LIST.QQ + ":id/input").findOne(10e3)
+    const input = id(this.PACKAGES.QQ + ":id/input").findOne(10e3)
 
     input.setText(message)
 
@@ -67,54 +57,41 @@ export class QQ {
   openAndSendMsg(message: string[]) {
     if (!isEmpty(message)) {
       console.log("发送信息")
-      backHome(this.PACKAGE_ID_LIST.HOME)
+      system.backHome(this.PACKAGES.HOME)
       if (!this.open()) {
         console.error("无法打开QQ!")
         return false
       }
       this.chat() //进入聊天界面
 
-      const msgs = formatMsgs(message)
+      const msgs = script.formatMsgs(message)
 
       console.info(msgs)
       this.sendmsg(msgs)
     } else console.log("消息为空，直接退出！")
 
     sleep(1e3)
-    backHome(this.PACKAGE_ID_LIST.HOME)
+    system.backHome(this.PACKAGES.HOME)
   }
-}
-
-export interface DDCfg {
-  PACKAGES: DDPackageIdList
-  ACCOUNT: string
-  PASSWD: string
-  RETRY: number
-
-  CORP_ID: string
-}
-interface DDPackageIdList {
-  DD: string
-  HOME: string
 }
 
 export class DD {
   constructor(cfg: DDCfg) {
-    this.PACKAGE_ID_LIST = cfg.PACKAGES
+    this.PACKAGES = cfg.PACKAGES
     this.ACCOUNT = cfg.ACCOUNT
     this.PASSWD = cfg.PASSWD
     this.RETRY = cfg.RETRY
     this.CORP_ID = cfg.CORP_ID
   }
 
-  private readonly PACKAGE_ID_LIST: DDPackageIdList
+  private readonly PACKAGES: DDPackages
   private readonly ACCOUNT: string
   private readonly PASSWD: string
   private readonly RETRY: number
   private readonly CORP_ID: string
 
   private isLogin() {
-    return !id(this.PACKAGE_ID_LIST.DD + ":id/cb_privacy").findOne(5e3)
+    return !id(this.PACKAGES.DD + ":id/cb_privacy").findOne(5e3)
   }
   // 登录钉钉，如果已经登录，false
   private logining() {
@@ -149,7 +126,7 @@ export class DD {
     if (!this.isLogin()) return false
     const message = id("home_app_item").indexInParent(0).findOne(5e3)
     if (message !== null) message.click()
-    else if (packageName(this.PACKAGE_ID_LIST.DD).findOne(2e3) !== null) click(device.width / 10, device.height * 0.95)
+    else if (packageName(this.PACKAGES.DD).findOne(2e3) !== null) click(device.width / 10, device.height * 0.95)
     else return false
     return true
   }
@@ -157,10 +134,10 @@ export class DD {
   private open() {
     for (let index = 1; index <= this.RETRY; index++) {
       console.info(`第${index}次登录...`)
-      backHome(this.PACKAGE_ID_LIST.HOME)
-      console.log("正在启动" + app.getAppName(this.PACKAGE_ID_LIST.DD) + "...")
+      system.backHome(this.PACKAGES.HOME)
+      console.log("正在启动" + app.getAppName(this.PACKAGES.DD) + "...")
 
-      if (!openApp(this.PACKAGE_ID_LIST.DD)) {
+      if (!system.openApp(this.PACKAGES.DD)) {
         console.warn("启动失败，重新启动...")
         continue
       }
@@ -215,10 +192,10 @@ export class DD {
       }
       if (textContains("成功").findOne(15e3) === null) {
         console.warn("打卡无效,也许未到打卡时间!")
-        return [`考勤打卡:${formatTime("HH:mm")} 打卡·无效`]
+        return [`考勤打卡:${script.formatTime("HH:mm")} 打卡·无效`]
       }
       // return `考勤打卡:${formatTime("HH:mm")}打卡·成功\n但未收到成功消息`
-      return [`考勤打卡:${formatTime("HH:mm")} 打卡·成功`]
+      return [`考勤打卡:${script.formatTime("HH:mm")} 打卡·成功`]
     }
     const e = [`重试${this.RETRY}次, 打卡失败!`]
     console.error(e)
@@ -226,9 +203,9 @@ export class DD {
   }
 
   openAndPunchIn(): string[] {
-    console.log("本地时间: " + formatTime("YYYY-MM-DD HH:mm:ss"))
+    console.log("本地时间: " + script.formatTime("YYYY-MM-DD HH:mm:ss"))
     console.log("开始打卡")
-    backHome(this.PACKAGE_ID_LIST.HOME)
+    system.backHome(this.PACKAGES.HOME)
     if (!this.open()) {
       const e = ["无法打开钉钉!"]
       console.error(e)
@@ -236,30 +213,19 @@ export class DD {
     }
     const r = this.punchIn()
     sleep(3e3)
-    backHome(this.PACKAGE_ID_LIST.HOME)
+    system.backHome(this.PACKAGES.HOME)
     return r
   }
 }
 
-interface ClockPackageIdList {
-  CLOCK: string
-  HOME: string
-}
-
-export interface ClockCfg {
-  PACKAGES: ClockPackageIdList
-  SWIPESCREEN: SwipeScreen
-  RETRY: number
-}
-
 export class Clock {
   constructor(cfg: ClockCfg) {
-    this.PACKAGE_ID_LIST = cfg.PACKAGES
+    this.PACKAGES = cfg.PACKAGES
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.RETRY = cfg.RETRY
   }
 
-  private readonly PACKAGE_ID_LIST: ClockPackageIdList
+  private readonly PACKAGES: ClockPackages
   private readonly SWIPESCREEN: SwipeScreen
   private readonly RETRY: number
 
@@ -271,16 +237,16 @@ export class Clock {
       if (root) {
         VolumeDown()
         sleep(1e3)
-        if (!packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500)) {
+        if (!packageName(this.PACKAGES.CLOCK).findOne(500)) {
           console.log("已闭闹钟")
           return true
         } else {
-          swipeScreen(this.SWIPESCREEN, true)
+          system.swipeScreen(this.SWIPESCREEN, true)
         }
       } else {
         console.warn("没有root权限，通过滑动关闭闹钟")
-        swipeScreen(this.SWIPESCREEN, false)
-        if (!packageName(this.PACKAGE_ID_LIST.CLOCK).findOne(500)) {
+        system.swipeScreen(this.SWIPESCREEN, false)
+        if (!packageName(this.PACKAGES.CLOCK).findOne(500)) {
           console.log("已闭闹钟")
           return true
         }
@@ -289,12 +255,4 @@ export class Clock {
     console.warn(`重试${this.RETRY}次, 可能未关闭!`)
     return false
   }
-}
-
-interface EmailPackageIdList {
-  EMAIL: string
-}
-
-export interface EmailCfg {
-  PACKAGES: EmailPackageIdList
 }

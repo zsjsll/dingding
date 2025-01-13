@@ -1,11 +1,22 @@
-
 import { floor, head, includes, last, parseInt, some, toNumber } from "lodash"
 import moment from "moment"
 
-
 // -----------以下函数需要root权限-----------------
 
-export function swipeScreen(opt: SwipeScreen, root: boolean) {
+export const system = {
+  swipeScreen,
+  closeScreen,
+  isRoot,
+  openWifi,
+  resetPhone,
+  backHome,
+  openApp,
+  brightScreen,
+  isDeviceLocked,
+  setVolume,
+}
+
+function swipeScreen(opt: SwipeScreen, root: boolean) {
   if (root) Swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   else swipe(device.width * 0.5, device.height * opt.START, device.width * 0.5, device.height * opt.END, opt.TIME)
   // gesture(
@@ -23,7 +34,7 @@ export function swipeScreen(opt: SwipeScreen, root: boolean) {
   sleep(1500) // 等待解锁动画完成
 }
 
-export function closeScreen(root: boolean) {
+function closeScreen(root: boolean) {
   device.cancelKeepingAwake() // 取消设备常亮
   // if (isRoot()) shell("input keyevent 26", true)
   if (root) Power()
@@ -35,11 +46,11 @@ export function closeScreen(root: boolean) {
   sleep(1e3)
 }
 
-export function isRoot() {
+function isRoot() {
   return !shell("su -v").code
 }
 
-export function openWifi(root: boolean) {
+function openWifi(root: boolean) {
   if (root) {
     const wifi_info = shell("settings get global wifi_on", true)
     if (wifi_info.error !== "") console.error("无法获取wifi信息")
@@ -57,28 +68,13 @@ export function openWifi(root: boolean) {
 
 // -----------以上函数需要root权限-----------------
 
-export function resetPhone() {
+function resetPhone() {
   // device.setBrightnessMode(1) // 自动亮度模式
   device.setBrightness(600)
   device.cancelKeepingAwake() // 取消设备常亮
 }
 
-export function reloadScript() {
-  const exec_path: string = engines.myEngine().getSource().toString()
-  engines.execScriptFile(exec_path)
-}
-
-export function onlyRunOneScript() {
-  engines.all().map((ScriptEngine) => {
-    if (engines.myEngine().toString() !== ScriptEngine.toString()) {
-      ScriptEngine.forceStop()
-    }
-  })
-}
-
-// --------------------------------------------
-
-export function backHome(home_id: string) {
+function backHome(home_id: string) {
   for (let i = 0; i < 10; i++) {
     if (currentPackage() === home_id) break
     back()
@@ -89,29 +85,12 @@ export function backHome(home_id: string) {
   sleep(1e3)
 }
 
-export function openApp(package_id: string) {
+function openApp(package_id: string) {
   app.launchPackage(package_id)
   return !!packageName(package_id).findOne(20e3)
 }
 
-export function formatTime(style: string, timestamp?: number) {
-  if (timestamp) return moment(timestamp).format(style)
-  else return moment().format(style)
-}
-
-export type Delay = [number, number]
-
-export function delay([min, max]: Delay = [0, 0]) {
-  if (max <= 0 || min >= max) {
-    return
-  } else {
-    const randomTime = random(min * 1e3, max * 1e3)
-    toastLog(Math.floor(randomTime / 1000) + "秒后启动程序" + "...")
-    sleep(randomTime)
-  }
-}
-
-export function brightScreen(brightness: number) {
+function brightScreen(brightness: number) {
   device.wakeUpIfNeeded() // 唤醒设备
   if (brightness >= 0) {
     device.keepScreenOn() // 保持亮屏
@@ -123,27 +102,43 @@ export function brightScreen(brightness: number) {
   return !!device.isScreenOn()
 }
 
-export function isDeviceLocked() {
+function isDeviceLocked() {
   importClass(android.app.KeyguardManager)
   importClass(android.content.Context)
   const km = context.getSystemService(Context.KEYGUARD_SERVICE)
   return km.isKeyguardLocked()
 }
 
-export interface SwipeScreen {
-  TIME: number
-  START: number
-  END: number
-}
-
-export function setVolume(volume: number) {
+function setVolume(volume: number) {
   device.setMusicVolume(volume)
   device.setNotificationVolume(volume)
   device.setAlarmVolume(volume)
 }
 
-export type White_list = Record<string, string>
-export function inWhiteList(filter_switch = true, white_list: White_list, package_name: string) {
+function reloadScript() {
+  const exec_path: string = engines.myEngine().getSource().toString()
+  engines.execScriptFile(exec_path)
+}
+
+function onlyRunOneScript() {
+  engines.all().map((ScriptEngine) => {
+    if (engines.myEngine().toString() !== ScriptEngine.toString()) {
+      ScriptEngine.forceStop()
+    }
+  })
+}
+
+function delay([min, max]: Delay = [0, 0]) {
+  if (max <= 0 || min >= max) {
+    return
+  } else {
+    const randomTime = random(min * 1e3, max * 1e3)
+    toastLog(Math.floor(randomTime / 1000) + "秒后启动程序" + "...")
+    sleep(randomTime)
+  }
+}
+
+function inWhiteList(filter_switch = true, white_list: WhiteList, package_name: string) {
   if (filter_switch === false) {
     console.log("放行")
     return true
@@ -154,13 +149,13 @@ export function inWhiteList(filter_switch = true, white_list: White_list, packag
   return r
 }
 
-export function setStorageData(name: string, key: string, value: unknown) {
+function setStorageData(name: string, key: string, value: unknown) {
   const storage = storages.create(name) // 创建storage对象
   value ??= ""
   storage.put(key, value)
 }
 
-export function getStorageData(name: string, key: string) {
+function getStorageData(name: string, key: string) {
   const storage = storages.create(name)
   if (storage.contains(key)) {
     return storage.get(key, "")
@@ -168,9 +163,12 @@ export function getStorageData(name: string, key: string) {
   // 默认返回undefined
 }
 
-export type Pause = [number, number]
+function formatTime(style: string, timestamp?: number) {
+  if (timestamp) return moment(timestamp).format(style)
+  else return moment().format(style)
+}
 
-export function formatPauseInput(input: string): Pause {
+function formatPauseInput(input: string): Pause {
   input = "0" + input //在字符串前面添加一个0
   //匹配所有数字，包括小数
   const pause = input.match(/[\d.]+/g)?.map((v) => {
@@ -188,7 +186,7 @@ export function formatPauseInput(input: string): Pause {
 const line = "-----------------------------"
 const wn = "!+!+!+!+!+!+!+!+!+!+!+!+!+!+!"
 
-export function pauseStatus(pause: Pause) {
+function pauseStatus(pause: Pause) {
   if (pause !== undefined) {
     const [after, count] = pause
     if (count === 0) return []
@@ -198,19 +196,19 @@ export function pauseStatus(pause: Pause) {
   return ["好像出错了"]
 }
 
-export function changePause(pause: Pause) {
+function changePause(pause: Pause) {
   if (pause[0] > 0) pause[0] -= 1 //如果有延迟打卡， 延迟打卡减1次
   else if (pause[1] > 0) pause[1] -= 1 //如果没有延迟打卡次数，且有暂停打卡次数， 暂停打卡减1次
   return pause
 }
 
-export function formatNotification(n: org.autojs.autojs.core.notification.Notification): string {
+function formatNotification(n: org.autojs.autojs.core.notification.Notification): string {
   const text = n.getText().replace(/^\[\d+条\]\s*/g, "") //去除前面的 [number条]
   const msgs = `${formatTime("HH:mm")} ${n.getTitle()}: ${text}`
   return msgs
 }
 
-export function formatMsgs(msgs: string[]): string {
+function formatMsgs(msgs: string[]): string {
   const base_msgs = `\n当前电量: ${device.getBattery()}%\n是否充电: ${device.isCharging()}`
   const findSomething = (list: string[], val: string) => some(list, (v) => includes(v, val))
   const del_head_line = head(msgs) === line || head(msgs) === "\n"
@@ -222,4 +220,19 @@ export function formatMsgs(msgs: string[]): string {
   return [...msgs, base_msgs].join("\n")
 
   // message = message.replace(/^[\n-]+|[\n]+$/g, "") //如果开头有很多的-或者\n，则去掉  如果结尾有\n 去除
+}
+
+export const script = {
+  reloadScript,
+  onlyRunOneScript,
+  delay,
+  inWhiteList,
+  setStorageData,
+  getStorageData,
+  formatTime,
+  formatPauseInput,
+  pauseStatus,
+  changePause,
+  formatNotification,
+  formatMsgs,
 }

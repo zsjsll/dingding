@@ -1,36 +1,17 @@
-import { resetPhone, inWhiteList, White_list, reloadScript, formatTime } from "./tools"
+import { script, system } from "./tools"
 import { debounce, forIn, isFunction } from "lodash"
-import { Cfg } from "./config"
 
-export interface ListenerCfg {
-  OBSERVE_VOLUME_KEY_UP: boolean
-  OBSERVE_VOLUME_KEY_DOWN: boolean
-  NOTIFICATIONS_FILTER: boolean
-  PACKAGES: White_list
-}
-
-interface Info {
-  PACKAGENAME: string
-  TITLE: string
-  TEXT: string
-  PRIORITY: number
-  CATEGORY: string
-  TIME: string
-  NUMBER: number
-  TICKER_TEXT: string
-}
-
-export class Listener implements ListenerCfg {
+export default class Listener {
   constructor(cfg: Cfg) {
     this.OBSERVE_VOLUME_KEY_UP = cfg.OBSERVE_VOLUME_KEY_UP
     this.OBSERVE_VOLUME_KEY_DOWN = cfg.OBSERVE_VOLUME_KEY_DOWN
     this.NOTIFICATIONS_FILTER = cfg.NOTIFICATIONS_FILTER
     this.PACKAGES = cfg.PACKAGES
   }
-  OBSERVE_VOLUME_KEY_UP: boolean
-  OBSERVE_VOLUME_KEY_DOWN: boolean
-  PACKAGES: White_list
-  NOTIFICATIONS_FILTER: boolean
+  private readonly OBSERVE_VOLUME_KEY_UP: boolean
+  private readonly OBSERVE_VOLUME_KEY_DOWN: boolean
+  private readonly PACKAGES: WhiteList
+  private readonly NOTIFICATIONS_FILTER: boolean
 
   listenVolumeKey(func?: (e: android.view.KeyEvent) => unknown) {
     events.setKeyInterceptionEnabled("volume_up", this.OBSERVE_VOLUME_KEY_UP)
@@ -41,9 +22,9 @@ export class Listener implements ListenerCfg {
       events.on("key", (keycode: number, event: android.view.KeyEvent) => {
         if (keycode === keys.volume_up && event.getAction() === 0) {
           threads.shutDownAll()
-          resetPhone()
+          system.resetPhone()
           toastLog("按下音量+,重启程序!")
-          reloadScript()
+          script.reloadScript()
           if (isFunction(func)) return func(event)
           else return
         }
@@ -54,7 +35,7 @@ export class Listener implements ListenerCfg {
       events.on("key", (keycode: number, event: android.view.KeyEvent) => {
         if (keycode === keys.volume_down && event.getAction() === 0) {
           threads.shutDownAll()
-          resetPhone()
+          system.resetPhone()
           toastLog("按下音量-,中断所有子线程!")
           /* 调试脚本*/
           if (isFunction(func)) return func(event)
@@ -77,12 +58,12 @@ export class Listener implements ListenerCfg {
             TEXT: n.getText(),
             PRIORITY: n.priority,
             CATEGORY: n.category,
-            TIME: formatTime("YYYY-MM-DD HH:mm:ss", n.when),
+            TIME: script.formatTime("YYYY-MM-DD HH:mm:ss", n.when),
             NUMBER: n.number,
             TICKER_TEXT: n.tickerText,
           }
           forIn(info, (v, k) => console.verbose(`${k}: ${v}`))
-          if (!inWhiteList(this.NOTIFICATIONS_FILTER, this.PACKAGES, info.PACKAGENAME)) return
+          if (!script.inWhiteList(this.NOTIFICATIONS_FILTER, this.PACKAGES, info.PACKAGENAME)) return
           if (isFunction(func)) return func(n)
         },
         200,

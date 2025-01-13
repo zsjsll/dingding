@@ -1,42 +1,7 @@
-import { QQCfg, DDCfg, ClockCfg, EmailCfg } from "./app"
-import { PhoneCfg } from "./phone"
-import { ListenerCfg } from "./listener"
-import { isRoot, Delay, Pause, formatTime } from "./tools"
+import { system, script } from "./tools"
 import { toString } from "lodash"
 
-type Json = {
-  PACKAGES: WhiteList
-  GLOBAL_LOG_FILE_DIR: string
-  DELAY: Delay
-} & QQCfg &
-  DDCfg &
-  ClockCfg &
-  PhoneCfg &
-  ListenerCfg &
-  EmailCfg &
-  BaseConfig
-
-interface WhiteList {
-  XMSF: string
-  HWID: string
-}
-
-interface BaseConfig {
-  ACCOUNT: string
-  PASSWD: string
-  QQ: string
-  CORP_ID: string
-}
-
-export interface Variable {
-  ROOT: boolean
-  pause: Pause
-  thread: org.autojs.autojs.core.looper.TimerThread | undefined
-  info: string[]
-}
-
-export type Cfg = Variable & Json
-export class Config {
+export default class Config {
   private readonly CONFIG: Json
   private readonly CONFIG_PATH: string
   private readonly VARIABLE: Variable
@@ -125,14 +90,14 @@ export class Config {
   }
 
   initCfg() {
-    this.VARIABLE.ROOT = isRoot()
+    this.VARIABLE.ROOT = system.isRoot()
     const cfg = this.createJsonFile()
     const final_config: Cfg = { ...cfg, ...this.VARIABLE }
     return final_config
   }
 
   createLog() {
-    const log = files.join(files.cwd(), this.CONFIG.GLOBAL_LOG_FILE_DIR, `${formatTime("YYYY-MM-DD-(d)")}.log`)
+    const log = files.join(files.cwd(), this.CONFIG.GLOBAL_LOG_FILE_DIR, `${script.formatTime("YYYY-MM-DD-(d)")}.log`)
     console.log("创建运行日志...\n" + log)
     console.setGlobalLogConfig({ file: log })
   }

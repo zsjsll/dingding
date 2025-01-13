@@ -1,18 +1,6 @@
-import { brightScreen, isDeviceLocked, backHome, setVolume, swipeScreen, SwipeScreen, resetPhone, closeScreen, openWifi } from "./tools"
+import { system } from "./tools"
 
-export interface PhoneCfg {
-  DEV: boolean
-  SCREEN_BRIGHTNESS: number
-  SWIPESCREEN: SwipeScreen
-  VOLUME: number
-  PACKAGES: PhonePackageIdList
-}
-
-interface PhonePackageIdList {
-  HOME: string
-}
-
-export class Phone {
+export default class Phone {
   private readonly DEV: boolean
   private readonly SCREEN_BRIGHTNESS: number
   private readonly SWIPESCREEN: SwipeScreen
@@ -32,32 +20,32 @@ export class Phone {
 
   turnOn(root: boolean) {
     const screen_brightness = this.DEV ? -1 : this.SCREEN_BRIGHTNESS
-    if (!brightScreen(screen_brightness)) {
+    if (!system.brightScreen(screen_brightness)) {
       console.error("唤醒设备失败!")
       return false
     }
     sleep(500)
-    if (isDeviceLocked()) {
+    if (system.isDeviceLocked()) {
       console.log("解锁屏幕")
-      swipeScreen(this.SWIPESCREEN, root)
-      if (isDeviceLocked()) {
+      system.swipeScreen(this.SWIPESCREEN, root)
+      if (system.isDeviceLocked()) {
         console.error("上滑解锁失败, 请按脚本中的注释调整UNLOCKSCREEN中的 key[TIME, START, END] 的参数!")
         return false
       }
     }
     console.info("屏幕已解锁")
-    setVolume(this.VOLUME)
-    backHome(this.PACKAGE_ID_LIST.HOME)
-    openWifi(root)
+    system.setVolume(this.VOLUME)
+    system.backHome(this.PACKAGE_ID_LIST.HOME)
+    system.openWifi(root)
     return true
   }
 
   turnOff(root: boolean) {
-    backHome(this.PACKAGE_ID_LIST.HOME)
-    if (this.DEV) resetPhone()
+    system.backHome(this.PACKAGE_ID_LIST.HOME)
+    if (this.DEV) system.resetPhone()
     console.log("关闭屏幕")
     for (let i = 0; i < 10; i++) {
-      closeScreen(root)
+      system.closeScreen(root)
       if (!device.isScreenOn()) {
         console.info("屏幕已关闭")
         return true
