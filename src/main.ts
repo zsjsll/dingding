@@ -3,7 +3,7 @@ import { QQ, DD, Clock } from "./module/app"
 import { Listener } from "./module/listener"
 import { Config } from "./module/config"
 import { Phone } from "./module/phone"
-import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatNotification } from "./module/tools"
+import { formatPauseInput, delay, onlyRunOneScript, pauseStatus, changePause, formatNotification } from "./module/tools"
 ;(function main() {
   //初始化脚本
   onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -63,7 +63,7 @@ import { formatPause, delay, onlyRunOneScript, pauseStatus, changePause, formatN
     }
 
     if (includes(n.getText(), "暂停")) {
-      cfg.pause = formatPause(n.getText())
+      cfg.pause = formatPauseInput(n.getText())
       const pause_tatus_msg = isEmpty(pauseStatus(cfg.pause)) ? ["暂停0次, 恢复定时打卡"] : pauseStatus(cfg.pause)
       doIt(() => [...pause_tatus_msg])
       return

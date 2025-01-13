@@ -170,7 +170,7 @@ export function getStorageData(name: string, key: string) {
 
 export type Pause = [number, number]
 
-export function formatPause(input: string): Pause {
+export function formatPauseInput(input: string): Pause {
   input = "0" + input //在字符串前面添加一个0
   //匹配所有数字，包括小数
   const pause = input.match(/[\d.]+/g)?.map((v) => {
