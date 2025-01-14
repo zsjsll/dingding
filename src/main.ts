@@ -1,10 +1,10 @@
 import { includes, isEmpty } from "lodash"
 
-import { script } from "@/tools"
-import Listener from "@/listener"
-import Config from "@/config"
-import Phone from "@/phone"
-import { QQ, DD, Clock } from "@/app"
+import { script } from "modules/tools"
+import Listener from "modules/listener"
+import Config from "modules/config"
+import Phone from "modules/phone"
+import { QQ, DD, Clock } from "modules/app"
 ;(function main() {
   //初始化脚本
   script.onlyRunOneScript() //停止其他脚本，只运行当前脚本

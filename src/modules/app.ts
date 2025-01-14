@@ -1,5 +1,5 @@
 import { isEmpty, startsWith } from "lodash"
-import { script, system } from "@/tools"
+import { script, system } from "modules/tools"
 
 export class QQ {
   private readonly PACKAGES: QQPackages

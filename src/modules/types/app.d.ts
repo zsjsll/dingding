@@ -1,5 +1,10 @@
+type Package = [string, { whiteList?: string[]; blackList?: string[] }] | [string]
+
 interface DefPackages {
   HOME: string
+}
+interface QQPackages extends DefPackages {
+  QQ: string
 }
 
 interface QQCfg {
@@ -7,8 +12,8 @@ interface QQCfg {
   QQ: string
 }
 
-interface QQPackages extends DefPackages {
-  QQ: string
+interface DDPackages extends DefPackages {
+  DD: string
 }
 
 interface DDCfg {
@@ -18,9 +23,6 @@ interface DDCfg {
   RETRY: number
 
   CORP_ID: string
-}
-interface DDPackages extends DefPackages {
-  DD: string
 }
 
 interface ClockPackages extends DefPackages {

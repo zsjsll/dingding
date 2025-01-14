@@ -10,6 +10,12 @@ type Json = {
   EmailCfg &
   BaseConfig
 
+// interface Json extends BaseConfig, DDCfg, QQCfg, PhoneCfg, ListenerCfg {
+//   PACKAGES: AppPackages
+//   GLOBAL_LOG_FILE_DIR: string
+//   DELAY: Delay
+// }
+
 // interface WhiteList {
 //   XMSF: string
 //   HWID: string

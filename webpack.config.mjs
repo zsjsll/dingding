@@ -7,7 +7,7 @@ import path from "path"
 
 const entry_path = "./src"
 const entry_file = path.join(entry_path, "main.ts")
-const alias_path = "./src/module"
+const alias_path = "./src/modules"
 
 const output_path = "./dist"
 
