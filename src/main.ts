@@ -1,10 +1,10 @@
 import { includes, isEmpty } from "lodash"
 
-import { script } from "modules/tools"
-import Listener from "modules/listener"
-import Config from "modules/config"
-import Phone from "modules/phone"
-import { QQ, DD, Clock } from "modules/app"
+import { script } from "@/tools"
+import Listener from "@/listener"
+import Config from "@/config"
+import Phone from "@/phone"
+import { QQ, DD, Clock } from "@/app"
 ;(function main() {
   //初始化脚本
   script.onlyRunOneScript() //停止其他脚本，只运行当前脚本
@@ -87,7 +87,7 @@ import { QQ, DD, Clock } from "modules/app"
   }
 
   function listenClock(n: org.autojs.autojs.core.notification.Notification) {
-    if (n.getPackageName() !== cfg.PACKAGES.CLOCK) return
+    if (n.getPackageName() !== cfg.PACKAGES.CLOCK[0]) return
     threads.shutDownAll()
     clock.closeAlarm(cfg.ROOT)
     let msg: string[]
@@ -107,8 +107,8 @@ import { QQ, DD, Clock } from "modules/app"
   }
 
   function listenDD(n: org.autojs.autojs.core.notification.Notification) {
-    if (n.getPackageName() !== cfg.PACKAGES.DD) return
-    if (includes(n.getText(), "考勤打卡") && (includes(n.getText(), "成功") || includes(n.getText(), "全部正常"))) return
+    if (n.getPackageName() !== cfg.PACKAGES.DD[0]) return
+    // if (includes(n.getText(), "考勤打卡") && (includes(n.getText(), "成功") || includes(n.getText(), "全部正常"))) return
 
     cfg.info.push(script.formatNotification(n))
 

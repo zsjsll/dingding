@@ -1,5 +1,6 @@
-import { floor, head, includes, last, parseInt, some, toNumber } from "lodash"
+import { floor, head, includes, isEmpty, last, parseInt, some, toNumber } from "lodash"
 import moment from "moment"
+import { SwipeScreen, Delay, Pause, AppPackages, Info } from "@/types"
 
 // -----------以下函数需要root权限-----------------
 
@@ -138,15 +139,69 @@ function delay([min, max]: Delay = [0, 0]) {
   }
 }
 
-function inWhiteList(filter_switch = true, white_list: WhiteList, package_name: string) {
+// eslint-disable-next-line sonarjs/cognitive-complexity
+function inWhiteList(filter_switch = true, app_packages: AppPackages, info: Info) {
   if (filter_switch === false) {
     console.log("放行")
     return true
   }
-  const r = includes(white_list, package_name)
-  if (r) console.info("放行")
-  else console.info("丢弃")
-  return r
+  // 先过滤包id
+
+  for (const [package_name, options] of Object.values(app_packages)) {
+    if (package_name === info.PACKAGENAME) {
+      console.info("在包之中")
+      if (!isEmpty(options)) {
+        if (!isEmpty(options.whiteList) && isEmpty(options.except)) {
+          for (const element of options.whiteList) {
+            if (includes(info.TEXT, element)) {
+              console.info("白名单")
+              console.info("放行")
+              return true
+            } else {
+              console.info("白名单")
+              console.info("丢弃")
+              return false
+            }
+          }
+        }
+        if (isEmpty(options.whiteList) && !isEmpty(options.except)) {
+          for (const element of options.except) {
+            if (includes(info.TEXT, element)) {
+              console.info("排除关键字")
+              console.info("丢弃")
+              return false
+            }
+          }
+          console.info("排除关键字")
+          console.info("放行")
+          return true
+        }
+        if (!isEmpty(options.whiteList) && !isEmpty(options.except)) {
+          for (const element of options.whiteList) {
+            if (includes(info.TEXT, element)) {
+              for (const element of options.except) {
+                if (includes(info.TEXT, element)) {
+                  console.info("白名单+排除关键字")
+                  console.info("丢弃")
+                  return false
+                }
+              }
+              console.info("白名单+排除关键字")
+              console.info("放行")
+              return true
+            }
+          }
+        }
+        console.info("丢弃")
+        return false
+      } else {
+        console.info("放行")
+        return true
+      }
+    }
+  }
+  console.log("丢弃")
+  return false
 }
 
 function setStorageData(name: string, key: string, value: unknown) {

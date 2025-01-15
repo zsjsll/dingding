@@ -1,5 +1,6 @@
 import { system, script } from "./tools"
 import { toString } from "lodash"
+import { Cfg, Json, Variable } from "@/types"
 
 export default class Config {
   private readonly CONFIG: Json
@@ -39,13 +40,13 @@ export default class Config {
       // 最小延迟时间,最大延迟时间
       RETRY: 10, //登录和打卡的重试次数
       PACKAGES: {
-        QQ: "com.tencent.tim", // 请使用tim
-        DD: "com.alibaba.android.rimet", // 钉钉
-        EMAIL: "com.tencent.androidqqmail", // QQ邮箱
-        XMSF: "com.xiaomi.xmsf", // 小米推送服务
-        HWID: "com.huawei.hwid", // 华为手机标识服务
-        CLOCK: "com.android.deskclock", // 系统闹铃,自行修改
-        HOME: "com.miui.home.launcher.ScreenView", //桌面的包名称，自行修改
+        QQ: ["com.tencent.tim"], // 请使用tim
+        DD: ["com.alibaba.android.rimet", { except: ["全部正常", "打卡·成功", "企业审批统计已生成"] }], // 钉钉
+        EMAIL: ["com.tencent.androidqqmail"], // QQ邮箱
+        XMSF: ["com.xiaomi.xmsf"], // 小米推送服务
+        HWID: ["com.huawei.hwid"], // 华为手机标识服务
+        CLOCK: ["com.android.deskclock"], // 系统闹铃,自行修改
+        HOME: ["com.miui.home.launcher.ScreenView"], //桌面的包名称，自行修改
       },
 
       GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径

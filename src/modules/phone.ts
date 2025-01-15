@@ -1,21 +1,22 @@
 import { system } from "./tools"
+import { PhoneCfg, step, SwipeScreen } from "@/types"
 
 export default class Phone {
   private readonly DEV: boolean
   private readonly SCREEN_BRIGHTNESS: number
   private readonly SWIPESCREEN: SwipeScreen
   private readonly VOLUME: number
-  private readonly PACKAGE_ID_LIST: PhonePackageIdList
+  private readonly PACKAGESNAME: { HOME: string }
 
-  next: step = step.next
-  exit: step = step.exit
+  public readonly next: step = step.next
+  public readonly exit: step = step.exit
 
   constructor(cfg: PhoneCfg) {
     this.DEV = cfg.DEV
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.VOLUME = cfg.VOLUME
-    this.PACKAGE_ID_LIST = cfg.PACKAGES
+    this.PACKAGESNAME = { HOME: cfg.PACKAGES.HOME[0] }
   }
 
   turnOn(root: boolean) {
@@ -35,13 +36,13 @@ export default class Phone {
     }
     console.info("屏幕已解锁")
     system.setVolume(this.VOLUME)
-    system.backHome(this.PACKAGE_ID_LIST.HOME)
+    system.backHome(this.PACKAGESNAME.HOME)
     system.openWifi(root)
     return true
   }
 
   turnOff(root: boolean) {
-    system.backHome(this.PACKAGE_ID_LIST.HOME)
+    system.backHome(this.PACKAGESNAME.HOME)
     if (this.DEV) system.resetPhone()
     console.log("关闭屏幕")
     for (let i = 0; i < 10; i++) {
@@ -54,9 +55,4 @@ export default class Phone {
     console.error("需root权限或Android 9 以上版本,等待屏幕自动关闭")
     return false
   }
-}
-
-enum step {
-  next = "next",
-  exit = "exit",
 }

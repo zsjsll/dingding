@@ -1,8 +1,9 @@
 import { script, system } from "./tools"
 import { debounce, forIn, isFunction } from "lodash"
+import { AppPackages, Info, ListenerCfg } from "@/types"
 
 export default class Listener {
-  constructor(cfg: Cfg) {
+  constructor(cfg: ListenerCfg) {
     this.OBSERVE_VOLUME_KEY_UP = cfg.OBSERVE_VOLUME_KEY_UP
     this.OBSERVE_VOLUME_KEY_DOWN = cfg.OBSERVE_VOLUME_KEY_DOWN
     this.NOTIFICATIONS_FILTER = cfg.NOTIFICATIONS_FILTER
@@ -10,7 +11,7 @@ export default class Listener {
   }
   private readonly OBSERVE_VOLUME_KEY_UP: boolean
   private readonly OBSERVE_VOLUME_KEY_DOWN: boolean
-  private readonly PACKAGES: WhiteList
+  private readonly PACKAGES: AppPackages
   private readonly NOTIFICATIONS_FILTER: boolean
 
   listenVolumeKey(func?: (e: android.view.KeyEvent) => unknown) {
@@ -63,7 +64,7 @@ export default class Listener {
             TICKER_TEXT: n.tickerText,
           }
           forIn(info, (v, k) => console.verbose(`${k}: ${v}`))
-          if (!script.inWhiteList(this.NOTIFICATIONS_FILTER, this.PACKAGES, info.PACKAGENAME)) return
+          if (!script.inWhiteList(this.NOTIFICATIONS_FILTER, this.PACKAGES, info)) return
           if (isFunction(func)) return func(n)
         },
         200,
