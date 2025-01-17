@@ -41,6 +41,7 @@ type L = [Name, Name]
 const l: L = [{ name: "aaaa" }, { name: "2" }]
 
 forEach(l, (v) => {
-
   console.log(v)
 })
+
+console.log(includes("123", undefined))

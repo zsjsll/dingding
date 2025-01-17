@@ -11,12 +11,12 @@ export type Pause = [number, number]
 
 export interface BlackListOptions {
   keywords: string[]
-  except: string[]
+  except?: string[]
 }
 
 export interface Package {
   NAME: string
-  BLACKLISTS: BlackListOptions[]
+  BLACKLISTS?: BlackListOptions[]
 }
 
 export enum FilterStates {

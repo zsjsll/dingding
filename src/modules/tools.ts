@@ -1,4 +1,4 @@
-import { every, floor, head, includes, last, parseInt, some, toNumber } from "lodash"
+import { every, floor, head, includes, isEmpty, last, parseInt, some, toNumber } from "lodash"
 import moment from "moment"
 import { SwipeScreen, Delay, Pause, AppPackages, Info, BlackListOptions, FilterStates, Package } from "@/types"
 
@@ -141,18 +141,19 @@ function delay([min, max]: Delay = [0, 0]) {
 
 function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): FilterStates {
   const filterBlackList = (text: string, black_list: BlackListOptions): FilterStates => {
-    const ct = every(black_list.keywords, (kw) => includes(text, kw))
+    const ct = every(black_list?.keywords, (kw) => includes(text, kw))
     if (ct) {
+      if (isEmpty(black_list?.except)) {
+        console.error("× 丢弃，黑名单 √")
+        return FilterStates.drop
+      }
       for (const except of black_list.except) {
         if (includes(text, except)) {
           console.warn("√ 放行，黑名单 √，排除名单 √")
           return FilterStates.pass
-        } else {
-          console.error("× 丢弃，黑名单 √，排除名单 ×")
-          return FilterStates.drop
         }
       }
-      console.error("× 丢弃，黑名单 √")
+      console.error("× 丢弃，黑名单 √，排除名单 ×")
       return FilterStates.drop
     }
     return FilterStates.continue
@@ -166,10 +167,15 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
   let is_in_packages = false
   for (const app_package of Object.values(app_packages) as Package[]) {
     if (app_package.NAME === info.PACKAGENAME) {
+      if (isEmpty(app_package.BLACKLISTS)) {
+        console.warn("√ 放行，没有黑名单")
+        return FilterStates.pass
+      }
       is_in_packages = true
 
       for (const black_list of app_package.BLACKLISTS) {
         console.log(black_list)
+
         const r = filterBlackList(info.TEXT, black_list)
         if (r !== FilterStates.continue) {
           return r
@@ -180,10 +186,9 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
   if (is_in_packages) {
     console.error("√ 放行，在包中")
     return FilterStates.pass
-  } else {
-    console.error("× 丢弃，不在包中")
-    return FilterStates.drop
   }
+  console.error("× 丢弃，不在包中")
+  return FilterStates.drop
 }
 
 function setStorageData(name: string, key: string, value: unknown) {

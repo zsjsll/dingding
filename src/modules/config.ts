@@ -42,7 +42,7 @@ export default class Config {
       PACKAGES: {
         QQ: {
           NAME: "com.tencent.tim",
-          BLACKLISTS: [{ keywords: ["1", "2", "3", "4"], except: ["2", "3"] }],
+          BLACKLISTS: [{ keywords: [], except: [] }],
         }, // 请使用tim
         DD: {
           NAME: "com.alibaba.android.rimet",
@@ -57,10 +57,7 @@ export default class Config {
         }, // QQ邮箱
         XMSF: {
           NAME: "com.xiaomi.xmsf",
-          BLACKLISTS: [
-            { keywords: ["1", "2", "3", "4"], except: ["2", "3"] },
-            { keywords: ["aa", "bb", "cc", "dd"], except: ["bb", "cc"] },
-          ],
+          BLACKLISTS: [{ keywords: ["123"] }],
         }, // 小米推送服务
         HWID: {
           NAME: "com.huawei.hwid",
