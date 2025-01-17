@@ -9,12 +9,21 @@ export interface SwipeScreen {
 
 export type Pause = [number, number]
 
-interface PackageOptions {
-  whiteList?: string[]
-  except?: string[]
+export interface BlackListOptions {
+  keywords: string[]
+  except: string[]
 }
 
-export type Package = [string, PackageOptions] | [string]
+export interface Package {
+  NAME: string
+  BLACKLISTS: BlackListOptions[]
+}
+
+export enum FilterStates {
+  drop = "drop",
+  pass = "pass",
+  continue = "continue",
+}
 
 //listener.ts
 export interface ListenerCfg {
@@ -90,7 +99,7 @@ export interface PhoneCfg {
 interface PhonePackages {
   HOME: Package
 }
-export enum step {
+export enum Step {
   next = "next",
   exit = "exit",
 }
@@ -101,7 +110,6 @@ type ExtendPackages = "XMSF" | "HWID"
 type ExtendPackagesMap = Record<ExtendPackages, Package>
 
 export type AppPackages = PhonePackages & QQPackages & DDPackages & ClockPackages & EmailPackages & ExtendPackagesMap
-
 
 export interface Json extends DDCfg, QQCfg, PhoneCfg, ListenerCfg {
   PACKAGES: AppPackages

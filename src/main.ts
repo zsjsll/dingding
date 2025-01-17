@@ -87,7 +87,7 @@ import { QQ, DD, Clock } from "@/app"
   }
 
   function listenClock(n: org.autojs.autojs.core.notification.Notification) {
-    if (n.getPackageName() !== cfg.PACKAGES.CLOCK[0]) return
+    if (n.getPackageName() !== cfg.PACKAGES.CLOCK.NAME) return
     threads.shutDownAll()
     clock.closeAlarm(cfg.ROOT)
     let msg: string[]
@@ -107,7 +107,7 @@ import { QQ, DD, Clock } from "@/app"
   }
 
   function listenDD(n: org.autojs.autojs.core.notification.Notification) {
-    if (n.getPackageName() !== cfg.PACKAGES.DD[0]) return
+    if (n.getPackageName() !== cfg.PACKAGES.DD.NAME) return
     // if (includes(n.getText(), "考勤打卡") && (includes(n.getText(), "成功") || includes(n.getText(), "全部正常"))) return
 
     cfg.info.push(script.formatNotification(n))

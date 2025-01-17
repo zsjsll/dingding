@@ -7,7 +7,7 @@ export class QQ {
   private readonly QQ: string
 
   constructor(cfg: QQCfg) {
-    this.PACKAGESNAME = { QQ: cfg.PACKAGES.QQ[0], HOME: cfg.PACKAGES.HOME[0] }
+    this.PACKAGESNAME = { QQ: cfg.PACKAGES.QQ.NAME, HOME: cfg.PACKAGES.HOME.NAME }
     this.QQ = cfg.QQ
   }
 
@@ -84,7 +84,7 @@ export class DD {
   private readonly CORP_ID: string
 
   constructor(cfg: DDCfg) {
-    this.PACKAGESNAME = { DD: cfg.PACKAGES.DD[0], HOME: cfg.PACKAGES.HOME[0] }
+    this.PACKAGESNAME = { DD: cfg.PACKAGES.DD.NAME, HOME: cfg.PACKAGES.HOME.NAME }
     this.ACCOUNT = cfg.ACCOUNT
     this.PASSWD = cfg.PASSWD
     this.RETRY = cfg.RETRY
@@ -224,7 +224,7 @@ export class Clock {
   private readonly RETRY: number
 
   constructor(cfg: ClockCfg) {
-    this.PACKAGESNAME = { CLOCK: cfg.PACKAGES.CLOCK[0], HOME: cfg.PACKAGES.HOME[0] }
+    this.PACKAGESNAME = { CLOCK: cfg.PACKAGES.CLOCK.NAME, HOME: cfg.PACKAGES.HOME.NAME }
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.RETRY = cfg.RETRY
   }

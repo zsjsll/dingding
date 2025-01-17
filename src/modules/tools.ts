@@ -1,6 +1,6 @@
-import { floor, head, includes, isEmpty, last, parseInt, some, toNumber } from "lodash"
+import { floor, head, includes, last, parseInt, some, toNumber } from "lodash"
 import moment from "moment"
-import { SwipeScreen, Delay, Pause, AppPackages, Info } from "@/types"
+import { SwipeScreen, Delay, Pause, AppPackages, Info, BlackListOptions, FilterStates, Package } from "@/types"
 
 // -----------以下函数需要root权限-----------------
 
@@ -139,69 +139,54 @@ function delay([min, max]: Delay = [0, 0]) {
   }
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
-function inWhiteList(filter_switch = true, app_packages: AppPackages, info: Info) {
-  if (filter_switch === false) {
-    console.log("放行")
-    return true
+function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): FilterStates {
+  const filterBlackList = (text: string, black_list: BlackListOptions): FilterStates => {
+    for (const keyword of black_list.keywords) {
+      if (includes(text, keyword)) {
+        for (const except of black_list.except) {
+          if (includes(text, except)) {
+            console.warn("√ 放行，黑名单 √，排除名单 √")
+            return FilterStates.pass
+          } else {
+            console.error("× 丢弃，黑名单 √，排除名单 ×")
+            return FilterStates.drop
+          }
+        }
+        console.error("× 丢弃，黑名单 √")
+        return FilterStates.drop
+      }
+    }
+    // console.warn("√ 放行,黑名单 ×")
+    return FilterStates.continue
+  }
+
+  if (!filter_switch) {
+    console.warn("√ 放行，已关闭过滤")
+    return FilterStates.pass
   }
   // 先过滤包id
-
-  for (const [package_name, options] of Object.values(app_packages)) {
-    if (package_name === info.PACKAGENAME) {
-      console.info("在包之中")
-      if (!isEmpty(options)) {
-        if (!isEmpty(options.whiteList) && isEmpty(options.except)) {
-          for (const element of options.whiteList) {
-            if (includes(info.TEXT, element)) {
-              console.info("白名单")
-              console.info("放行")
-              return true
-            } else {
-              console.info("白名单")
-              console.info("丢弃")
-              return false
-            }
-          }
+  let is_in_packages = false
+  for (const app_package of Object.values(app_packages) as Package[]) {
+    if (app_package.NAME === info.PACKAGENAME) {
+      is_in_packages = true
+      // console.log(app_package.BLACKLISTS)
+      for (const black_list of app_package.BLACKLISTS) {
+        console.log(black_list)
+        const r = filterBlackList(info.TEXT, black_list)
+        if (r !== FilterStates.continue) {
+          return r
         }
-        if (isEmpty(options.whiteList) && !isEmpty(options.except)) {
-          for (const element of options.except) {
-            if (includes(info.TEXT, element)) {
-              console.info("排除关键字")
-              console.info("丢弃")
-              return false
-            }
-          }
-          console.info("排除关键字")
-          console.info("放行")
-          return true
-        }
-        if (!isEmpty(options.whiteList) && !isEmpty(options.except)) {
-          for (const element of options.whiteList) {
-            if (includes(info.TEXT, element)) {
-              for (const element of options.except) {
-                if (includes(info.TEXT, element)) {
-                  console.info("白名单+排除关键字")
-                  console.info("丢弃")
-                  return false
-                }
-              }
-              console.info("白名单+排除关键字")
-              console.info("放行")
-              return true
-            }
-          }
-        }
-        console.info("丢弃")
-        return false
-      } else {
-        console.info("放行")
-        return true
+        // return filterBlackList(info.TEXT, black_list)
       }
     }
   }
-  console.log("丢弃")
-  return false
+  if (is_in_packages) {
+    console.error("√ 放行，在包中")
+    return FilterStates.pass
+  } else {
+    console.error("× 丢弃，不在包中")
+    return FilterStates.drop
+  }
 }
 
 function setStorageData(name: string, key: string, value: unknown) {
@@ -281,7 +266,7 @@ export const script = {
   reloadScript,
   onlyRunOneScript,
   delay,
-  inWhiteList,
+  isDrop,
   setStorageData,
   getStorageData,
   formatTime,

@@ -40,13 +40,40 @@ export default class Config {
       // 最小延迟时间,最大延迟时间
       RETRY: 10, //登录和打卡的重试次数
       PACKAGES: {
-        QQ: ["com.tencent.tim"], // 请使用tim
-        DD: ["com.alibaba.android.rimet", { except: ["全部正常", "打卡·成功", "企业审批统计已生成"] }], // 钉钉
-        EMAIL: ["com.tencent.androidqqmail"], // QQ邮箱
-        XMSF: ["com.xiaomi.xmsf"], // 小米推送服务
-        HWID: ["com.huawei.hwid"], // 华为手机标识服务
-        CLOCK: ["com.android.deskclock"], // 系统闹铃,自行修改
-        HOME: ["com.miui.home.launcher.ScreenView"], //桌面的包名称，自行修改
+        QQ: {
+          NAME: "com.tencent.tim",
+          BLACKLISTS: [{ keywords: ["1", "2", "3", "4"], except: ["2", "3"] }],
+        }, // 请使用tim
+        DD: {
+          NAME: "com.alibaba.android.rimet",
+          BLACKLISTS: [
+            { keywords: ["考勤打卡"], except: ["失败", "异常"] },
+            { keywords: ["企业审批统计已生成"], except: [] },
+          ],
+        }, // 钉钉
+        EMAIL: {
+          NAME: "com.tencent.androidqqmail",
+          BLACKLISTS: [{ keywords: [], except: [] }],
+        }, // QQ邮箱
+        XMSF: {
+          NAME: "com.xiaomi.xmsf",
+          BLACKLISTS: [
+            { keywords: ["1", "2", "3", "4"], except: ["2", "3"] },
+            { keywords: ["aa", "bb", "cc", "dd"], except: ["bb", "cc"] },
+          ],
+        }, // 小米推送服务
+        HWID: {
+          NAME: "com.huawei.hwid",
+          BLACKLISTS: [{ keywords: [], except: [] }],
+        }, // 华为手机标识服务
+        CLOCK: {
+          NAME: "com.android.deskclock",
+          BLACKLISTS: [{ keywords: [], except: [] }],
+        }, // 系统闹铃,自行修改
+        HOME: {
+          NAME: "com.miui.home.launcher.ScreenView",
+          BLACKLISTS: [{ keywords: [], except: [] }],
+        }, //桌面的包名称，自行修改
       },
 
       GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径
