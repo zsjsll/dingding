@@ -44,8 +44,8 @@ export default class Config {
         DD: {
           NAME: "com.alibaba.android.rimet",
           BLACKLISTS: [
-            { keywords: ["考勤打卡"], except: ["失败", "异常"] }, //kewords 一个集合中，是与关系，必须要全部满足才进行except的判断
-            { keywords: ["企业审批统计已生成"] }, //
+            { keywords: ["考勤打卡"], except: ["失败", "异常"] }, //kewords 一个集合中，是与关系，必须要全部满足才进行except的判断, except 是或关系
+            { keywords: ["企业审批统计已生成"] }, //竖向的keywords，也就是数组元素间的keywords是关系，从上而下的进行判断
           ],
         }, // 钉钉
         EMAIL: { NAME: "com.tencent.androidqqmail" }, // QQ邮箱

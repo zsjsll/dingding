@@ -141,6 +141,10 @@ function delay([min, max]: Delay = [0, 0]) {
 
 function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): FilterStates {
   const filterBlackList = (text: string, black_list: BlackListOptions): FilterStates => {
+    if (isEmpty(black_list?.keywords)) {
+      console.warn("√ 放行，黑名单为空")
+      return FilterStates.pass
+    }
     const ct = every(black_list?.keywords, (kw) => includes(text, kw))
     if (ct) {
       if (isEmpty(black_list?.except)) {
