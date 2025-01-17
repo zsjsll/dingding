@@ -156,7 +156,7 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
         return FilterStates.drop
       }
     }
-    // console.warn("√ 放行,黑名单 ×")
+
     return FilterStates.continue
   }
 
@@ -169,14 +169,13 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
   for (const app_package of Object.values(app_packages) as Package[]) {
     if (app_package.NAME === info.PACKAGENAME) {
       is_in_packages = true
-      // console.log(app_package.BLACKLISTS)
+
       for (const black_list of app_package.BLACKLISTS) {
         console.log(black_list)
         const r = filterBlackList(info.TEXT, black_list)
         if (r !== FilterStates.continue) {
           return r
         }
-        // return filterBlackList(info.TEXT, black_list)
       }
     }
   }
