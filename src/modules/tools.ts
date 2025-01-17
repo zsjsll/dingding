@@ -1,4 +1,4 @@
-import { floor, head, includes, last, parseInt, some, toNumber } from "lodash"
+import { every, floor, head, includes, last, parseInt, some, toNumber } from "lodash"
 import moment from "moment"
 import { SwipeScreen, Delay, Pause, AppPackages, Info, BlackListOptions, FilterStates, Package } from "@/types"
 
@@ -141,22 +141,20 @@ function delay([min, max]: Delay = [0, 0]) {
 
 function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): FilterStates {
   const filterBlackList = (text: string, black_list: BlackListOptions): FilterStates => {
-    for (const keyword of black_list.keywords) {
-      if (includes(text, keyword)) {
-        for (const except of black_list.except) {
-          if (includes(text, except)) {
-            console.warn("√ 放行，黑名单 √，排除名单 √")
-            return FilterStates.pass
-          } else {
-            console.error("× 丢弃，黑名单 √，排除名单 ×")
-            return FilterStates.drop
-          }
+    const ct = every(black_list.keywords, (kw) => includes(text, kw))
+    if (ct) {
+      for (const except of black_list.except) {
+        if (includes(text, except)) {
+          console.warn("√ 放行，黑名单 √，排除名单 √")
+          return FilterStates.pass
+        } else {
+          console.error("× 丢弃，黑名单 √，排除名单 ×")
+          return FilterStates.drop
         }
-        console.error("× 丢弃，黑名单 √")
-        return FilterStates.drop
       }
+      console.error("× 丢弃，黑名单 √")
+      return FilterStates.drop
     }
-
     return FilterStates.continue
   }
 
