@@ -147,7 +147,7 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
         console.error("× 丢弃，黑名单 √")
         return FilterStates.drop
       }
-      for (const except of black_list.except) {
+      for (const except of black_list.except as string[]) {
         if (includes(text, except)) {
           console.warn("√ 放行，黑名单 √，排除名单 √")
           return FilterStates.pass
@@ -173,7 +173,7 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
       }
       is_in_packages = true
 
-      for (const black_list of app_package.BLACKLISTS) {
+      for (const black_list of app_package.BLACKLISTS as BlackListOptions[]) {
         console.log(black_list)
 
         const r = filterBlackList(info.TEXT, black_list)
