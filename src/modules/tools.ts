@@ -188,7 +188,7 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
     }
   }
   if (is_in_packages) {
-    console.error("√ 放行，在包中")
+    console.warn("√ 放行，在包中")
     return FilterStates.pass
   }
   console.error("× 丢弃，不在包中")
