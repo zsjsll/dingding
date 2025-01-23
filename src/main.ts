@@ -51,6 +51,7 @@ import { QQ, DD, Clock } from "@/app"
         phone.turnOff(cfg.ROOT)
       })
     }
+    if (n.getText() === "邮件提醒: 你有一封新邮件") cfg.thread = threads.start(() => phone.turnOn(cfg.ROOT))
 
     if (n.getText() === "帮助") {
       const default_msg = ["帮助: 显示所有指令内容", "打卡: 马上打卡", "锁屏: 停止当前动作后锁屏", "{n}暂停{m}: 延迟{n}次,暂停{m}次", "恢复: 恢复自动打卡"]
@@ -87,7 +88,7 @@ import { QQ, DD, Clock } from "@/app"
   }
 
   function listenClock(n: org.autojs.autojs.core.notification.Notification) {
-    if (n.getPackageName() !== cfg.PACKAGES.CLOCK.NAME) return
+    if (n.getPackageName() !== cfg.PACKAGES.CLOCK.PACKAGENAME) return
     threads.shutDownAll()
     clock.closeAlarm(cfg.ROOT)
     let msg: string[]
@@ -107,7 +108,7 @@ import { QQ, DD, Clock } from "@/app"
   }
 
   function listenDD(n: org.autojs.autojs.core.notification.Notification) {
-    if (n.getPackageName() !== cfg.PACKAGES.DD.NAME) return
+    if (n.getPackageName() !== cfg.PACKAGES.DD.PACKAGENAME) return
     // if (includes(n.getText(), "考勤打卡") && (includes(n.getText(), "成功") || includes(n.getText(), "全部正常"))) return
 
     cfg.info.push(script.formatNotification(n))

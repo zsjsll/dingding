@@ -15,7 +15,8 @@ export interface BlackListOptions {
 }
 
 export interface Package {
-  NAME: string
+  PACKAGENAME: string
+  APPNAME?: string
   BLACKLISTS?: BlackListOptions[]
 }
 
@@ -52,6 +53,7 @@ interface QQPackages extends PhonePackages {
 
 export interface QQCfg {
   PACKAGES: QQPackages
+  RETRY: number
   QQ: string
 }
 

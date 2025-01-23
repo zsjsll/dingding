@@ -4,15 +4,24 @@ import { QQCfg, DDCfg, ClockCfg, SwipeScreen } from "@/types"
 
 export class QQ {
   private readonly PACKAGESNAME: { QQ: string; HOME: string }
+  private readonly APPNAME: string
   private readonly QQ: string
+  private readonly RETRY: number
 
   constructor(cfg: QQCfg) {
-    this.PACKAGESNAME = { QQ: cfg.PACKAGES.QQ.NAME, HOME: cfg.PACKAGES.HOME.NAME }
+    this.PACKAGESNAME = { QQ: cfg.PACKAGES.QQ.PACKAGENAME, HOME: cfg.PACKAGES.HOME.PACKAGENAME }
     this.QQ = cfg.QQ
+    this.RETRY = cfg.RETRY
+    this.APPNAME = cfg.PACKAGES.QQ.APPNAME as string
   }
 
   private open() {
-    return system.openApp(this.PACKAGESNAME.QQ)
+    for (let i = 1; i <= this.RETRY; i++) {
+      console.info(`第${i}次打开...`)
+      if (system.openApp(this.PACKAGESNAME.QQ, this.APPNAME)) return true
+    }
+    console.error("无法打开QQ!")
+    return false
   }
   private chat() {
     // 最新的tim和qq 如果用意图启动，会出错误，所以改成查找控件来进入聊天窗口
@@ -59,10 +68,8 @@ export class QQ {
     if (!isEmpty(message)) {
       console.log("发送信息")
       system.backHome(this.PACKAGESNAME.HOME)
-      if (!this.open()) {
-        console.error("无法打开QQ!")
-        return false
-      }
+      if (!this.open()) return false
+
       this.chat() //进入聊天界面
 
       const msgs = script.formatMsgs(message)
@@ -78,13 +85,15 @@ export class QQ {
 
 export class DD {
   private readonly PACKAGESNAME: { DD: string; HOME: string }
+  private readonly APPNAME: string
   private readonly ACCOUNT: string
   private readonly PASSWD: string
   private readonly RETRY: number
   private readonly CORP_ID: string
 
   constructor(cfg: DDCfg) {
-    this.PACKAGESNAME = { DD: cfg.PACKAGES.DD.NAME, HOME: cfg.PACKAGES.HOME.NAME }
+    this.PACKAGESNAME = { DD: cfg.PACKAGES.DD.PACKAGENAME, HOME: cfg.PACKAGES.HOME.PACKAGENAME }
+    this.APPNAME = cfg.PACKAGES.DD.APPNAME as string
     this.ACCOUNT = cfg.ACCOUNT
     this.PASSWD = cfg.PASSWD
     this.RETRY = cfg.RETRY
@@ -137,7 +146,7 @@ export class DD {
       system.backHome(this.PACKAGESNAME.HOME)
       console.log("正在启动" + app.getAppName(this.PACKAGESNAME.DD) + "...")
 
-      if (!system.openApp(this.PACKAGESNAME.DD)) {
+      if (!system.openApp(this.PACKAGESNAME.DD, this.APPNAME)) {
         console.warn("启动失败，重新启动...")
         continue
       }
@@ -224,7 +233,7 @@ export class Clock {
   private readonly RETRY: number
 
   constructor(cfg: ClockCfg) {
-    this.PACKAGESNAME = { CLOCK: cfg.PACKAGES.CLOCK.NAME, HOME: cfg.PACKAGES.HOME.NAME }
+    this.PACKAGESNAME = { CLOCK: cfg.PACKAGES.CLOCK.PACKAGENAME, HOME: cfg.PACKAGES.HOME.PACKAGENAME }
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.RETRY = cfg.RETRY
   }

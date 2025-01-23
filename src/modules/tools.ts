@@ -86,9 +86,13 @@ function backHome(home_id: string) {
   sleep(1e3)
 }
 
-function openApp(package_id: string) {
-  app.launchPackage(package_id)
-  return !!packageName(package_id).findOne(20e3)
+function openApp(package_name: string, app_name: string) {
+  app.launchPackage(package_name)
+  if (packageName(package_name).findOne(5e3)) return true
+  else {
+    app.launchApp(app_name)
+    return !!packageName(package_name).findOne(5e3)
+  }
 }
 
 function brightScreen(brightness: number) {
@@ -170,7 +174,7 @@ function isDrop(filter_switch = true, info: Info, app_packages: AppPackages): Fi
   // 先过滤包id
   let is_in_packages = false
   for (const app_package of Object.values(app_packages) as Package[]) {
-    if (app_package.NAME === info.PACKAGENAME) {
+    if (app_package.PACKAGENAME === info.PACKAGENAME) {
       if (isEmpty(app_package.BLACKLISTS)) {
         console.warn("√ 放行，没有黑名单")
         return FilterStates.pass

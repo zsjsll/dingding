@@ -40,19 +40,20 @@ export default class Config {
       // 最小延迟时间,最大延迟时间
       RETRY: 10, //登录和打卡的重试次数
       PACKAGES: {
-        QQ: { NAME: "com.tencent.tim" }, // 请使用tim
+        QQ: { PACKAGENAME: "com.tencent.tim", APPNAME: "TIM" }, // 请使用tim
         DD: {
-          NAME: "com.alibaba.android.rimet",
+          PACKAGENAME: "com.alibaba.android.rimet",
+          APPNAME: "钉钉",
           BLACKLISTS: [
             { keywords: ["考勤打卡"], except: ["失败", "异常"] }, //kewords 在不同集合中（竖向关系）是或关系， 在同一个集合中（横向关系）是与关系，必须要全部满足才进行except的判断， except 是或关系
             { keywords: ["企业审批统计已生成"] },
           ],
         }, // 钉钉
-        EMAIL: { NAME: "com.tencent.androidqqmail" }, // QQ邮箱
-        XMSF: { NAME: "com.xiaomi.xmsf" }, // 小米推送服务
-        HWID: { NAME: "com.huawei.hwid" }, // 华为手机标识服务
-        CLOCK: { NAME: "com.android.deskclock" }, // 系统闹铃,自行修改
-        HOME: { NAME: "com.miui.home.launcher.ScreenView" }, //桌面的包名称，自行修改
+        EMAIL: { PACKAGENAME: "com.tencent.androidqqmail" }, // QQ邮箱
+        XMSF: { PACKAGENAME: "com.xiaomi.xmsf" }, // 小米推送服务
+        HWID: { PACKAGENAME: "com.huawei.hwid" }, // 华为手机标识服务
+        CLOCK: { PACKAGENAME: "com.android.deskclock" }, // 系统闹铃,自行修改
+        HOME: { PACKAGENAME: "com.miui.home.launcher.ScreenView" }, //桌面的包名称，自行修改
       },
 
       GLOBAL_LOG_FILE_DIR: "Archive/", // 运行日志路径

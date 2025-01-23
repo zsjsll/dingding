@@ -16,7 +16,7 @@ export default class Phone {
     this.SCREEN_BRIGHTNESS = cfg.SCREEN_BRIGHTNESS
     this.SWIPESCREEN = cfg.SWIPESCREEN
     this.VOLUME = cfg.VOLUME
-    this.PACKAGESNAME = { HOME: cfg.PACKAGES.HOME.NAME }
+    this.PACKAGESNAME = { HOME: cfg.PACKAGES.HOME.PACKAGENAME }
   }
 
   turnOn(root: boolean) {
